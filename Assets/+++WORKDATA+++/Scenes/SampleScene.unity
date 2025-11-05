@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 126251184}
   - component: {fileID: 126251183}
   m_Layer: 5
-  m_Name: Fill
+  m_Name: Fill-image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -176,11 +176,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 6f8baf214fdacbf47b515aae9b99fcd2, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitPoints: 10
-  maxHitPoints: 100
+  maxHitPoints: 10
   uiHitpoints: {fileID: 0}
   enemyHealthBar: {fileID: 1674313116}
 --- !u!114 &323273794
@@ -1122,7 +1122,7 @@ GameObject:
   - component: {fileID: 764193232}
   - component: {fileID: 764193231}
   m_Layer: 5
-  m_Name: base
+  m_Name: base-image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1160,7 +1160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0.8862745}
+  m_Color: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0.8862745}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1628,8 +1628,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fillImage: {fileID: 126251183}
-  hideWhenFull: 1
-  worldOffset: {x: 0, y: 2, z: 0}
+  hideWhenFull: 0
+  visualGroup: {fileID: 0}
+  worldOffset: {x: 0, y: 5, z: 0}
   billboardToCamera: 1
 --- !u!114 &1674313117
 MonoBehaviour:

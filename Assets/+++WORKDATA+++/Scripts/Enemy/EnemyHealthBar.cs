@@ -4,15 +4,16 @@ using UnityEngine.UI;
 public class EnemyHealthBar : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private Image fillImage;          // assign a filled Image
-    [SerializeField] private bool hideWhenFull = true; // auto-hide at 100%
+    [SerializeField] private Image fillImage;          // Zuweisen: Filled Image
+    [SerializeField] private bool hideWhenFull = true; // bei 100% ausblenden
+    [SerializeField] private CanvasGroup visualGroup;  // auf denselben UI-Container legen (nicht auf das Script-Objekt)
 
     [Header("Behavior")]
     [SerializeField] private Vector3 worldOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool billboardToCamera = true;
 
     private int maxHP = 1;
-    private Transform target; // usually the enemy root
+    private Transform target;
 
     public void Init(Transform followTarget, int maxHitPoints, int currentHitPoints)
     {
@@ -29,19 +30,25 @@ public class EnemyHealthBar : MonoBehaviour
         fillImage.fillAmount = t;
 
         if (hideWhenFull && t >= 0.999f)
-            fillImage.transform.parent.gameObject.SetActive(false);
+        {
+            if (visualGroup) { visualGroup.alpha = 0f; visualGroup.interactable = false; visualGroup.blocksRaycasts = false; }
+            else             { fillImage.enabled = false; }
+        }
         else
-            fillImage.transform.parent.gameObject.SetActive(true);
+        {
+            if (visualGroup) { visualGroup.alpha = 1f; visualGroup.interactable = true; visualGroup.blocksRaycasts = true; }
+            else             { fillImage.enabled = true; }
+        }
     }
 
     private void LateUpdate()
     {
         if (!target) return;
 
-        // follow enemy
+        // folgen
         transform.position = target.position + worldOffset;
 
-        // face camera
+        // zur Kamera drehen
         if (billboardToCamera && Camera.main)
         {
             Vector3 forward = transform.position - Camera.main.transform.position;
