@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -65,6 +66,12 @@ public class Hitpoints : MonoBehaviour
             {
                 Destroy(gameObject);
             }
+        }
+        
+        if (gameObject.CompareTag("Player"))
+        {
+            Debug.Log("ShakeS");
+            Camera.main.DOShakePosition(0.5f, new Vector3(0.2f, 0.2f, 0));
         }
     }
 }
