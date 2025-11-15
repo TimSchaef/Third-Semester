@@ -1328,25 +1328,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &852854111 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1438347520461570845, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
-  m_PrefabInstance: {fileID: 4310603170245058391}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &852854119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 852854111}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 713b04a21f2ff9e48b312acfc5e590f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats: {fileID: 1801846104}
-  progress: {fileID: 1801846103}
 --- !u!1 &935618112
 GameObject:
   m_ObjectHideFlags: 0
@@ -2772,13 +2753,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1254454131068389766, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
+      propertyPath: stats
+      value: 
+      objectReference: {fileID: 1801846104}
+    - target: {fileID: 1254454131068389766, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
+      propertyPath: progress
+      value: 
+      objectReference: {fileID: 1801846103}
     - target: {fileID: 1438347520461570845, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6054124073316107698, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6189033925488851932, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2824,17 +2809,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1801846102}
-    - target: {fileID: 7239568497796983229, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
-      propertyPath: m_FillAmount
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1438347520461570845, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 852854119}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67087fca0d12f97428be9adde94b0c0b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
