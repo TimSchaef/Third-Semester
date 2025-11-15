@@ -7,6 +7,7 @@ public class SkillTree : MonoBehaviour
 {
     [Header("Config")]
     public PlayerProgress player;
+    public PlayerStatsManager statsManager;            // <-- NEU: Stats-Manager zuweisen
     public List<SkillDefinition> allSkills = new List<SkillDefinition>();
 
     [Header("Runtime State")]
@@ -14,11 +15,15 @@ public class SkillTree : MonoBehaviour
     private HashSet<string> unlockedIds = new HashSet<string>();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
+    
 
     void Awake()
     {
         // Rebuild set on load/enter play
         unlockedIds = new HashSet<string>(unlockedSkills.Select(s => s.skillId));
+
+        // WICHTIG: Effekte aller bereits freigeschalteten Skills erneut anwenden
+        ReapplyAllEffects();
     }
 
     public bool IsUnlocked(SkillDefinition skill) => skill != null && unlockedIds.Contains(skill.skillId);
@@ -60,6 +65,13 @@ public class SkillTree : MonoBehaviour
 
         unlockedSkills.Add(skill);
         unlockedIds.Add(skill.skillId);
+
+        // >>> HIER: Effekte in StatsManager übernehmen <<<
+        if (statsManager != null && skill.effects != null)
+        {
+            statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
+        }
+
         OnSkillUnlocked?.Invoke(skill);
         SaveUnlocked();
         return true;
@@ -92,6 +104,28 @@ public class SkillTree : MonoBehaviour
                 unlockedSkills.Add(def);
                 unlockedIds.Add(def.skillId);
             }
+        }
+
+        // nach dem Laden Effekte erneut in StatsManager schreiben
+        ReapplyAllEffects();
+    }
+
+    private void ReapplyAllEffects()
+    {
+        if (statsManager == null) return;
+
+        // erst alle alten Skill-Quellen löschen:
+        foreach (var skill in allSkills)
+        {
+            if (!string.IsNullOrEmpty(skill.skillId))
+                statsManager.RemoveEffectsFrom(skill.skillId);
+        }
+
+        // dann alle freigeschalteten Skills neu anwenden:
+        foreach (var skill in unlockedSkills)
+        {
+            if (skill != null && skill.effects != null)
+                statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
         }
     }
 }

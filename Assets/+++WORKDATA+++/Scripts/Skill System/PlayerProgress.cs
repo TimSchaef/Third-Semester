@@ -11,6 +11,11 @@ public class PlayerProgress : MonoBehaviour
     public int SkillPoints => unspentSkillPoints;
 
     private int XPRequiredForNextLevel() => currentLevel * 100;
+    
+    public int GetXPRequiredForNextLevel()
+    {
+        return XPRequiredForNextLevel();
+    }
 
     public void AddXP(int amount)
     {

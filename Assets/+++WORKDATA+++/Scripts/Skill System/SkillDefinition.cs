@@ -5,7 +5,7 @@ using UnityEngine;
 public class SkillDefinition : ScriptableObject
 {
     [Header("Identity")]
-    public string skillId;          // unique string (e.g., "firebolt")
+    public string skillId;          // unique string (e.g., "swift_legs")
     public string displayName;
     [TextArea] public string description;
     public Sprite icon;
@@ -14,4 +14,7 @@ public class SkillDefinition : ScriptableObject
     [Min(1)] public int requiredPlayerLevel = 1;
     [Min(1)] public int costSkillPoints = 1;
     public List<SkillDefinition> prerequisites = new List<SkillDefinition>();
+
+    [Header("Effects")]
+    public List<SkillEffect> effects = new List<SkillEffect>();
 }

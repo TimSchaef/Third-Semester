@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: XPGain
   m_EditorClassIdentifier: 
   statId: 5
-  displayName: 
-  description: 
+  displayName: MoveSpeed
+  description: 'Changes the Xp Gain
+
+'
   maxLevel: 5
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
-  baseValue: 0
-  incrementPerLevel: 0
+  baseValue: 1
+  incrementPerLevel: 1
