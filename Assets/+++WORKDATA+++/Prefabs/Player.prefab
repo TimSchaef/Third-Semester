@@ -278,6 +278,7 @@ GameObject:
   - component: {fileID: 9163934548025895123}
   - component: {fileID: 2681993167726318184}
   - component: {fileID: 6992839715270156423}
+  - component: {fileID: 9006165888835563375}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -344,8 +345,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 495636633
-  m_SortingLayer: 3
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 25c8595d9d6d25347b3ba42956646d4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -542,6 +543,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: SkillMenuController, Assembly-CSharp
+        m_MethodName: ToggleSkillMenu
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d672e77f-63be-4b71-a34d-3d263fbcc9c6
+    m_ActionName: 'UI/OpenSkillMenu[/Keyboard/k]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -609,14 +626,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 6992839715270156423}
   allStats:
-  - {fileID: 11400000, guid: eea5eacca9e8d524a9ea9df6723383a5, type: 2}
-  - {fileID: 11400000, guid: d4d382ffc586b8a42863a8b781c7a1dd, type: 2}
-  - {fileID: 11400000, guid: ba5e1329cf708574a82531b1a7ee3a23, type: 2}
-  - {fileID: 11400000, guid: 22511f2fcc470764cbd8f67f80bf492e, type: 2}
-  - {fileID: 11400000, guid: 80da311014d18f8428ce9f96a191ebfc, type: 2}
+  - {fileID: 11400000, guid: 436fdd99f0650ca47af1b971ec02d415, type: 2}
+  - {fileID: 11400000, guid: 96456a700249f2741a666c7eda43958d, type: 2}
+  - {fileID: 11400000, guid: 6cc655ed26d9909408e2cf6a2531c632, type: 2}
+  - {fileID: 11400000, guid: 17763d356dd6b4e4889994955a2526a4, type: 2}
+  - {fileID: 11400000, guid: b4868c16c7aa74d46bce46802b5084ac, type: 2}
+  - {fileID: 11400000, guid: 5d68ad47ca718ee4caf1fe824e546c01, type: 2}
+  - {fileID: 11400000, guid: 562d3e26469defa4fb6d78fa3d74994d, type: 2}
   - {fileID: 11400000, guid: 5a0d309a27aadd44b955793064481182, type: 2}
-  - {fileID: 11400000, guid: 75d8b0a6c85b70e41905af53d275c9f5, type: 2}
-  - {fileID: 11400000, guid: 99375cbad08d1834fa7400002531d68a, type: 2}
 --- !u!114 &6992839715270156423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,6 +649,19 @@ MonoBehaviour:
   currentLevel: 1
   currentXP: 0
   unspentSkillPoints: 0
+--- !u!114 &9006165888835563375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053158358163126664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d0d4acf9b37d9498d1982239df6b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 2681993167726318184}
 --- !u!1 &6805136915170122017
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,7 +705,7 @@ Camera:
   m_GameObject: {fileID: 6805136915170122017}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
