@@ -18,8 +18,8 @@ MonoBehaviour:
   icon: {fileID: 0}
   requiredPlayerLevel: 1
   costSkillPoints: 1
-  prerequisites:
-  - {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
+  prerequisiteMode: 0
+  prerequisites: []
   effects:
   - stat: 0
     op: 1

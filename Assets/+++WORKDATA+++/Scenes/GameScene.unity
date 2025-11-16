@@ -477,7 +477,7 @@ GameObject:
   - component: {fileID: 200048735}
   - component: {fileID: 200048734}
   - component: {fileID: 200048733}
-  - component: {fileID: 200048732}
+  - component: {fileID: 200048736}
   m_Layer: 5
   m_Name: MoveSpeed
   m_TagString: Untagged
@@ -505,23 +505,6 @@ RectTransform:
   m_AnchoredPosition: {x: 57, y: 17}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &200048732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200048730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0563cd8fa067ba74e8c844a85d59652b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tree: {fileID: 1376251996}
-  skill: {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
-  title: {fileID: 458827704}
-  subtitle: {fileID: 0}
-  icon: {fileID: 0}
 --- !u!114 &200048733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +587,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 200048730}
   m_CullTransparentMesh: 1
+--- !u!114 &200048736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200048730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc251ed28d0e1954f987daf970e6efac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree: {fileID: 1376251996}
+  skill: {fileID: 11400000, guid: 78ce4685093d3ad4391df7494ac13751, type: 2}
+  requirementMode: 0
+  prerequisiteNodes: []
+  title: {fileID: 0}
+  subtitle: {fileID: 0}
+  icon: {fileID: 0}
+  btn: {fileID: 0}
 --- !u!1 &254789392
 GameObject:
   m_ObjectHideFlags: 0
@@ -2172,7 +2175,7 @@ GameObject:
   - component: {fileID: 1054260214}
   - component: {fileID: 1054260213}
   - component: {fileID: 1054260212}
-  - component: {fileID: 1054260211}
+  - component: {fileID: 1054260215}
   m_Layer: 5
   m_Name: MoveSpeed (3)
   m_TagString: Untagged
@@ -2200,23 +2203,6 @@ RectTransform:
   m_AnchoredPosition: {x: 57, y: -318}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1054260211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1054260209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0563cd8fa067ba74e8c844a85d59652b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tree: {fileID: 1376251996}
-  skill: {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
-  title: {fileID: 1880932761}
-  subtitle: {fileID: 0}
-  icon: {fileID: 0}
 --- !u!114 &1054260212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2299,6 +2285,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054260209}
   m_CullTransparentMesh: 1
+--- !u!114 &1054260215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054260209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc251ed28d0e1954f987daf970e6efac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree: {fileID: 1376251996}
+  skill: {fileID: 11400000, guid: 802b488fe69ba3340812e8f894d3f922, type: 2}
+  requirementMode: 1
+  prerequisiteNodes:
+  - {fileID: 1802179925}
+  - {fileID: 1279285403}
+  title: {fileID: 0}
+  subtitle: {fileID: 0}
+  icon: {fileID: 0}
+  btn: {fileID: 0}
 --- !u!1 &1185177096
 GameObject:
   m_ObjectHideFlags: 0
@@ -2485,7 +2493,7 @@ GameObject:
   - component: {fileID: 1279285402}
   - component: {fileID: 1279285401}
   - component: {fileID: 1279285400}
-  - component: {fileID: 1279285399}
+  - component: {fileID: 1279285403}
   m_Layer: 5
   m_Name: MoveSpeed (2)
   m_TagString: Untagged
@@ -2513,23 +2521,6 @@ RectTransform:
   m_AnchoredPosition: {x: 151, y: -133}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1279285399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1279285397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0563cd8fa067ba74e8c844a85d59652b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tree: {fileID: 1376251996}
-  skill: {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
-  title: {fileID: 515941778}
-  subtitle: {fileID: 0}
-  icon: {fileID: 0}
 --- !u!114 &1279285400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2612,6 +2603,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1279285397}
   m_CullTransparentMesh: 1
+--- !u!114 &1279285403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1279285397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc251ed28d0e1954f987daf970e6efac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree: {fileID: 1376251996}
+  skill: {fileID: 11400000, guid: 78ce4685093d3ad4391df7494ac13751, type: 2}
+  requirementMode: 0
+  prerequisiteNodes:
+  - {fileID: 200048736}
+  title: {fileID: 0}
+  subtitle: {fileID: 0}
+  icon: {fileID: 0}
+  btn: {fileID: 0}
 --- !u!1 &1313604845
 GameObject:
   m_ObjectHideFlags: 0
@@ -2822,14 +2834,14 @@ MonoBehaviour:
   player: {fileID: 1801846103}
   statsManager: {fileID: 1801846104}
   allSkills:
-  - {fileID: 11400000, guid: d6290fa348749b24f9ab86eff3c0487f, type: 2}
-  - {fileID: 11400000, guid: 2085cc23fb113bd43a33eaf91f79ab03, type: 2}
-  - {fileID: 11400000, guid: 30ae0536e0cfa4b4d8a914ef78bd9ebf, type: 2}
-  - {fileID: 11400000, guid: 43d7ef0e777a012429dcf049acc542c2, type: 2}
-  - {fileID: 11400000, guid: 0bc011d0273634742ae4dd62463f57e3, type: 2}
-  - {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
-  - {fileID: 11400000, guid: 0ed21ca67e86b714e8095e593ed44236, type: 2}
-  - {fileID: 11400000, guid: 2ff3cbb22d7d13649819d4e2a0a5f353, type: 2}
+  - {fileID: 11400000, guid: a315da883781afb48a78b328a763cae2, type: 2}
+  - {fileID: 11400000, guid: 802b488fe69ba3340812e8f894d3f922, type: 2}
+  - {fileID: 11400000, guid: 264ce5df47f28364587fed22575235f9, type: 2}
+  - {fileID: 11400000, guid: c6ef431f0b4ba944db787f6204272269, type: 2}
+  - {fileID: 11400000, guid: d3ec2c067aa55a147a76884161b47418, type: 2}
+  - {fileID: 11400000, guid: 78ce4685093d3ad4391df7494ac13751, type: 2}
+  - {fileID: 11400000, guid: 72069d11fd87a314db9bca99ea1f7b87, type: 2}
+  - {fileID: 11400000, guid: 4f4f25ef4ad04574a88aa75b90614417, type: 2}
   unlockedSkills: []
 --- !u!4 &1376251997
 Transform:
@@ -3426,7 +3438,7 @@ GameObject:
   - component: {fileID: 1802179924}
   - component: {fileID: 1802179923}
   - component: {fileID: 1802179922}
-  - component: {fileID: 1802179921}
+  - component: {fileID: 1802179925}
   m_Layer: 5
   m_Name: MoveSpeed (1)
   m_TagString: Untagged
@@ -3454,23 +3466,6 @@ RectTransform:
   m_AnchoredPosition: {x: -40, y: -133}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1802179921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1802179919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0563cd8fa067ba74e8c844a85d59652b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tree: {fileID: 1376251996}
-  skill: {fileID: 11400000, guid: bb67d535b5d5cfd4e9c4c1f298fc50ae, type: 2}
-  title: {fileID: 436691834}
-  subtitle: {fileID: 0}
-  icon: {fileID: 0}
 --- !u!114 &1802179922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3553,6 +3548,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1802179919}
   m_CullTransparentMesh: 1
+--- !u!114 &1802179925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802179919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc251ed28d0e1954f987daf970e6efac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree: {fileID: 1376251996}
+  skill: {fileID: 11400000, guid: d3ec2c067aa55a147a76884161b47418, type: 2}
+  requirementMode: 0
+  prerequisiteNodes:
+  - {fileID: 200048736}
+  title: {fileID: 0}
+  subtitle: {fileID: 0}
+  icon: {fileID: 0}
+  btn: {fileID: 0}
 --- !u!1 &1803581013
 GameObject:
   m_ObjectHideFlags: 0
