@@ -7,7 +7,7 @@ public class SkillTree : MonoBehaviour
 {
     [Header("Config")]
     public PlayerProgress player;
-    public PlayerStatsManager statsManager;            // <-- NEU: Stats-Manager zuweisen
+    public PlayerStatsManager statsManager;
     public List<SkillDefinition> allSkills = new List<SkillDefinition>();
 
     [Header("Runtime State")]
@@ -15,46 +15,79 @@ public class SkillTree : MonoBehaviour
     private HashSet<string> unlockedIds = new HashSet<string>();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
-    
 
     void Awake()
     {
-        // Rebuild set on load/enter play
         unlockedIds = new HashSet<string>(unlockedSkills.Select(s => s.skillId));
-
-        // WICHTIG: Effekte aller bereits freigeschalteten Skills erneut anwenden
         ReapplyAllEffects();
     }
 
-    public bool IsUnlocked(SkillDefinition skill) => skill != null && unlockedIds.Contains(skill.skillId);
+    public bool IsUnlocked(SkillDefinition skill) =>
+        skill != null && unlockedIds.Contains(skill.skillId);
 
+    /// <summary>
+    /// Prüft, ob die Voraussetzungen eines Skills erfüllt sind.
+    /// Mode:
+    ///  - All: alle in prerequisites müssen unlocked sein
+    ///  - Any: mindestens eine/r in prerequisites muss unlocked sein
+    /// </summary>
     public bool MeetsPrerequisites(SkillDefinition skill)
     {
         if (skill == null) return false;
-        if (skill.prerequisites == null || skill.prerequisites.Count == 0) return true;
-        return skill.prerequisites.All(p => p != null && IsUnlocked(p));
+        if (skill.prerequisites == null || skill.prerequisites.Count == 0)
+            return true;
+
+        var validPrereqs = skill.prerequisites.Where(p => p != null).ToList();
+        if (validPrereqs.Count == 0) return true;
+
+        switch (skill.prerequisiteMode)
+        {
+            case SkillPrerequisiteMode.All:
+                return validPrereqs.All(p => IsUnlocked(p));
+
+            case SkillPrerequisiteMode.Any:
+                return validPrereqs.Any(p => IsUnlocked(p));
+
+            default:
+                return true;
+        }
     }
 
     public bool CanUnlock(SkillDefinition skill, out string reason)
     {
         reason = string.Empty;
+
         if (skill == null) { reason = "No skill selected."; return false; }
         if (IsUnlocked(skill)) { reason = "Already unlocked."; return false; }
+
         if (player.Level < skill.requiredPlayerLevel)
         {
             reason = $"Requires player level {skill.requiredPlayerLevel}.";
             return false;
         }
+
         if (!MeetsPrerequisites(skill))
         {
-            reason = "Missing prerequisite skill(s).";
+            if (skill.prerequisites != null && skill.prerequisites.Count > 0)
+            {
+                if (skill.prerequisiteMode == SkillPrerequisiteMode.All)
+                    reason = "Requires all prerequisite skills.";
+                else
+                    reason = "Requires at least one prerequisite skill.";
+            }
+            else
+            {
+                reason = "Missing prerequisite skill(s).";
+            }
             return false;
         }
+
         if (player.SkillPoints < skill.costSkillPoints)
         {
             reason = $"Requires {skill.costSkillPoints} skill point(s).";
             return false;
         }
+
         return true;
     }
 
@@ -66,23 +99,18 @@ public class SkillTree : MonoBehaviour
         unlockedSkills.Add(skill);
         unlockedIds.Add(skill.skillId);
 
-        // >>> HIER: Effekte in StatsManager übernehmen <<<
         if (statsManager != null && skill.effects != null)
-        {
             statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
-        }
 
         OnSkillUnlocked?.Invoke(skill);
         SaveUnlocked();
         return true;
     }
 
-    // --- Simple persistence for unlocked set
     const string KEY_UNLOCKED = "skilltree_unlocked";
 
     public void SaveUnlocked()
     {
-        // Store IDs joined by '|'
         var s = string.Join("|", unlockedIds);
         PlayerPrefs.SetString(KEY_UNLOCKED, s);
         PlayerPrefs.Save();
@@ -106,7 +134,6 @@ public class SkillTree : MonoBehaviour
             }
         }
 
-        // nach dem Laden Effekte erneut in StatsManager schreiben
         ReapplyAllEffects();
     }
 
@@ -114,14 +141,12 @@ public class SkillTree : MonoBehaviour
     {
         if (statsManager == null) return;
 
-        // erst alle alten Skill-Quellen löschen:
         foreach (var skill in allSkills)
         {
             if (!string.IsNullOrEmpty(skill.skillId))
                 statsManager.RemoveEffectsFrom(skill.skillId);
         }
 
-        // dann alle freigeschalteten Skills neu anwenden:
         foreach (var skill in unlockedSkills)
         {
             if (skill != null && skill.effects != null)
@@ -129,4 +154,5 @@ public class SkillTree : MonoBehaviour
         }
     }
 }
+
 

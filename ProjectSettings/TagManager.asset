@@ -39,19 +39,10 @@ TagManager:
   - 
   m_SortingLayers:
   - name: Ground
-    uniqueID: 1580902949
+    uniqueID: 1174479771
     locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Walls
-    uniqueID: 3892869995
-    locked: 0
-  - name: Enemy
-    uniqueID: 1426132707
-    locked: 0
-  - name: Player
-    uniqueID: 495636633
     locked: 0
   m_RenderingLayers:
   - Default
