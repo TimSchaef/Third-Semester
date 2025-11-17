@@ -17,9 +17,9 @@ MonoBehaviour:
   description: 'Changes the Xp Gain
 
 '
-  maxLevel: 5
+  maxLevel: 1
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
-  baseValue: 10
+  baseValue: 5
   incrementPerLevel: 1

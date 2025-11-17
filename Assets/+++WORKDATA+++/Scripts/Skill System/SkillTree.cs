@@ -6,34 +6,30 @@ using UnityEngine;
 public class SkillTree : MonoBehaviour
 {
     [Header("Config")]
-    public PlayerStatsManager statsManager;   // PlayerStatsManager auf dem Player
-    public PlayerProgress player;            // PlayerProgress auf dem Player
-    public List<SkillDefinition> allSkills = new(); // alle Skill-Assets (einmal pro Asset eintragen)
+    public PlayerStatsManager statsManager;
+    public PlayerProgress player;
+    public List<SkillDefinition> allSkills = new();
 
     [Header("Runtime State")]
-    [SerializeField] private List<SkillDefinition> unlockedSkills = new(); // nur zum Debug/Inspector
-    private HashSet<string> unlockedIds = new();                           // für schnellen Zugriff
+    [SerializeField] private List<SkillDefinition> unlockedSkills = new();
+    private HashSet<string> unlockedIds = new();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
 
-    // eigener Key, damit alte Saves nicht stören
-    const string KEY_UNLOCKED = "skilltree_unlocked_v2";
-
     void Awake()
     {
-        LoadUnlocked();
+        // NICHTS mehr laden – immer frisch starten
+        unlockedSkills.Clear();
+        unlockedIds.Clear();
 
-        unlockedIds = new HashSet<string>(
-            unlockedSkills.Where(s => s != null).Select(s => s.skillId)
-        );
-
+        // sicherheitshalber Effekte neu setzen (am Anfang sind das 0)
         ReapplyAllEffects();
     }
 
     /// <summary>
-    /// Wird nur noch von Dingen benutzt, die wissen wollen,
-    /// ob dieses Skill-Asset schon irgendwann freigeschaltet wurde.
-    /// Die Baumlogik (welcher Button nach welchem kommt) läuft über SkillNodeButton.
+    /// Wird nur noch dafür benutzt, zu wissen,
+    /// ob ein Skill-Asset in DIESER RUNDE schon freigeschaltet wurde.
+    /// (z.B. für ReapplyAllEffects)
     /// </summary>
     public bool IsUnlocked(SkillDefinition skill) =>
         skill != null && unlockedIds.Contains(skill.skillId);
@@ -44,7 +40,8 @@ public class SkillTree : MonoBehaviour
     /// - PlayerProgress vorhanden
     /// - Spielerlevel reicht
     /// - genug Skillpunkte
-    /// KEINE Button-Verknüpfungen, KEINE SkillDefinition-Prerequisites.
+    /// KEIN Speichern, KEIN Laden, KEINE persistenten Daten.
+    /// Verzweigungen/Verkettung im Skillbaum machst du im SkillNodeButton.
     /// </summary>
     public bool CanUnlock(SkillDefinition skill, out string reason)
     {
@@ -78,10 +75,8 @@ public class SkillTree : MonoBehaviour
     }
 
     /// <summary>
-    /// Zieht Skillpunkte ab, markiert das Skill-Asset als freigeschaltet,
-    /// wendet Effekte an und speichert.
-    /// Die Entscheidung "darf ich von diesem Button aus skillen"
-    /// trifft der SkillNodeButton (über seine prerequisiteNodes).
+    /// Zieht Skillpunkte ab, markiert das Skill-Asset für DIESEN RUN als freigeschaltet,
+    /// wendet Effekte an. KEIN Speichern für spätere Runs.
     /// </summary>
     public bool TryUnlock(SkillDefinition skill)
     {
@@ -101,6 +96,7 @@ public class SkillTree : MonoBehaviour
             return false;
         }
 
+        // Für diese Session merken
         if (!unlockedIds.Contains(skill.skillId))
         {
             unlockedSkills.Add(skill);
@@ -108,41 +104,11 @@ public class SkillTree : MonoBehaviour
         }
 
         ApplySkillEffects(skill);
-        SaveUnlocked();
 
         OnSkillUnlocked?.Invoke(skill);
 
         Debug.Log($"[SkillTree] Unlocked {skill.skillId}. Remaining SkillPoints={player.SkillPoints}");
         return true;
-    }
-
-    // ---------- SAVE / LOAD ----------
-
-    public void SaveUnlocked()
-    {
-        string data = string.Join("|", unlockedIds);
-        PlayerPrefs.SetString(KEY_UNLOCKED, data);
-        PlayerPrefs.Save();
-    }
-
-    public void LoadUnlocked()
-    {
-        unlockedSkills.Clear();
-        unlockedIds.Clear();
-
-        string data = PlayerPrefs.GetString(KEY_UNLOCKED, "");
-        if (string.IsNullOrEmpty(data)) return;
-
-        foreach (var id in data.Split('|'))
-        {
-            if (string.IsNullOrEmpty(id)) continue;
-            var sk = allSkills.FirstOrDefault(s => s != null && s.skillId == id);
-            if (sk != null)
-            {
-                unlockedSkills.Add(sk);
-                unlockedIds.Add(id);
-            }
-        }
     }
 
     // ---------- EFFEKTE ----------
@@ -164,13 +130,14 @@ public class SkillTree : MonoBehaviour
                 statsManager.RemoveEffectsFrom(s.skillId);
         }
 
-        // dann alle freigeschalteten wieder drauf
+        // dann alle freigeschalteten (nur für DIESE RUNDE) wieder drauf
         foreach (var s in unlockedSkills)
         {
             ApplySkillEffects(s);
         }
     }
 }
+
 
 
 

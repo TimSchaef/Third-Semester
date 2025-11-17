@@ -14,6 +14,7 @@ public struct SkillEffect
 
 public class PlayerStatsManager : MonoBehaviour
 {
+    
     public PlayerProgress player;
     public List<PlayerStatDefinition> allStats;
 
@@ -74,17 +75,28 @@ public class PlayerStatsManager : MonoBehaviour
         float add = 0f;
         float mult = 0f;
 
-        foreach (var src in activeSourceEffects.Values)
+        foreach (var kv in activeSourceEffects)
         {
-            foreach (var e in src)
+            foreach (var e in kv.Value)
             {
                 if (e.stat != id) continue;
                 if (e.op == StatOp.Add) add += e.value;
-                else mult += e.value;
+                else if (e.op == StatOp.Mult) mult += e.value;
             }
         }
 
-        return (baseVal + add) * (1f + mult);
+        float result = (baseVal + add) * (1f + mult);
+
+        // einfache Sicherheit:
+        switch (id)
+        {
+            case CoreStatId.MoveSpeed:
+                return Mathf.Max(0f, result);   // nie negative Geschwindigkeit
+            case CoreStatId.MaxHP:
+                return Mathf.Max(1f, result);   // mind. 1 HP
+            default:
+                return result;
+        }
     }
 
     // --- Saving Stat Levels ---

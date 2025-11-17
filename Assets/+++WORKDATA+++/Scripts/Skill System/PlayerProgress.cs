@@ -2,16 +2,38 @@ using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
 {
-    [SerializeField] private int currentLevel = 1;
-    [SerializeField] private int currentXP = 0;
-    [SerializeField] private int unspentSkillPoints = 0;
+    [Header("Startwerte für einen Run")]
+    [SerializeField] private int startLevel = 1;
+    [SerializeField] private int startXP = 0;
+    [SerializeField] private int startSkillPoints = 0;
+
+    private int currentLevel;
+    private int currentXP;
+    private int unspentSkillPoints;
 
     public int Level => currentLevel;
     public int XP => currentXP;
     public int SkillPoints => unspentSkillPoints;
 
-    private int XPRequiredForNextLevel() => currentLevel * 100;
-    public int GetXPRequiredForNextLevel() => XPRequiredForNextLevel();
+    private void Awake()
+    {
+        ResetProgress();
+    }
+
+    public void ResetProgress()
+    {
+        currentLevel = Mathf.Max(1, startLevel);
+        currentXP = Mathf.Max(0, startXP);
+        unspentSkillPoints = Mathf.Max(0, startSkillPoints);
+    }
+
+    /// <summary>
+    /// Menge der XP bis zum nächsten Level.
+    /// </summary>
+    public int GetXPRequiredForNextLevel()
+    {
+        return currentLevel * 100;
+    }
 
     public void AddXP(int amount)
     {
@@ -19,24 +41,17 @@ public class PlayerProgress : MonoBehaviour
 
         currentXP += amount;
 
-        while (currentXP >= XPRequiredForNextLevel())
+        while (currentXP >= GetXPRequiredForNextLevel())
         {
-            currentXP -= XPRequiredForNextLevel();
-
-            // LEVEL UP
+            currentXP -= GetXPRequiredForNextLevel();
             currentLevel++;
-
-            // +1 Skillpunkt pro Level-Up
             unspentSkillPoints++;
         }
     }
 
-    // 🔥 HIER: Methode wieder einfügen, die XPGiver & Hitpoints benutzen
     public void AddXPMultiplied(int baseAmount, float multiplier)
     {
-        // multiplier z.B. aus XPGain-Stat (1.0 = normal, 1.2 = +20% XP)
-        int finalAmount = Mathf.RoundToInt(baseAmount * Mathf.Max(0f, multiplier));
-        AddXP(finalAmount);
+        AddXP(Mathf.RoundToInt(baseAmount * Mathf.Max(0f, multiplier)));
     }
 
     public bool SpendSkillPoints(int amount)
@@ -45,28 +60,9 @@ public class PlayerProgress : MonoBehaviour
         unspentSkillPoints -= amount;
         return true;
     }
-
-    // --- SPEICHERN / LADEN ---
-
-    const string KEY_LEVEL = "player_level";
-    const string KEY_XP = "player_xp";
-    const string KEY_SP = "player_skillpoints";
-
-    public void SaveProgress()
-    {
-        PlayerPrefs.SetInt(KEY_LEVEL, currentLevel);
-        PlayerPrefs.SetInt(KEY_XP, currentXP);
-        PlayerPrefs.SetInt(KEY_SP, unspentSkillPoints);
-        PlayerPrefs.Save();
-    }
-
-    public void LoadProgress()
-    {
-        currentLevel = PlayerPrefs.GetInt(KEY_LEVEL, 1);
-        currentXP = PlayerPrefs.GetInt(KEY_XP, 0);
-        unspentSkillPoints = PlayerPrefs.GetInt(KEY_SP, 0);
-    }
 }
+
+
 
 
 

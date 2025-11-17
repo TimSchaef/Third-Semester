@@ -3,50 +3,47 @@ using UnityEngine.UI;
 
 public class EnemyHealthBar : MonoBehaviour
 {
+    [Header("Refs")]
+    [SerializeField] private HealthComponent health;   // Hier HealthComponent reinziehen
+    [SerializeField] private Transform followTarget;   // optional, sonst wird health.transform benutzt
+
     [Header("UI")]
-    [SerializeField] private Image fillImage;          // Zuweisen: Filled Image
+    [SerializeField] private Image fillImage;          // Filled Image
     [SerializeField] private bool hideWhenFull = true; // bei 100% ausblenden
-    [SerializeField] private CanvasGroup visualGroup;  // auf denselben UI-Container legen (nicht auf das Script-Objekt)
+    [SerializeField] private CanvasGroup visualGroup;  // CanvasGroup auf dem UI-Container
 
     [Header("Behavior")]
     [SerializeField] private Vector3 worldOffset = new Vector3(0f, 2f, 0f);
     [SerializeField] private bool billboardToCamera = true;
 
-    private int maxHP = 1;
-    private Transform target;
-
-    public void Init(Transform followTarget, int maxHitPoints, int currentHitPoints)
+    private void Awake()
     {
-        target = followTarget;
-        maxHP = Mathf.Max(1, maxHitPoints);
-        Set(currentHitPoints);
-    }
-
-    public void Set(int currentHitPoints)
-    {
-        if (!fillImage) return;
-
-        float t = Mathf.Clamp01((float)currentHitPoints / Mathf.Max(1, maxHP));
-        fillImage.fillAmount = t;
-
-        if (hideWhenFull && t >= 0.999f)
+        if (health == null && followTarget != null)
         {
-            if (visualGroup) { visualGroup.alpha = 0f; visualGroup.interactable = false; visualGroup.blocksRaycasts = false; }
-            else             { fillImage.enabled = false; }
+            health = followTarget.GetComponentInParent<HealthComponent>();
         }
-        else
+
+        if (followTarget == null && health != null)
         {
-            if (visualGroup) { visualGroup.alpha = 1f; visualGroup.interactable = true; visualGroup.blocksRaycasts = true; }
-            else             { fillImage.enabled = true; }
+            followTarget = health.transform;
+        }
+
+        // Wenn der Gegner stirbt → Healthbar zerstören
+        if (health != null)
+        {
+            health.OnDeath += () => Destroy(gameObject);
         }
     }
 
     private void LateUpdate()
     {
-        if (!target) return;
+        if (!health || !followTarget) return;
+
+        // Füllung aktualisieren
+        UpdateFill();
 
         // folgen
-        transform.position = target.position + worldOffset;
+        transform.position = followTarget.position + worldOffset;
 
         // zur Kamera drehen
         if (billboardToCamera && Camera.main)
@@ -57,4 +54,41 @@ public class EnemyHealthBar : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(forward);
         }
     }
+
+    private void UpdateFill()
+    {
+        if (!fillImage) return;
+        if (health.MaxHP <= 0f) return;
+
+        float t = Mathf.Clamp01(health.CurrentHP / health.MaxHP);
+        fillImage.fillAmount = t;
+
+        if (hideWhenFull && t >= 0.999f)
+        {
+            if (visualGroup)
+            {
+                visualGroup.alpha = 0f;
+                visualGroup.interactable = false;
+                visualGroup.blocksRaycasts = false;
+            }
+            else
+            {
+                fillImage.enabled = false;
+            }
+        }
+        else
+        {
+            if (visualGroup)
+            {
+                visualGroup.alpha = 1f;
+                visualGroup.interactable = true;
+                visualGroup.blocksRaycasts = true;
+            }
+            else
+            {
+                fillImage.enabled = true;
+            }
+        }
+    }
 }
+
