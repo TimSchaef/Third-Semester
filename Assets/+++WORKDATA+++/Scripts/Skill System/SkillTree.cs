@@ -6,59 +6,64 @@ using UnityEngine;
 public class SkillTree : MonoBehaviour
 {
     [Header("Config")]
-    public PlayerProgress player;
     public PlayerStatsManager statsManager;
-    public List<SkillDefinition> allSkills = new List<SkillDefinition>();
+    public PlayerProgress player;
+    public List<SkillDefinition> allSkills = new();
 
     [Header("Runtime State")]
-    [SerializeField] private List<SkillDefinition> unlockedSkills = new List<SkillDefinition>();
-    private HashSet<string> unlockedIds = new HashSet<string>();
+    [SerializeField] private List<SkillDefinition> unlockedSkills = new();
+    private HashSet<string> unlockedIds = new();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
 
+    const string KEY_UNLOCKED = "skilltree_unlocked";
+
     void Awake()
     {
-        unlockedIds = new HashSet<string>(unlockedSkills.Select(s => s.skillId));
+        // Geladene Skills wiederherstellen
+        LoadUnlocked();
+
+        // HashSet neu aufbauen
+        unlockedIds = new HashSet<string>(unlockedSkills.Where(s => s != null).Select(s => s.skillId));
+
+        // Effekte aller bereits freigeschalteten Skills anwenden
         ReapplyAllEffects();
     }
 
     public bool IsUnlocked(SkillDefinition skill) =>
         skill != null && unlockedIds.Contains(skill.skillId);
 
-    /// <summary>
-    /// Prüft, ob die Voraussetzungen eines Skills erfüllt sind.
-    /// Mode:
-    ///  - All: alle in prerequisites müssen unlocked sein
-    ///  - Any: mindestens eine/r in prerequisites muss unlocked sein
-    /// </summary>
+    // Prerequisites direkt aus dem SkillDefinition-Asset
     public bool MeetsPrerequisites(SkillDefinition skill)
     {
         if (skill == null) return false;
         if (skill.prerequisites == null || skill.prerequisites.Count == 0)
             return true;
 
-        var validPrereqs = skill.prerequisites.Where(p => p != null).ToList();
-        if (validPrereqs.Count == 0) return true;
-
-        switch (skill.prerequisiteMode)
-        {
-            case SkillPrerequisiteMode.All:
-                return validPrereqs.All(p => IsUnlocked(p));
-
-            case SkillPrerequisiteMode.Any:
-                return validPrereqs.Any(p => IsUnlocked(p));
-
-            default:
-                return true;
-        }
+        return skill.prerequisites.All(p => p != null && IsUnlocked(p));
     }
 
     public bool CanUnlock(SkillDefinition skill, out string reason)
     {
-        reason = string.Empty;
+        reason = "";
 
-        if (skill == null) { reason = "No skill selected."; return false; }
-        if (IsUnlocked(skill)) { reason = "Already unlocked."; return false; }
+        if (skill == null)
+        {
+            reason = "No skill.";
+            return false;
+        }
+
+        if (IsUnlocked(skill))
+        {
+            reason = "Already unlocked.";
+            return false;
+        }
+
+        if (player == null)
+        {
+            reason = "No PlayerProgress reference.";
+            return false;
+        }
 
         if (player.Level < skill.requiredPlayerLevel)
         {
@@ -68,17 +73,7 @@ public class SkillTree : MonoBehaviour
 
         if (!MeetsPrerequisites(skill))
         {
-            if (skill.prerequisites != null && skill.prerequisites.Count > 0)
-            {
-                if (skill.prerequisiteMode == SkillPrerequisiteMode.All)
-                    reason = "Requires all prerequisite skills.";
-                else
-                    reason = "Requires at least one prerequisite skill.";
-            }
-            else
-            {
-                reason = "Missing prerequisite skill(s).";
-            }
+            reason = "Missing prerequisite.";
             return false;
         }
 
@@ -93,26 +88,40 @@ public class SkillTree : MonoBehaviour
 
     public bool TryUnlock(SkillDefinition skill)
     {
-        if (!CanUnlock(skill, out _)) return false;
-        if (!player.SpendSkillPoints(skill.costSkillPoints)) return false;
+        if (skill == null) return false;
+
+        string reason;
+        if (!CanUnlock(skill, out reason))
+        {
+            Debug.Log($"[SkillTree] Cannot unlock {skill.skillId}: {reason} " +
+                      $"(Level={player?.Level}, SkillPoints={player?.SkillPoints})");
+            return false;
+        }
+
+        if (!player.SpendSkillPoints(skill.costSkillPoints))
+        {
+            Debug.Log($"[SkillTree] SpendSkillPoints failed for {skill.skillId}");
+            return false;
+        }
 
         unlockedSkills.Add(skill);
         unlockedIds.Add(skill.skillId);
 
-        if (statsManager != null && skill.effects != null)
-            statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
+        ApplySkillEffects(skill);
+        SaveUnlocked();
 
         OnSkillUnlocked?.Invoke(skill);
-        SaveUnlocked();
+
+        Debug.Log($"[SkillTree] Unlocked {skill.skillId}. Remaining SkillPoints={player.SkillPoints}");
         return true;
     }
 
-    const string KEY_UNLOCKED = "skilltree_unlocked";
+    // ---------- SAVE / LOAD ----------
 
     public void SaveUnlocked()
     {
-        var s = string.Join("|", unlockedIds);
-        PlayerPrefs.SetString(KEY_UNLOCKED, s);
+        string data = string.Join("|", unlockedIds);
+        PlayerPrefs.SetString(KEY_UNLOCKED, data);
         PlayerPrefs.Save();
     }
 
@@ -121,38 +130,49 @@ public class SkillTree : MonoBehaviour
         unlockedSkills.Clear();
         unlockedIds.Clear();
 
-        var s = PlayerPrefs.GetString(KEY_UNLOCKED, "");
-        if (string.IsNullOrEmpty(s)) return;
+        string data = PlayerPrefs.GetString(KEY_UNLOCKED, "");
+        if (string.IsNullOrEmpty(data)) return;
 
-        var idSet = new HashSet<string>(s.Split('|').Where(id => !string.IsNullOrEmpty(id)));
-        foreach (var def in allSkills)
+        var ids = data.Split('|');
+        foreach (var id in ids)
         {
-            if (idSet.Contains(def.skillId))
+            if (string.IsNullOrEmpty(id)) continue;
+            var sk = allSkills.FirstOrDefault(s => s != null && s.skillId == id);
+            if (sk != null)
             {
-                unlockedSkills.Add(def);
-                unlockedIds.Add(def.skillId);
+                unlockedSkills.Add(sk);
+                unlockedIds.Add(id);
             }
         }
-
-        ReapplyAllEffects();
     }
 
-    private void ReapplyAllEffects()
+    // ---------- EFFEKTE ----------
+
+    void ApplySkillEffects(SkillDefinition skill)
+    {
+        if (statsManager == null || skill == null) return;
+        statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
+    }
+
+    public void ReapplyAllEffects()
     {
         if (statsManager == null) return;
 
-        foreach (var skill in allSkills)
+        // Erst alte Effekte weg (falls du RemoveEffectsFrom nutzt)
+        foreach (var s in allSkills)
         {
-            if (!string.IsNullOrEmpty(skill.skillId))
-                statsManager.RemoveEffectsFrom(skill.skillId);
+            if (s != null && !string.IsNullOrEmpty(s.skillId))
+                statsManager.RemoveEffectsFrom(s.skillId);
         }
 
-        foreach (var skill in unlockedSkills)
+        // Dann alle unlocked Skills erneut anwenden
+        foreach (var s in unlockedSkills)
         {
-            if (skill != null && skill.effects != null)
-                statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
+            ApplySkillEffects(s);
         }
     }
 }
+
+
 
 
