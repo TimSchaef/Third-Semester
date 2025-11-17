@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum StatOp { Add, Mult } // Mult = prozentual (z. B. +10% = 0.10f)
+public enum StatOp { Add, Mult }
 
 [System.Serializable]
 public struct SkillEffect
 {
     public CoreStatId stat;
     public StatOp op;
-    public float value; // Add: absolute Punkte, Mult: 0.10 = +10%
+    public float value;
 }
 
 public class PlayerStatsManager : MonoBehaviour
@@ -17,20 +17,35 @@ public class PlayerStatsManager : MonoBehaviour
     public PlayerProgress player;
     public List<PlayerStatDefinition> allStats;
 
-    private readonly Dictionary<CoreStatId, int> levels = new(); // aus Upgrades
-    // NEW: aktive Modifikatoren gruppiert nach Quelle (nodeId)
+    private readonly Dictionary<CoreStatId, int> levels = new();
     private readonly Dictionary<string, List<SkillEffect>> activeSourceEffects = new();
+
+    // --- SAVE SUPPORT TYPES ---
+    [System.Serializable]
+    public class StatLevelSave
+    {
+        public CoreStatId id;
+        public int level;
+    }
+
+    [System.Serializable]
+    public class StatLevelSaveContainer
+    {
+        public List<StatLevelSave> stats = new();
+    }
 
     void Awake()
     {
         foreach (var s in allStats)
-            if (!levels.ContainsKey(s.statId)) levels.Add(s.statId, 0);
+            if (!levels.ContainsKey(s.statId))
+                levels.Add(s.statId, 0);
     }
 
-    // --- Level/Upgrades API (wie gehabt)
-    public int GetLevel(CoreStatId id) => levels.TryGetValue(id, out var lv) ? lv : 0;
+    public int GetLevel(CoreStatId id) =>
+        levels.TryGetValue(id, out var lv) ? lv : 0;
 
-    private PlayerStatDefinition GetDef(CoreStatId id) => allStats.FirstOrDefault(s => s.statId == id);
+    private PlayerStatDefinition GetDef(CoreStatId id) =>
+        allStats.FirstOrDefault(s => s.statId == id);
 
     private float GetBaseValue(CoreStatId id)
     {
@@ -40,7 +55,7 @@ public class PlayerStatsManager : MonoBehaviour
         return lv > 0 ? def.GetValueAtLevel(lv) : def.baseValue;
     }
 
-    // --- Modifikatoren API
+    // --- Modifikatoren ---
     public void ApplyEffectsFrom(string sourceId, IEnumerable<SkillEffect> effects)
     {
         if (string.IsNullOrEmpty(sourceId)) return;
@@ -53,36 +68,63 @@ public class PlayerStatsManager : MonoBehaviour
         activeSourceEffects.Remove(sourceId);
     }
 
-    // --- Effektiver Wert: Basis + Add + Mult
     public float GetValue(CoreStatId id)
     {
         float baseVal = GetBaseValue(id);
-
         float add = 0f;
-        float mult = 0f; // Summe der Prozente (0.1 + 0.2 = +30%)
+        float mult = 0f;
 
-        foreach (var kv in activeSourceEffects)
+        foreach (var src in activeSourceEffects.Values)
         {
-            foreach (var e in kv.Value)
+            foreach (var e in src)
             {
                 if (e.stat != id) continue;
                 if (e.op == StatOp.Add) add += e.value;
-                else if (e.op == StatOp.Mult) mult += e.value;
+                else mult += e.value;
             }
         }
 
         return (baseVal + add) * (1f + mult);
     }
 
-    // --- Upgrade-Checks (optional wie zuvor)
+    // --- Saving Stat Levels ---
+    const string KEY_STAT_LEVELS = "player_stat_levels";
+
+    public void SaveStats()
+    {
+        var container = new StatLevelSaveContainer();
+
+        foreach (var kv in levels)
+            container.stats.Add(new StatLevelSave { id = kv.Key, level = kv.Value });
+
+        string json = JsonUtility.ToJson(container);
+        PlayerPrefs.SetString(KEY_STAT_LEVELS, json);
+        PlayerPrefs.Save();
+    }
+
+    public void LoadStats()
+    {
+        if (!PlayerPrefs.HasKey(KEY_STAT_LEVELS)) return;
+
+        string json = PlayerPrefs.GetString(KEY_STAT_LEVELS, "");
+        var container = JsonUtility.FromJson<StatLevelSaveContainer>(json);
+        if (container == null) return;
+
+        foreach (var entry in container.stats)
+            levels[entry.id] = entry.level;
+    }
+
+    // --- Upgrade logic (unverändert) ---
     public bool CanUpgrade(PlayerStatDefinition s, out string reason)
     {
         reason = "";
         int lv = GetLevel(s.statId);
+
         if (lv >= s.maxLevel) { reason = "Max Level erreicht."; return false; }
         if (player.Level < s.requiredPlayerLevel) { reason = $"Benötigt Spielerlevel {s.requiredPlayerLevel}."; return false; }
-        if (s.prerequisites != null && s.prerequisites.Any(p => GetLevel(p.statId) == 0)) { reason = "Voraussetzungen fehlen."; return false; }
+        if (s.prerequisites.Any(p => GetLevel(p.statId) == 0)) { reason = "Voraussetzung fehlt."; return false; }
         if (player.SkillPoints < s.costPerUpgrade) { reason = "Nicht genug Skillpunkte."; return false; }
+
         return true;
     }
 
@@ -90,9 +132,11 @@ public class PlayerStatsManager : MonoBehaviour
     {
         if (!CanUpgrade(s, out _)) return false;
         if (!player.SpendSkillPoints(s.costPerUpgrade)) return false;
+
         levels[s.statId] = GetLevel(s.statId) + 1;
         return true;
     }
 }
+
 
 

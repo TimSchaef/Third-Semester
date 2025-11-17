@@ -1,137 +1,105 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class Wave
-    {
-        public string waveName;
-        public GameObject enemyPrefab;
-        public int enemyCount;
-        public float spawnInterval;
-        public float timeBetweenWaves;
-    }
+    [Header("Spawn Settings")]
+    [SerializeField] private GameObject[] enemyPrefabs;   // Gegner-Prefabs (mit HealthComponent + EnemyWaveMember)
+    [SerializeField] private Transform[] spawnPoints;     // mögliche Spawnpunkte
 
-    [Header("Wave Settings")]
-    public Wave[] waves;
-    public Transform[] spawnPoints;
-    
-    [Header("Spawn Behavior")]
-    public bool randomSpawnPoints = true;
-    public float waveStartDelay = 2f;
+    [Header("Waves")]
+    [SerializeField] private int startEnemies = 3;        // Anzahl Gegner in Welle 1
+    [SerializeField] private int enemiesPerWaveIncrease = 2; // pro Welle kommen so viele dazu
+    [SerializeField] private float timeBetweenWaves = 5f;     // Pause zwischen Wellen
 
-    private int currentWaveIndex = 0;
-    private int enemiesSpawned = 0;
-    private int enemiesAlive = 0;
+    [Header("Difficulty")]
+    [Tooltip("Zusätzlicher HP-Multiplikator pro Welle: 0.2 = +20% HP pro Welle")]
+    [SerializeField] private float hpMultiplierPerWave = 0.2f;
+
+    [Header("State (read-only)")]
+    [SerializeField] private int currentWave = 0;
+    [SerializeField] private int enemiesAlive = 0;
+    [SerializeField] private bool autoStart = true;
+
     private bool isSpawning = false;
 
-    void Start()
+    private void Start()
     {
-        StartCoroutine(StartWaveSequence());
-    }
-
-    IEnumerator StartWaveSequence()
-    {
-        yield return new WaitForSeconds(waveStartDelay);
-        
-        while (currentWaveIndex < waves.Length)
+        if (autoStart)
         {
-            Wave currentWave = waves[currentWaveIndex];
-            
-            yield return StartCoroutine(SpawnWave(currentWave));
-            
-            // Wait for all enemies to be defeated
-            while (enemiesAlive > 0)
-            {
-                yield return new WaitForSeconds(0.5f);
-            }
-            
-            Debug.Log($"Wave {currentWaveIndex + 1} completed!");
-            
-            currentWaveIndex++;
-            
-            // Wait before next wave
-            if (currentWaveIndex < waves.Length)
-            {
-                Debug.Log($"Waiting {currentWave.timeBetweenWaves}s before next wave...");
-                yield return new WaitForSeconds(currentWave.timeBetweenWaves);
-            }
+            StartNextWave();
         }
-        
-        Debug.Log("All waves completed!");
+    }
+    
+
+    public void StartNextWave()
+    {
+        if (isSpawning) return;
+        StartCoroutine(SpawnWaveRoutine());
     }
 
-    IEnumerator SpawnWave(Wave wave)
+    private IEnumerator SpawnWaveRoutine()
     {
-        Debug.Log($"Starting {wave.waveName}");
         isSpawning = true;
-        enemiesSpawned = 0;
 
-        for (int i = 0; i < wave.enemyCount; i++)
+        // Ab Welle 2 Pause einlegen
+        if (currentWave > 0)
         {
-            SpawnEnemy(wave.enemyPrefab);
-            enemiesSpawned++;
-            
-            if (i < wave.enemyCount - 1)
-            {
-                yield return new WaitForSeconds(wave.spawnInterval);
-            }
+            Debug.Log($"Next wave in {timeBetweenWaves} seconds...");
+            yield return new WaitForSeconds(timeBetweenWaves);
+        }
+
+        currentWave++;
+
+        int enemyCount = startEnemies + (currentWave - 1) * enemiesPerWaveIncrease;
+        Debug.Log($"Spawning Wave {currentWave} with {enemyCount} enemies.");
+
+        enemiesAlive = 0;
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            SpawnEnemyForCurrentWave();
+            yield return new WaitForSeconds(0.1f); // minimaler Delay, optional
         }
 
         isSpawning = false;
     }
 
-    void SpawnEnemy(GameObject enemyPrefab)
+    private void SpawnEnemyForCurrentWave()
     {
-        Transform spawnPoint;
-        
-        if (randomSpawnPoints)
-        {
-            spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        }
-        else
-        {
-            spawnPoint = spawnPoints[enemiesSpawned % spawnPoints.Length];
-        }
+        GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
-        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-        
-        // Track the enemy GameObject directly
-        StartCoroutine(TrackEnemy(enemy));
-    }
-
-    IEnumerator TrackEnemy(GameObject enemy)
-    {
+        GameObject enemyGO = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
         enemiesAlive++;
-        
-        // Wait until the enemy is destroyed
-        // Use try-catch to handle the destroyed object gracefully
-        while (true)
+
+        var member = enemyGO.GetComponent<EnemyWaveMember>();
+        if (member != null) member.Init(this);
+
+        // 🔥 FIX: Gegner bekommt nach dem Spawn sofort den Player als Target
+        var ai = enemyGO.GetComponent<CotLStyleEnemy3D>();
+        if (ai != null)
+            ai.player = GameObject.FindWithTag("Player").transform;
+
+        // HP Scaling usw…
+        var hp = enemyGO.GetComponent<HealthComponent>();
+        if (hp != null)
         {
-            if (enemy == null)
-            {
-                break;
-            }
-            yield return new WaitForSeconds(0.1f);
+            float mult = 1f + hpMultiplierPerWave * (currentWave - 1);
+            hp.SetMaxHpMultiplier(mult, healToFull: true);
         }
-        
-        enemiesAlive--;
     }
 
-    // UI Helper methods
-    public int GetCurrentWave()
+    // Wird vom EnemyWaveMember bei OnDeath aufgerufen
+    public void OnEnemyKilled(EnemyWaveMember member)
     {
-        return currentWaveIndex + 1;
-    }
+        enemiesAlive = Mathf.Max(0, enemiesAlive - 1);
+        Debug.Log($"Enemy killed. Remaining: {enemiesAlive}");
 
-    public int GetTotalWaves()
-    {
-        return waves.Length;
-    }
-
-    public int GetEnemiesAlive()
-    {
-        return enemiesAlive;
+        if (enemiesAlive == 0)
+        {
+            Debug.Log($"Wave {currentWave} cleared!");
+            StartNextWave();  // nächste Welle nach Delay-Coroutine
+        }
     }
 }
