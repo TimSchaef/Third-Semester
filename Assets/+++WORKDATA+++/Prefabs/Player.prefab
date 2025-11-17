@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3041541123724220908}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: TurnPivot
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6747059834994486472}
   - component: {fileID: 2158112779565058524}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,6 @@ GameObject:
   - component: {fileID: 5129877898993010540}
   - component: {fileID: 5430387086433423122}
   - component: {fileID: 6858312578653962778}
-  - component: {fileID: 4526718673923275121}
   - component: {fileID: 5637119226119703134}
   - component: {fileID: 7641209192148689415}
   - component: {fileID: 1640932607949527615}
@@ -279,6 +278,7 @@ GameObject:
   - component: {fileID: 2681993167726318184}
   - component: {fileID: 6992839715270156423}
   - component: {fileID: 9006165888835563375}
+  - component: {fileID: 8039557404693863005}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -375,26 +375,6 @@ MonoBehaviour:
   fallbackSpeed: 5
   turnPivot: {fileID: 3041541123724220908}
   turnSmoothTime: 0.1
---- !u!114 &4526718673923275121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6053158358163126664}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fab8113542983e4481d473fcb3801b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats: {fileID: 2681993167726318184}
-  useStatsForMaxHP: 1
-  maxHitPoints: 100
-  hitPoints: 100
-  uiHitpoints: {fileID: 0}
-  enemyHealthBar: {fileID: 0}
-  isPlayer: 1
-  xpOnDeath: 10
 --- !u!114 &5637119226119703134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,17 +387,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b199ebbf0bf88e34ebc9aa490da7f4f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats: {fileID: 2681993167726318184}
-  selfHealth: {fileID: 4526718673923275121}
   attackCollider: {fileID: 3021547053878649676}
+  damage: 10
+  knockbackForce: 14
+  activeTime: 0.1
+  attackCooldown: 1
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
   ignoreSameRoot: 1
-  baseDamage: 15
-  knockbackForce: 9
-  activeTime: 0.1
-  baseCooldown: 0.6
 --- !u!114 &7641209192148689415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,7 +640,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 2681993167726318184}
+  fallbackMaxHP: 100
   maxHpMultiplier: 1
+--- !u!114 &8039557404693863005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053158358163126664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 713b04a21f2ff9e48b312acfc5e590f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 2681993167726318184}
+  progress: {fileID: 6992839715270156423}
 --- !u!1 &6805136915170122017
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,7 +668,7 @@ GameObject:
   - component: {fileID: 8971043648926914516}
   - component: {fileID: 8371714628953891081}
   - component: {fileID: 839426554790344214}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}

@@ -85,15 +85,14 @@ GameObject:
   m_Component:
   - component: {fileID: 6189033925488851932}
   - component: {fileID: 6054124073316107698}
-  - component: {fileID: 856123165456699776}
   - component: {fileID: 6484549960956901645}
   - component: {fileID: 3496537972283027139}
   - component: {fileID: 1274288563647970843}
   - component: {fileID: 8684421987492140076}
-  - component: {fileID: 1254454131068389766}
   - component: {fileID: -1596803197070258424}
   - component: {fileID: 70181014462596856}
   - component: {fileID: -5925243694241844530}
+  - component: {fileID: -8570287809886828214}
   m_Layer: 3
   m_Name: Enemy
   m_TagString: Untagged
@@ -173,26 +172,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &856123165456699776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438347520461570845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fab8113542983e4481d473fcb3801b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats: {fileID: 0}
-  useStatsForMaxHP: 1
-  maxHitPoints: 50
-  hitPoints: 50
-  uiHitpoints: {fileID: 0}
-  enemyHealthBar: {fileID: 2583843688154974276}
-  isPlayer: 0
-  xpOnDeath: 10
 --- !u!114 &6484549960956901645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,6 +224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   knockbackForce: 5
+  damageInterval: 1
   useTrigger: 1
   targetLayers:
     serializedVersion: 2
@@ -298,20 +278,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.2395916, y: 4, z: 0.2}
   m_Center: {x: 0.0015249252, y: 2, z: 0}
---- !u!114 &1254454131068389766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438347520461570845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 713b04a21f2ff9e48b312acfc5e590f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats: {fileID: 2681993167726318184, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
-  progress: {fileID: 6992839715270156423, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
 --- !u!114 &-1596803197070258424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,6 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 0}
+  fallbackMaxHP: 100
   maxHpMultiplier: 1
 --- !u!114 &70181014462596856
 MonoBehaviour:
@@ -354,6 +321,20 @@ MonoBehaviour:
   allStats:
   - {fileID: 11400000, guid: 96456a700249f2741a666c7eda43958d, type: 2}
   - {fileID: 11400000, guid: 5a0d309a27aadd44b955793064481182, type: 2}
+--- !u!114 &-8570287809886828214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438347520461570845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747fc75d1a215ea4087e8b8bae2befdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseXP: 10
+  xpGiver: {fileID: 0}
 --- !u!1 &1819689528345035555
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,6 +451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74ef596e6f2eb474994ac6e4a590b9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: {fileID: -1596803197070258424}
+  followTarget: {fileID: 0}
   fillImage: {fileID: 7239568497796983229}
   hideWhenFull: 0
   visualGroup: {fileID: 0}

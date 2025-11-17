@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'Changes the Thorns DMG
 
 '
-  maxLevel: 5
+  maxLevel: 1
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
