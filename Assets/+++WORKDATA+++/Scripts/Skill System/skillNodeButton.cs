@@ -6,26 +6,29 @@ using TMPro;
 
 public enum SkillNodeRequirementMode
 {
-    All,   // alle vorherigen Skills müssen freigeschaltet sein (UND)
-    Any    // mindestens einer der vorherigen Skills (ODER)
+    All,   // alle vorherigen Buttons müssen unlocked sein
+    Any    // mindestens einer der vorherigen Buttons
 }
 
 [RequireComponent(typeof(Button))]
 public class SkillNodeButton : MonoBehaviour
 {
     [Header("Refs")]
-    public SkillTree tree;                 // dein SkillSystem-Objekt
-    public SkillDefinition skill;          // Stat-Effekt-Asset (kann mehrfach verwendet werden!)
+    public SkillTree tree;
+    public SkillDefinition skill;
 
     [Header("Node Connections")]
     public SkillNodeRequirementMode requirementMode = SkillNodeRequirementMode.All;
     public List<SkillNodeButton> prerequisiteNodes = new List<SkillNodeButton>();
-    // → Hier verlinkst du im Inspector die Buttons, die VOR diesem Button kommen.
 
     [Header("UI")]
     public TMP_Text title;
     public TMP_Text subtitle;
     public Image icon;
+
+    // 👉 Hier: dieser Button weiß, ob ER selbst freigeschaltet ist
+    [HideInInspector] 
+    public bool unlocked = false;
 
     private Button btn;
 
@@ -38,31 +41,25 @@ public class SkillNodeButton : MonoBehaviour
     void Start()
     {
         if (tree != null)
-            tree.OnSkillUnlocked += _ => Refresh();  // bei jedem Unlock neu prüfen
+            tree.OnSkillUnlocked += _ => Refresh();
 
         Refresh();
     }
 
     void OnEnable() => Refresh();
 
-    void OnDestroy()
-    {
-        if (tree != null)
-            tree.OnSkillUnlocked -= _ => Refresh();
-    }
-
+    // Prüft nur, ob die VORGÄNGER-BUTTONS unlocked sind
     bool LocalPrereqsMet()
     {
-        var valid = prerequisiteNodes.Where(p => p != null && p.skill != null).ToList();
-        if (valid.Count == 0) return true; // keine Vorgänger → sofort erlaubt
+        var valid = prerequisiteNodes.Where(p => p != null).ToList();
+        if (valid.Count == 0) return true; // keine Vorgänger -> frei
 
-        // Prüfe, ob die Vorgänger-Skills freigeschaltet sind
         switch (requirementMode)
         {
             case SkillNodeRequirementMode.All:
-                return valid.All(n => tree.IsUnlocked(n.skill));
+                return valid.All(n => n.unlocked);
             case SkillNodeRequirementMode.Any:
-                return valid.Any(n => tree.IsUnlocked(n.skill));
+                return valid.Any(n => n.unlocked);
             default:
                 return true;
         }
@@ -75,13 +72,11 @@ public class SkillNodeButton : MonoBehaviour
         if (title) title.text = skill.displayName;
         if (icon) icon.sprite = skill.icon;
 
-        bool unlocked = tree.IsUnlocked(skill);
         bool prereqsOK = LocalPrereqsMet();
 
         string reason;
-        bool canByLevelAndPoints = tree.CanUnlock(skill, out reason); // prüft nur Level + SkillPoints + evtl. eigene skill.prerequisites (am besten leer lassen)
+        bool canByLevelAndPoints = tree.CanUnlock(skill, out reason);
 
-        // UI-Text
         if (subtitle)
         {
             if (unlocked)
@@ -104,17 +99,31 @@ public class SkillNodeButton : MonoBehaviour
             }
         }
 
-        // Button aktiv/deaktiv
+        // 👉 Button ist nur klickbar, wenn:
+        // - dieser Button noch NICHT unlocked ist
+        // - alle vorherigen Buttons erfüllt sind
+        // - genug Level + SkillPoints da sind
         btn.interactable = !unlocked && prereqsOK && canByLevelAndPoints;
     }
 
     void OnClick()
     {
-        if (tree.TryUnlock(skill))
+        if (tree == null || skill == null) return;
+
+        if (!tree.TryUnlock(skill))
         {
-            Refresh();
+            string reason;
+            tree.CanUnlock(skill, out reason);
+            Debug.Log($"[SkillNodeButton] Click on {skill.skillId} failed: {reason}");
+            return;
         }
+
+        // 👉 AB HIER gilt dieser BUTTON als freigeschaltet
+        unlocked = true;
+        Refresh();
     }
 }
+
+
 
 

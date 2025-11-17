@@ -138,7 +138,7 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 3
+  m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
@@ -187,8 +187,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 0}
   useStatsForMaxHP: 1
-  maxHitPoints: 10
-  hitPoints: 10
+  maxHitPoints: 50
+  hitPoints: 50
   uiHitpoints: {fileID: 0}
   enemyHealthBar: {fileID: 2583843688154974276}
   isPlayer: 0
@@ -224,7 +224,7 @@ MonoBehaviour:
   separationForce: 8
   enemyMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   sprite: {fileID: 6054124073316107698}
   telegraphColor: {r: 1, g: 0.75, b: 0.2, a: 1}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0149d636e3b199f45a170967e2227a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
+  damage: 10
   knockbackForce: 5
   useTrigger: 1
   targetLayers:

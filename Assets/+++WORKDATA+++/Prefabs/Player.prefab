@@ -324,7 +324,7 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 3
+  m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
@@ -390,7 +390,7 @@ MonoBehaviour:
   stats: {fileID: 2681993167726318184}
   useStatsForMaxHP: 1
   maxHitPoints: 100
-  hitPoints: 60
+  hitPoints: 100
   uiHitpoints: {fileID: 0}
   enemyHealthBar: {fileID: 0}
   isPlayer: 1
@@ -414,7 +414,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   ignoreSameRoot: 1
-  baseDamage: 1
+  baseDamage: 15
   knockbackForce: 9
   activeTime: 0.1
   baseCooldown: 0.6
@@ -662,6 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 2681993167726318184}
+  maxHpMultiplier: 1
 --- !u!1 &6805136915170122017
 GameObject:
   m_ObjectHideFlags: 0
