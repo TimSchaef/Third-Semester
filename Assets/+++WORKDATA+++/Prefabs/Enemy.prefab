@@ -185,21 +185,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 5129877898993010540, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
-  maxSpeed: 10
-  acceleration: 20
+  maxSpeed: 15
+  acceleration: 24
   deceleration: 44.1
-  strafeSpeed: 4
+  strafeSpeed: 6
   strafeCurvature: 2
   detectRange: 800
   strafeRange: 2.44
   chargeTriggerRange: 2.59
   retreatRange: 1.4
-  telegraphTime: 0.2
+  telegraphTime: 0
   chargeSpeed: 16
   chargeDuration: 0.3
   chargeCooldown: 1
   chargeTurnAssist: 0.5
-  separationRadius: 1.2
+  separationRadius: 3
   separationForce: 8
   enemyMask:
     serializedVersion: 2
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 0}
-  fallbackMaxHP: 100
+  fallbackMaxHP: 50
   maxHpMultiplier: 1
 --- !u!114 &70181014462596856
 MonoBehaviour:

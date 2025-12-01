@@ -18,31 +18,15 @@ public class SkillTree : MonoBehaviour
 
     void Awake()
     {
-        // NICHTS mehr laden – immer frisch starten
         unlockedSkills.Clear();
         unlockedIds.Clear();
-
-        // sicherheitshalber Effekte neu setzen (am Anfang sind das 0)
+        
         ReapplyAllEffects();
     }
-
-    /// <summary>
-    /// Wird nur noch dafür benutzt, zu wissen,
-    /// ob ein Skill-Asset in DIESER RUNDE schon freigeschaltet wurde.
-    /// (z.B. für ReapplyAllEffects)
-    /// </summary>
+    
     public bool IsUnlocked(SkillDefinition skill) =>
         skill != null && unlockedIds.Contains(skill.skillId);
-
-    /// <summary>
-    /// Prüft NUR:
-    /// - Skill != null
-    /// - PlayerProgress vorhanden
-    /// - Spielerlevel reicht
-    /// - genug Skillpunkte
-    /// KEIN Speichern, KEIN Laden, KEINE persistenten Daten.
-    /// Verzweigungen/Verkettung im Skillbaum machst du im SkillNodeButton.
-    /// </summary>
+    
     public bool CanUnlock(SkillDefinition skill, out string reason)
     {
         reason = "";
@@ -73,11 +57,7 @@ public class SkillTree : MonoBehaviour
 
         return true;
     }
-
-    /// <summary>
-    /// Zieht Skillpunkte ab, markiert das Skill-Asset für DIESEN RUN als freigeschaltet,
-    /// wendet Effekte an. KEIN Speichern für spätere Runs.
-    /// </summary>
+    
     public bool TryUnlock(SkillDefinition skill)
     {
         if (skill == null) return false;
@@ -95,8 +75,7 @@ public class SkillTree : MonoBehaviour
             Debug.Log($"[SkillTree] SpendSkillPoints failed for {skill.skillId}");
             return false;
         }
-
-        // Für diese Session merken
+        
         if (!unlockedIds.Contains(skill.skillId))
         {
             unlockedSkills.Add(skill);

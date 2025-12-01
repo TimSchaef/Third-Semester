@@ -7,16 +7,19 @@ public class WaveSpawner : MonoBehaviour
     public GameObject[] enemyPrefabs;
 
     [Header("Spawn Area (Box)")]
-    public Transform areaCenter;                // Mittelpunkt der Box
+    public Transform areaCenter;                
     public Vector3 areaSize = new Vector3(15f, 0, 15f);
 
     [Header("Player Target")]
-    public Transform playerTransform;           // ← HIER dein echter Player rein!
+    public Transform playerTransform;           
 
     [Header("Waves")]
     public int startEnemies = 3;
     public int enemiesPerWaveIncrease = 2;
-    public float timeBetweenWaves = 5f;
+
+    [Header("Timing")]
+    public float timeBetweenWaves = 5f;         // Zeit zwischen Wellen
+    public float spawnIntervalInWave = 0.2f;    // Zeit zwischen einzelnen Spawns in einer Welle
 
     [Header("Difficulty Scaling")]
     public float hpMultiplierPerWave = 0.2f;
@@ -24,38 +27,34 @@ public class WaveSpawner : MonoBehaviour
     [Header("Runtime")]
     public int currentWave = 0;
     public int enemiesAlive = 0;
-    private bool isSpawning = false;
 
     private void Start()
     {
-        StartNextWave();
+        // Endlos-Wellen-Loop
+        StartCoroutine(WaveLoop());
     }
 
-    public void StartNextWave()
+    private IEnumerator WaveLoop()
     {
-        if (!isSpawning)
-            StartCoroutine(SpawnWaveRoutine());
-    }
-
-    private IEnumerator SpawnWaveRoutine()
-    {
-        isSpawning = true;
-
-        if (currentWave > 0)
-            yield return new WaitForSeconds(timeBetweenWaves);
-
-        currentWave++;
-        int enemyCount = startEnemies + (currentWave - 1) * enemiesPerWaveIncrease;
-
-        enemiesAlive = 0;
-
-        for (int i = 0; i < enemyCount; i++)
+        while (true)
         {
-            SpawnEnemyForCurrentWave();
-            yield return null;  // Mini Delay, verteilt die Spawns
-        }
+            // kleine Pause vor der nächsten Welle
+            if (currentWave > 0)
+                yield return new WaitForSeconds(timeBetweenWaves);
 
-        isSpawning = false;
+            currentWave++;
+            int enemyCount = startEnemies + (currentWave - 1) * enemiesPerWaveIncrease;
+            enemiesAlive = 0;
+
+            for (int i = 0; i < enemyCount; i++)
+            {
+                SpawnEnemyForCurrentWave();
+                if (spawnIntervalInWave > 0f)
+                    yield return new WaitForSeconds(spawnIntervalInWave);
+                else
+                    yield return null; // minimaler Delay
+            }
+        }
     }
 
     private void SpawnEnemyForCurrentWave()
@@ -73,21 +72,18 @@ public class WaveSpawner : MonoBehaviour
 
         enemiesAlive++;
 
-        // 🟢 Gegner bekommt IMMER das richtige Player-Transform
         var ai = enemyGO.GetComponent<CotLStyleEnemy3D>();
         if (ai != null && playerTransform != null)
         {
-            ai.player = playerTransform;   // ← FIX: Gegner tracken immer den echten Player
+            ai.player = playerTransform;
         }
 
-        // Optional: WaveMember für OnEnemyKilled
         var member = enemyGO.GetComponent<EnemyWaveMember>();
         if (member != null)
         {
             member.Init(this);
         }
 
-        // optional HP-Skalierung pro Welle
         var hp = enemyGO.GetComponent<HealthComponent>();
         if (hp != null)
         {
@@ -96,7 +92,6 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    // Zufallsposition in der Box-Area (rechteckig)
     private Vector3 GetRandomPointInBox()
     {
         Vector3 center = areaCenter != null ? areaCenter.position : transform.position;
@@ -114,10 +109,8 @@ public class WaveSpawner : MonoBehaviour
     {
         enemiesAlive = Mathf.Max(0, enemiesAlive - 1);
 
-        if (enemiesAlive == 0)
-        {
-            StartNextWave();
-        }
+        // KEIN StartNextWave mehr – Wellen laufen zeitbasiert
+        // Hier könntest du nur UI updaten etc.
     }
 
     private void OnDrawGizmosSelected()
@@ -127,6 +120,7 @@ public class WaveSpawner : MonoBehaviour
         Gizmos.DrawWireCube(center, new Vector3(areaSize.x, 0.2f, areaSize.z));
     }
 }
+
 
 
 

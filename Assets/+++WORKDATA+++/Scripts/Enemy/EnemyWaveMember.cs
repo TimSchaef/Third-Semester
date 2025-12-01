@@ -28,8 +28,6 @@ public class EnemyWaveMember : MonoBehaviour
             hp.OnDeath -= HandleDeath;
         }
 
-        // Fallback: falls der Gegner aus irgendeinem Grund zerstört wird,
-        // ohne dass OnDeath vorher gefeuert hat, trotzdem eine Meldung schicken.
         if (!reportedDeath && spawner != null)
         {
             spawner.OnEnemyKilled(this);
@@ -38,7 +36,7 @@ public class EnemyWaveMember : MonoBehaviour
 
     private void HandleDeath()
     {
-        if (reportedDeath) return; // nur einmal melden
+        if (reportedDeath) return;
         reportedDeath = true;
 
         if (spawner != null)
@@ -47,4 +45,5 @@ public class EnemyWaveMember : MonoBehaviour
         }
     }
 }
+
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
@@ -14,6 +15,9 @@ public class PlayerProgress : MonoBehaviour
     public int Level => currentLevel;
     public int XP => currentXP;
     public int SkillPoints => unspentSkillPoints;
+
+    // 🔔 Event: wird ausgelöst, wenn ein Level-Up passiert
+    public event Action<int> OnLevelUp;
 
     private void Awake()
     {
@@ -41,11 +45,19 @@ public class PlayerProgress : MonoBehaviour
 
         currentXP += amount;
 
+        int oldLevel = currentLevel;
+
         while (currentXP >= GetXPRequiredForNextLevel())
         {
             currentXP -= GetXPRequiredForNextLevel();
             currentLevel++;
             unspentSkillPoints++;
+        }
+
+        if (currentLevel > oldLevel)
+        {
+            OnLevelUp?.Invoke(currentLevel);
+            Debug.Log($"[PlayerProgress] Level Up! New level = {currentLevel}");
         }
     }
 
@@ -61,6 +73,8 @@ public class PlayerProgress : MonoBehaviour
         return true;
     }
 }
+
+
 
 
 
