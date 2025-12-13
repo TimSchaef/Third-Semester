@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
@@ -15,6 +16,9 @@ public class PlayerProgress : MonoBehaviour
     public int XP => currentXP;
     public int SkillPoints => unspentSkillPoints;
 
+    // NEU: Event
+    public event Action<int> OnSkillPointsChanged;
+
     private void Awake()
     {
         ResetProgress();
@@ -25,11 +29,9 @@ public class PlayerProgress : MonoBehaviour
         currentLevel = Mathf.Max(1, startLevel);
         currentXP = Mathf.Max(0, startXP);
         unspentSkillPoints = Mathf.Max(0, startSkillPoints);
+        OnSkillPointsChanged?.Invoke(unspentSkillPoints);
     }
 
-    /// <summary>
-    /// Menge der XP bis zum nächsten Level.
-    /// </summary>
     public int GetXPRequiredForNextLevel()
     {
         return currentLevel * 100;
@@ -46,6 +48,9 @@ public class PlayerProgress : MonoBehaviour
             currentXP -= GetXPRequiredForNextLevel();
             currentLevel++;
             unspentSkillPoints++;
+
+            // NEU: Event feuern (nach jeder Erhöhung)
+            OnSkillPointsChanged?.Invoke(unspentSkillPoints);
         }
     }
 
@@ -56,8 +61,14 @@ public class PlayerProgress : MonoBehaviour
 
     public bool SpendSkillPoints(int amount)
     {
+        if (amount <= 0) return true;
         if (unspentSkillPoints < amount) return false;
+
         unspentSkillPoints -= amount;
+
+        // NEU: Event feuern (nach Ausgeben)
+        OnSkillPointsChanged?.Invoke(unspentSkillPoints);
+
         return true;
     }
 }

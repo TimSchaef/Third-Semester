@@ -3,24 +3,27 @@ using UnityEngine;
 
 public class SkillPointsUI : MonoBehaviour
 {
-    public PlayerProgress progress;          // Reference to your PlayerProgress
-    public TextMeshProUGUI textUI;           // The text object that displays the skill points
+    public PlayerProgress progress;
+    public TextMeshProUGUI textUI;
 
     void Start()
     {
-        UpdateUI(); // Initial display
+        if (progress != null)
+            progress.OnSkillPointsChanged += OnChanged;
+
+        OnChanged(progress != null ? progress.SkillPoints : 0);
     }
 
-    void Update()
+    void OnDestroy()
     {
-        UpdateUI(); // Always update when value changes
+        if (progress != null)
+            progress.OnSkillPointsChanged -= OnChanged;
     }
 
-    void UpdateUI()
+    void OnChanged(int points)
     {
-        if (progress == null || textUI == null) return;
-
-        textUI.text = $"Skill Points: {progress.SkillPoints}";
+        if (textUI == null) return;
+        textUI.text = $"Skill Points: {points}";
     }
 }
 

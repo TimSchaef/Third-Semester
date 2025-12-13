@@ -7,16 +7,36 @@ public class WaveSpawner : MonoBehaviour
     public GameObject[] enemyPrefabs;
 
     [Header("Spawn Area (Box)")]
-    public Transform areaCenter;                // Mittelpunkt der Box
+    public Transform areaCenter;
     public Vector3 areaSize = new Vector3(15f, 0, 15f);
 
     [Header("Player Target")]
-    public Transform playerTransform;           // ← HIER dein echter Player rein!
+    public Transform playerTransform;
 
-    [Header("Waves")]
+    [Header("Spawn Restrictions")]
+    [Tooltip("Gegner dürfen NICHT innerhalb dieser Distanz zum Spieler spawnen.")]
+    public float minDistanceToPlayer = 6f;
+    public int maxSpawnTries = 30;
+
+    [Header("Groups / Waves")]
     public int startEnemies = 3;
     public int enemiesPerWaveIncrease = 2;
-    public float timeBetweenWaves = 5f;
+
+    [Header("Wave Timing")]
+    [Tooltip("Basis-Zeit zwischen zwei Waves.")]
+    public float baseTimeBetweenWaves = 5f;
+
+    [Tooltip("Zusätzliche Sekunden pro Wave.")]
+    public float timeIncreasePerWave = 1.5f;
+
+    [Tooltip("Maximale Wartezeit zwischen Waves (0 = kein Limit).")]
+    public float maxTimeBetweenWaves = 0f;
+
+    [Header("Spawn Timing (within group)")]
+    public float spawnInterval = 0.75f;
+
+    [Header("Optional: Enemy Cap")]
+    public int maxEnemiesAlive = 0;
 
     [Header("Difficulty Scaling")]
     public float hpMultiplierPerWave = 0.2f;
@@ -24,70 +44,77 @@ public class WaveSpawner : MonoBehaviour
     [Header("Runtime")]
     public int currentWave = 0;
     public int enemiesAlive = 0;
-    private bool isSpawning = false;
 
     private void Start()
     {
-        StartNextWave();
+        StartCoroutine(WaveLoopRoutine());
     }
 
-    public void StartNextWave()
+    private IEnumerator WaveLoopRoutine()
     {
-        if (!isSpawning)
-            StartCoroutine(SpawnWaveRoutine());
-    }
-
-    private IEnumerator SpawnWaveRoutine()
-    {
-        isSpawning = true;
-
-        if (currentWave > 0)
-            yield return new WaitForSeconds(timeBetweenWaves);
-
-        currentWave++;
-        int enemyCount = startEnemies + (currentWave - 1) * enemiesPerWaveIncrease;
-
-        enemiesAlive = 0;
-
-        for (int i = 0; i < enemyCount; i++)
+        while (true)
         {
-            SpawnEnemyForCurrentWave();
-            yield return null;  // Mini Delay, verteilt die Spawns
-        }
+            currentWave++;
 
-        isSpawning = false;
+            int enemyCount =
+                startEnemies + (currentWave - 1) * enemiesPerWaveIncrease;
+
+            for (int i = 0; i < enemyCount; i++)
+            {
+                if (maxEnemiesAlive > 0)
+                {
+                    while (enemiesAlive >= maxEnemiesAlive)
+                        yield return null;
+                }
+
+                SpawnEnemyForCurrentWave();
+                yield return new WaitForSeconds(spawnInterval);
+            }
+
+            float waitTime = CalculateTimeBetweenWaves();
+            yield return new WaitForSeconds(waitTime);
+        }
+    }
+
+    private float CalculateTimeBetweenWaves()
+    {
+        float t =
+            baseTimeBetweenWaves +
+            (currentWave - 1) * timeIncreasePerWave;
+
+        if (maxTimeBetweenWaves > 0f)
+            t = Mathf.Min(t, maxTimeBetweenWaves);
+
+        return t;
     }
 
     private void SpawnEnemyForCurrentWave()
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0)
-        {
-            Debug.LogWarning("WaveSpawner: No enemyPrefabs assigned!");
             return;
-        }
 
-        GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        if (playerTransform == null)
+            return;
 
-        Vector3 spawnPos = GetRandomPointInBox();
-        GameObject enemyGO = Instantiate(prefab, spawnPos, Quaternion.identity);
+        if (!TryGetValidSpawnPoint(out Vector3 spawnPos))
+            return;
+
+        GameObject prefab =
+            enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+
+        GameObject enemyGO =
+            Instantiate(prefab, spawnPos, Quaternion.identity);
 
         enemiesAlive++;
 
-        // 🟢 Gegner bekommt IMMER das richtige Player-Transform
         var ai = enemyGO.GetComponent<CotLStyleEnemy3D>();
-        if (ai != null && playerTransform != null)
-        {
-            ai.player = playerTransform;   // ← FIX: Gegner tracken immer den echten Player
-        }
+        if (ai != null)
+            ai.player = playerTransform;
 
-        // Optional: WaveMember für OnEnemyKilled
         var member = enemyGO.GetComponent<EnemyWaveMember>();
         if (member != null)
-        {
             member.Init(this);
-        }
 
-        // optional HP-Skalierung pro Welle
         var hp = enemyGO.GetComponent<HealthComponent>();
         if (hp != null)
         {
@@ -96,10 +123,32 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    // Zufallsposition in der Box-Area (rechteckig)
+    private bool TryGetValidSpawnPoint(out Vector3 spawnPos)
+    {
+        Vector3 playerPos = playerTransform.position;
+
+        for (int i = 0; i < maxSpawnTries; i++)
+        {
+            Vector3 p = GetRandomPointInBox();
+
+            Vector2 p2 = new Vector2(p.x, p.z);
+            Vector2 pl2 = new Vector2(playerPos.x, playerPos.z);
+
+            if (Vector2.Distance(p2, pl2) >= minDistanceToPlayer)
+            {
+                spawnPos = p;
+                return true;
+            }
+        }
+
+        spawnPos = default;
+        return false;
+    }
+
     private Vector3 GetRandomPointInBox()
     {
-        Vector3 center = areaCenter != null ? areaCenter.position : transform.position;
+        Vector3 center =
+            areaCenter != null ? areaCenter.position : transform.position;
 
         float halfX = areaSize.x * 0.5f;
         float halfZ = areaSize.z * 0.5f;
@@ -113,20 +162,31 @@ public class WaveSpawner : MonoBehaviour
     public void OnEnemyKilled(EnemyWaveMember member)
     {
         enemiesAlive = Mathf.Max(0, enemiesAlive - 1);
-
-        if (enemiesAlive == 0)
-        {
-            StartNextWave();
-        }
     }
 
     private void OnDrawGizmosSelected()
     {
+        Vector3 center =
+            areaCenter != null ? areaCenter.position : transform.position;
+
         Gizmos.color = Color.green;
-        Vector3 center = areaCenter != null ? areaCenter.position : transform.position;
         Gizmos.DrawWireCube(center, new Vector3(areaSize.x, 0.2f, areaSize.z));
+
+        if (playerTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(
+                playerTransform.position,
+                minDistanceToPlayer
+            );
+        }
     }
 }
+
+
+
+
+
 
 
 
