@@ -187,18 +187,18 @@ MonoBehaviour:
   player: {fileID: 5129877898993010540, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
   maxSpeed: 10
   acceleration: 20
-  deceleration: 44.1
+  deceleration: 98.7
   strafeSpeed: 4
   strafeCurvature: 2
   detectRange: 800
   strafeRange: 2.44
   chargeTriggerRange: 2.59
   retreatRange: 1.4
-  telegraphTime: 0.2
-  chargeSpeed: 16
-  chargeDuration: 0.3
-  chargeCooldown: 1
-  chargeTurnAssist: 0.5
+  telegraphTime: 0
+  chargeSpeed: 0
+  chargeDuration: 0
+  chargeCooldown: 0
+  chargeTurnAssist: 0
   separationRadius: 1.2
   separationForce: 8
   enemyMask:
@@ -276,8 +276,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.2395916, y: 4, z: 0.2}
-  m_Center: {x: 0.0015249252, y: 2, z: 0}
+  m_Size: {x: 2.2395916, y: 4, z: 1.7350628}
+  m_Center: {x: 0.0015249252, y: 2, z: 0.089582324}
 --- !u!114 &-1596803197070258424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,7 +333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 747fc75d1a215ea4087e8b8bae2befdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseXP: 10
+  baseXP: 50
   xpGiver: {fileID: 0}
 --- !u!1 &1819689528345035555
 GameObject:

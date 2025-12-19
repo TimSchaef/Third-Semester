@@ -15,7 +15,9 @@ public class SkillNodeButton : MonoBehaviour
 {
     [Header("Refs")]
     public SkillTree tree;
-    public SkillDefinition skill;
+
+    // 👉 NUR noch diese Liste
+    public List<SkillDefinition> skills = new List<SkillDefinition>();
 
     [Header("Node Connections")]
     public SkillNodeRequirementMode requirementMode = SkillNodeRequirementMode.All;
@@ -26,8 +28,7 @@ public class SkillNodeButton : MonoBehaviour
     public TMP_Text subtitle;
     public Image icon;
 
-    // 👉 Hier: dieser Button weiß, ob ER selbst freigeschaltet ist
-    [HideInInspector] 
+    [HideInInspector]
     public bool unlocked = false;
 
     private Button btn;
@@ -48,11 +49,10 @@ public class SkillNodeButton : MonoBehaviour
 
     void OnEnable() => Refresh();
 
-    // Prüft nur, ob die VORGÄNGER-BUTTONS unlocked sind
     bool LocalPrereqsMet()
     {
         var valid = prerequisiteNodes.Where(p => p != null).ToList();
-        if (valid.Count == 0) return true; // keine Vorgänger -> frei
+        if (valid.Count == 0) return true;
 
         switch (requirementMode)
         {
@@ -65,17 +65,39 @@ public class SkillNodeButton : MonoBehaviour
         }
     }
 
+    bool CanUnlockAll(out string reason)
+    {
+        reason = "";
+
+        if (tree == null) { reason = "No SkillTree reference."; return false; }
+        if (skills == null || skills.Count == 0) { reason = "No skills assigned."; return false; }
+
+        foreach (var s in skills)
+        {
+            if (s == null) continue;
+
+            if (!tree.CanUnlock(s, out reason))
+                return false;
+        }
+
+        return true;
+    }
+
     void Refresh()
     {
-        if (skill == null || tree == null || btn == null) return;
+        if (tree == null || btn == null || skills == null || skills.Count == 0)
+            return;
 
-        if (title) title.text = skill.displayName;
-        if (icon) icon.sprite = skill.icon;
+        var primary = skills.FirstOrDefault(s => s != null);
+        if (primary == null) return;
+
+        if (title) title.text = primary.displayName;
+        if (icon) icon.sprite = primary.icon;
 
         bool prereqsOK = LocalPrereqsMet();
 
         string reason;
-        bool canByLevelAndPoints = tree.CanUnlock(skill, out reason);
+        bool canByLevelAndPoints = CanUnlockAll(out reason);
 
         if (subtitle)
         {
@@ -95,34 +117,53 @@ public class SkillNodeButton : MonoBehaviour
             }
             else
             {
-                subtitle.text = $"Cost: {skill.costSkillPoints} | Req Lvl: {skill.requiredPlayerLevel}";
+                if (skills.Count == 1)
+                {
+                    subtitle.text =
+                        $"Cost: {primary.costSkillPoints} | Req Lvl: {primary.requiredPlayerLevel}";
+                }
+                else
+                {
+                    int totalCost = skills.Sum(s => s != null ? s.costSkillPoints : 0);
+                    int maxReqLvl = skills.Max(s => s != null ? s.requiredPlayerLevel : 0);
+                    subtitle.text =
+                        $"{skills.Count} Skills | Total Cost: {totalCost} | Req Lvl: {maxReqLvl}";
+                }
             }
         }
 
-        // 👉 Button ist nur klickbar, wenn:
-        // - dieser Button noch NICHT unlocked ist
-        // - alle vorherigen Buttons erfüllt sind
-        // - genug Level + SkillPoints da sind
         btn.interactable = !unlocked && prereqsOK && canByLevelAndPoints;
     }
 
     void OnClick()
     {
-        if (tree == null || skill == null) return;
+        if (tree == null || skills == null || skills.Count == 0)
+            return;
 
-        if (!tree.TryUnlock(skill))
+        string reason;
+        if (!CanUnlockAll(out reason))
         {
-            string reason;
-            tree.CanUnlock(skill, out reason);
-            Debug.Log($"[SkillNodeButton] Click on {skill.skillId} failed: {reason}");
+            Debug.Log($"[SkillNodeButton] Click failed: {reason}");
             return;
         }
 
-        // 👉 AB HIER gilt dieser BUTTON als freigeschaltet
+        foreach (var s in skills)
+        {
+            if (s == null) continue;
+
+            if (!tree.TryUnlock(s))
+            {
+                tree.CanUnlock(s, out reason);
+                Debug.Log($"[SkillNodeButton] Unlock {s.skillId} failed: {reason}");
+                return;
+            }
+        }
+
         unlocked = true;
         Refresh();
     }
 }
+
 
 
 

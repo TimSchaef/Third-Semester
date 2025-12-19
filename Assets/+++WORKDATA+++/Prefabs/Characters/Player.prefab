@@ -373,8 +373,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 2681993167726318184}
   fallbackSpeed: 5
-  turnPivot: {fileID: 3041541123724220908}
+  bodyPivot: {fileID: 0}
   turnSmoothTime: 0.1
+  faceOppositeMove: 1
 --- !u!114 &5637119226119703134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,14 +389,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackCollider: {fileID: 3021547053878649676}
+  attackPivot: {fileID: 0}
   damage: 10
   knockbackForce: 14
   activeTime: 0.1
   attackCooldown: 1
+  autoAttack: 1
+  autoAttackTick: 0.05
+  targetRange: 6
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
   ignoreSameRoot: 1
+  rotateDuringActiveTime: 1
+  faceTurnSpeed: 720
+  yawOffsetDegrees: 180
+  debugLogs: 0
 --- !u!114 &7641209192148689415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -588,8 +597,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.3367872, y: 8.06, z: 0.2}
-  m_Center: {x: 0.46649462, y: 4.03, z: 0}
+  m_Size: {x: 3.1569571, y: 8.06, z: 2.6502643}
+  m_Center: {x: 0.55640954, y: 4.03, z: 0.034583807}
 --- !u!114 &2681993167726318184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,9 +633,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97148e9804afff47a36b6eea0d26eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLevel: 1
-  currentXP: 0
-  unspentSkillPoints: 0
+  startLevel: 1
+  startXP: 0
+  startSkillPoints: 0
 --- !u!114 &9006165888835563375
 MonoBehaviour:
   m_ObjectHideFlags: 0
