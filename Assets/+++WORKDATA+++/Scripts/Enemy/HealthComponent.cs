@@ -19,7 +19,7 @@ public class HealthComponent : MonoBehaviour
 
     public float CurrentHP { get; private set; }
 
-    // Basis-MaxHP aus Stats oder Fallback
+  
     public float BaseMaxHP
     {
         get
@@ -27,23 +27,20 @@ public class HealthComponent : MonoBehaviour
             float baseFromStats = 0f;
             if (stats != null)
                 baseFromStats = stats.GetValue(CoreStatId.MaxHP);
-
-            // Wenn Stats fehlen oder 0/negativ liefern → Fallback nutzen
+            
             if (baseFromStats <= 0f)
                 baseFromStats = fallbackMaxHP;
 
             return baseFromStats;
         }
     }
-
-    // Effektives MaxHP (inkl. Multiplikator)
+    
     public float MaxHP => BaseMaxHP * Mathf.Max(0.1f, maxHpMultiplier);
 
     private bool isDead = false;
 
     void Start()
     {
-        // Sicherstellen, dass wir nicht mit 0 HP starten
         float max = MaxHP;
         if (max <= 0f)
         {
@@ -67,10 +64,7 @@ public class HealthComponent : MonoBehaviour
             CurrentHP = Mathf.Min(MaxHP, CurrentHP + regen * Time.deltaTime);
         }
     }
-
-    /// <summary>
-    /// Wird z.B. vom WaveSpawner aufgerufen, um Gegner-HP für höhere Wellen zu skalieren.
-    /// </summary>
+    
     public void SetMaxHpMultiplier(float mult, bool healToFull = true)
     {
         maxHpMultiplier = Mathf.Max(0.1f, mult);
@@ -79,16 +73,12 @@ public class HealthComponent : MonoBehaviour
             CurrentHP = MaxHP;
         }
     }
-
-    /// <summary>
-    /// Armor, Thorns, LifeSteal (nur beim Kill).
-    /// attacker = HealthComponent des Angreifers (für LifeSteal/Thorns).
-    /// </summary>
+    
     public float ApplyDamage(float rawDamage, HealthComponent attacker = null)
     {
         if (isDead || CurrentHP <= 0f) return 0f;
 
-        // Armor-Reduktion
+       
         float armor = 0f;
         if (stats != null)
             armor = Mathf.Max(0f, stats.GetValue(CoreStatId.Armor));
@@ -103,7 +93,7 @@ public class HealthComponent : MonoBehaviour
 
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
 
-        // Thorns: bei JEDEM Treffer
+        
         float thornsPct = 0f;
         if (stats != null)
             thornsPct = Mathf.Clamp01(stats.GetValue(CoreStatId.Thorns));
@@ -114,7 +104,7 @@ public class HealthComponent : MonoBehaviour
             attacker.ApplyPureDamage(reflect);
         }
 
-        // LifeSteal NUR beim Kill
+        
         if (diedThisHit && attacker != null && attacker.stats != null)
         {
             float lsPct = Mathf.Clamp01(attacker.stats.GetValue(CoreStatId.LifeSteal));
@@ -125,7 +115,7 @@ public class HealthComponent : MonoBehaviour
             }
         }
 
-        // Player-Hit Feedback (Camera Shake)
+        
         if (CompareTag("Player"))
         {
             if (Camera.main != null)
@@ -168,7 +158,6 @@ public class HealthComponent : MonoBehaviour
 
         if (CompareTag("Player"))
         {
-            // Szene neu laden wie vorher bei Hitpoints
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         else

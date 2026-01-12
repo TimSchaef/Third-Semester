@@ -11,6 +11,8 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
+    [SerializeField] private PlayerStatsManager stats;
+    [SerializeField] private float critMultiplier = 2f;
 
     [Header("Cooldown")]
     [SerializeField] private float attackCooldown = 1.0f;
@@ -231,6 +233,27 @@ public class PlayerAttack : MonoBehaviour
 
         p.rotation = Quaternion.RotateTowards(p.rotation, desired, faceTurnSpeed * Time.deltaTime);
     }
+    
+    private int CalculateDamage()
+    {
+        float baseDamage = damage;
+
+        // Damage aus Stats (Add)
+        if (stats != null)
+            baseDamage += stats.GetValue(CoreStatId.Damage);
+
+        // CritChance aus Stats (0..1)
+        float critChance = 0f;
+        if (stats != null)
+            critChance = Mathf.Clamp01(stats.GetValue(CoreStatId.CritChance));
+
+        bool isCrit = Random.value < critChance;
+        if (isCrit)
+            baseDamage *= critMultiplier;
+
+        return Mathf.RoundToInt(baseDamage);
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -241,7 +264,8 @@ public class PlayerAttack : MonoBehaviour
         var hp = other.GetComponent<HealthComponent>() ?? other.GetComponentInParent<HealthComponent>();
         if (!hp) return;
 
-        hp.ApplyDamage(damage, myHealth);
+        int finalDamage = CalculateDamage();
+        hp.ApplyDamage(finalDamage, myHealth);
 
         var rb = other.attachedRigidbody;
         if (rb)

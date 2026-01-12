@@ -7,6 +7,8 @@ public enum CoreStatId
     Armor,           // Rüstung (Damage-Reduction über Formel)
     XPGain,          // XP-Gewinn Multiplikator
     Thorns,          // Prozentualer Rückstoßschaden (0..1)
-    LifeSteal        // Lebensraub in % des verursachten Schadens (0..1)
+    LifeSteal,        // Lebensraub in % des verursachten Schadens (0..1)
+    Damage,        // absoluter Schaden
+    CritChance     // 0..1 (z.B. 0.25 = 25%)
 }
 

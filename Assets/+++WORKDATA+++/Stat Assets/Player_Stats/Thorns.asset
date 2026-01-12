@@ -21,5 +21,5 @@ MonoBehaviour:
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
-  baseValue: 1
+  baseValue: 0
   incrementPerLevel: 1

@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: MoveSpeed_1
   m_EditorClassIdentifier: 
   skillId: move_speed_1
-  displayName: Move Speed +50%
+  displayName: Move Speed +15%
   description: Increases movement speed by 50%.
   icon: {fileID: 0}
   requiredPlayerLevel: 1
   costSkillPoints: 1
+  prerequisiteMode: 0
   prerequisites: []
   effects:
   - stat: 0
     op: 1
-    value: 0.5
+    value: 0.15

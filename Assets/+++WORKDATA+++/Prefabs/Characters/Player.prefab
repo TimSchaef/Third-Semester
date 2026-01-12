@@ -171,8 +171,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 8.163546, y: 3.6073554, z: 9.183393}
-  m_Center: {x: 0.17971611, y: -0.841159, z: -3.50919}
+  m_Size: {x: 10.394573, y: 5.552591, z: 11.6372795}
+  m_Center: {x: 0.060350418, y: 0.131459, z: -4.7361336}
 --- !u!1 &4062481248524523805
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,7 +348,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 25c8595d9d6d25347b3ba42956646d4e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8877c551eb8cc0944a49f2a0ea08067e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -389,14 +389,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackCollider: {fileID: 3021547053878649676}
-  attackPivot: {fileID: 0}
-  damage: 10
+  attackPivot: {fileID: 3041541123724220908}
+  damage: 20
   knockbackForce: 14
   activeTime: 0.1
   attackCooldown: 1
   autoAttack: 1
   autoAttackTick: 0.05
-  targetRange: 6
+  targetRange: 14.14
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -404,7 +404,7 @@ MonoBehaviour:
   rotateDuringActiveTime: 1
   faceTurnSpeed: 720
   yawOffsetDegrees: 180
-  debugLogs: 0
+  debugLogs: 1
 --- !u!114 &7641209192148689415
 MonoBehaviour:
   m_ObjectHideFlags: 0
