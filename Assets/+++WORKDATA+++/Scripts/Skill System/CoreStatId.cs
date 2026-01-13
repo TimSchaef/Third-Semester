@@ -9,6 +9,9 @@ public enum CoreStatId
     Thorns,          // Prozentualer Rückstoßschaden (0..1)
     LifeSteal,        // Lebensraub in % des verursachten Schadens (0..1)
     Damage,        // absoluter Schaden
-    CritChance     // 0..1 (z.B. 0.25 = 25%)
+    CritChance,     // 0..1 (z.B. 0.25 = 25%)
+    AoeDamage,     // AOE Basis-Schaden pro Tick/Hit
+    AoeRadius,     // Radius in Metern
+    AoeTickRate    // Ticks pro Sekunde (z.B. 2 = 2x pro Sekunde)
 }
 

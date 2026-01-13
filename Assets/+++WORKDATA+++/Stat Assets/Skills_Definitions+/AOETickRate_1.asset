@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 392e26805821c28499f6840a43b97f42, type: 3}
-  m_Name: CritChance_1
+  m_Name: AOETickRate_1
   m_EditorClassIdentifier: 
-  skillId: critchance_1
-  displayName: +5 % Crit Chance
-  description: Increases armor by 15.
+  skillId: aoe_tick_rate_1
+  displayName: +5 Tick Rate
+  description: Increases AOE Tick Rate by 5.
   icon: {fileID: 0}
   requiredPlayerLevel: 1
   costSkillPoints: 1
   prerequisiteMode: 0
   prerequisites: []
   effects:
-  - stat: 9
+  - stat: 12
     op: 0
-    value: 0.05
+    value: 5
