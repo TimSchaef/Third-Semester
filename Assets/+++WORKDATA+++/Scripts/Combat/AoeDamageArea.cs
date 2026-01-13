@@ -3,23 +3,19 @@ using UnityEngine;
 public class AoeDamageArea : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private PlayerStatsManager stats;     // zieht AoeDamage/AoeRadius/AoeTickRate
+    [SerializeField] private PlayerStatsManager stats;
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
 
     [Header("Fallback (wenn Stats fehlen)")]
-    [SerializeField] private float baseRadius = 2.5f;
-    [SerializeField] private float baseDamagePerTick = 5f;
-    [SerializeField] private float baseTicksPerSecond = 2f;
-
-    [Header("Debug")]
-    [SerializeField] private bool debugLogs = false;
+    [SerializeField] private float fallbackRadius = 2.5f;
+    [SerializeField] private float fallbackDamagePerTick = 5f;   // wird ignoriert, wenn Stats gesetzt sind
+    [SerializeField] private float fallbackTicksPerSecond = 2f;
 
     private Transform root;
     private HealthComponent myHealth;
 
-    private float tickTimer;
-
+    private float timer;
     private readonly Collider[] buffer = new Collider[64];
 
     private void Awake()
@@ -30,20 +26,20 @@ public class AoeDamageArea : MonoBehaviour
 
     private void Update()
     {
-        float ticksPerSec = GetTicksPerSecond();
-        float interval = 1f / Mathf.Max(0.1f, ticksPerSec);
+        float ticksPerSecond = GetTicksPerSecond();
+        float interval = 1f / Mathf.Max(0.1f, ticksPerSecond);
 
-        tickTimer -= Time.deltaTime;
-        if (tickTimer > 0f) return;
+        timer -= Time.deltaTime;
+        if (timer > 0f) return;
 
-        tickTimer = interval;
-        DoTick();
+        timer = interval;
+        Tick();
     }
 
-    private void DoTick()
+    private void Tick()
     {
         float radius = GetRadius();
-        float dmg = GetDamagePerTick();
+        float dmg = GetAoeDamageOnly(); // NUR AoeDamage!
 
         int count = Physics.OverlapSphereNonAlloc(
             transform.position,
@@ -52,9 +48,6 @@ public class AoeDamageArea : MonoBehaviour
             targetLayers,
             QueryTriggerInteraction.Collide
         );
-
-        if (debugLogs)
-            Debug.Log($"[AOE] Tick: radius={radius:0.00}, dmg={dmg:0.0}, hits={count}", this);
 
         for (int i = 0; i < count; i++)
         {
@@ -70,33 +63,30 @@ public class AoeDamageArea : MonoBehaviour
         }
     }
 
-    private float GetDamagePerTick()
+    // -------------------------
+    // AOE Werte (separat)
+    // -------------------------
+
+    private float GetAoeDamageOnly()
     {
-        float v = baseDamagePerTick;
-        if (stats != null) v += stats.GetValue(CoreStatId.AoeDamage);
-        return Mathf.Max(0f, v);
+        // Wenn du es 100% stat-only willst:
+        // return stats != null ? Mathf.Max(0f, stats.GetValue(CoreStatId.AoeDamage)) : 0f;
+
+        // Falls du lieber Fallback willst, wenn stats null ist:
+        if (stats == null) return Mathf.Max(0f, fallbackDamagePerTick);
+        return Mathf.Max(0f, stats.GetValue(CoreStatId.AoeDamage));
     }
 
     private float GetRadius()
     {
-        float v = baseRadius;
-        if (stats != null) v += stats.GetValue(CoreStatId.AoeRadius);
-        return Mathf.Max(0.1f, v);
+        if (stats == null) return Mathf.Max(0.1f, fallbackRadius);
+        return Mathf.Max(0.1f, stats.GetValue(CoreStatId.AoeRadius));
     }
 
     private float GetTicksPerSecond()
     {
-        float v = baseTicksPerSecond;
-        if (stats != null) v += stats.GetValue(CoreStatId.AoeTickRate);
-        return Mathf.Max(0.1f, v);
+        if (stats == null) return Mathf.Max(0.1f, fallbackTicksPerSecond);
+        return Mathf.Max(0.1f, stats.GetValue(CoreStatId.AoeTickRate));
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        float r = baseRadius;
-        if (stats != null) r += stats.GetValue(CoreStatId.AoeRadius);
-        Gizmos.DrawWireSphere(transform.position, r);
-    }
-#endif
 }
+

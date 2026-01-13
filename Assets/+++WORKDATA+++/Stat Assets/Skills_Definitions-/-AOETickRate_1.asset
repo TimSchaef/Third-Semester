@@ -9,17 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
-  m_Name: XPGain
+  m_Script: {fileID: 11500000, guid: 392e26805821c28499f6840a43b97f42, type: 3}
+  m_Name: -AOETickRate_1
   m_EditorClassIdentifier: 
-  statId: 5
-  displayName: MoveSpeed
-  description: 'Changes the Xp Gain
-
-'
-  maxLevel: 1
-  costPerUpgrade: 1
+  skillId: aoe_tick_rate_1
+  displayName: -5 Tick Rate
+  description: Increases AOE Tick Rate by 5.
+  icon: {fileID: 0}
   requiredPlayerLevel: 1
+  costSkillPoints: 1
+  prerequisiteMode: 0
   prerequisites: []
-  baseValue: 1
-  incrementPerLevel: 1.5
+  effects:
+  - stat: 12
+    op: 0
+    value: -5
