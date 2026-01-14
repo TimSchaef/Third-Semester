@@ -41,8 +41,17 @@ TagManager:
   - name: Ground
     uniqueID: 1174479771
     locked: 0
+  - name: Ground Shadows
+    uniqueID: 4176380711
+    locked: 0
+  - name: Walls
+    uniqueID: 402005989
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Enemy and Player
+    uniqueID: 3679390181
     locked: 0
   m_RenderingLayers:
   - Default

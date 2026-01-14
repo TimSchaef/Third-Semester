@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttackSpeed_1
   m_EditorClassIdentifier: 
   skillId: attack_speed_1
-  displayName: Attack Speed +10%
+  displayName: Attack Speed +20%
   description: Increases attack speed by 10%.
   icon: {fileID: 0}
   requiredPlayerLevel: 1
@@ -22,5 +22,5 @@ MonoBehaviour:
   prerequisites: []
   effects:
   - stat: 1
-    op: 1
-    value: 0.3
+    op: 0
+    value: 0.2

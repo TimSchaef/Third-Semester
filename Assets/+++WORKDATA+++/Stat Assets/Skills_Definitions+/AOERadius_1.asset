@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AOERadius_1
   m_EditorClassIdentifier: 
   skillId: aoe_radius_1
-  displayName: +5 AOE Radius
+  displayName: +10 AOE Radius
   description: Increases AOE Radius by 5.
   icon: {fileID: 0}
   requiredPlayerLevel: 1
@@ -23,4 +23,4 @@ MonoBehaviour:
   effects:
   - stat: 11
     op: 0
-    value: 5
+    value: 10
