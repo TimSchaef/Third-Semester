@@ -105,8 +105,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -118586585
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 94d4f48114127f64581c4759b6bd13e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.6509804}
@@ -302,6 +302,7 @@ Transform:
   - {fileID: 3041541123724220908}
   - {fileID: 4622458217971782857}
   - {fileID: 6747059834994486472}
+  - {fileID: 6700547615120289210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5430387086433423122
@@ -345,8 +346,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -615577115
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8877c551eb8cc0944a49f2a0ea08067e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -393,7 +394,8 @@ MonoBehaviour:
   damage: 20
   knockbackForce: 14
   activeTime: 0.1
-  attackCooldown: 1
+  baseAttackCooldown: 1
+  stats: {fileID: 2681993167726318184}
   autoAttack: 1
   autoAttackTick: 0.05
   targetRange: 14.14
@@ -546,6 +548,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d672e77f-63be-4b71-a34d-3d263fbcc9c6
     m_ActionName: 'UI/OpenSkillMenu[/Keyboard/k]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: PauseMenuController, Assembly-CSharp
+        m_MethodName: TogglePause
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 6dbdd909-3184-49cd-9aba-d2527403d018
+    m_ActionName: 'UI/Pause[/Keyboard/escape]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -621,6 +639,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5d68ad47ca718ee4caf1fe824e546c01, type: 2}
   - {fileID: 11400000, guid: 562d3e26469defa4fb6d78fa3d74994d, type: 2}
   - {fileID: 11400000, guid: 5a0d309a27aadd44b955793064481182, type: 2}
+  - {fileID: 11400000, guid: 300ef70c8347c084ca17e9abac7b657e, type: 2}
+  - {fileID: 11400000, guid: 5ff932a6587b37a42a344ebd935ae4cd, type: 2}
+  - {fileID: 11400000, guid: 4383e4770744abd41b1302a25b8632c2, type: 2}
+  - {fileID: 11400000, guid: fb2fe1a09038517449695be13f2195b3, type: 2}
+  - {fileID: 11400000, guid: f43f886117ee0d04c9e485a3ef96a4b1, type: 2}
 --- !u!114 &6992839715270156423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -636,6 +659,9 @@ MonoBehaviour:
   startLevel: 1
   startXP: 0
   startSkillPoints: 0
+  statsManager: {fileID: 2681993167726318184}
+  xpGainBonusPerLevel: 0.1
+  useXPGainStat: 1
 --- !u!114 &9006165888835563375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,3 +828,55 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &8920848240511295213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6700547615120289210}
+  - component: {fileID: 2146933776689801927}
+  m_Layer: 6
+  m_Name: AOE_Origin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6700547615120289210
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920848240511295213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5129877898993010540}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2146933776689801927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920848240511295213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23524cc208e77c94e8672e9ae1025958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 2681993167726318184}
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  ignoreSameRoot: 1
+  fallbackRadius: 2.5
+  fallbackDamagePerTick: 5
+  fallbackTicksPerSecond: 2

@@ -11,11 +11,14 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
-    [SerializeField] private PlayerStatsManager stats;
-    [SerializeField] private float critMultiplier = 2f;
 
-    [Header("Cooldown")]
-    [SerializeField] private float attackCooldown = 1.0f;
+    [Header("Cooldown (Base)")]
+    [Tooltip("Basis-Cooldown bei AttackSpeed = 1.0")]
+    [SerializeField] private float baseAttackCooldown = 1.0f;
+
+    [Header("Stats (optional)")]
+    [Tooltip("Wenn gesetzt, skaliert AttackSpeed den Cooldown: effective = base / AttackSpeed")]
+    [SerializeField] private PlayerStatsManager stats;
 
     [Header("Auto Attack")]
     [SerializeField] private bool autoAttack = true;
@@ -55,13 +58,14 @@ public class PlayerAttack : MonoBehaviour
     {
         get
         {
-            if (attackCooldown <= 0f) return 1f;
-            return Mathf.Clamp01(1f - (cooldownTimer / attackCooldown));
+            float cd = GetEffectiveCooldown();
+            if (cd <= 0f) return 1f;
+            return Mathf.Clamp01(1f - (cooldownTimer / cd));
         }
     }
 
     public float RemainingCooldown => Mathf.Max(0f, cooldownTimer);
-    public float CooldownDuration => attackCooldown;
+    public float CooldownDuration => GetEffectiveCooldown();
 
     // Pivot-Fallback: wenn attackPivot leer ist, rotiert direkt der Collider-Transform
     private Transform Pivot => attackPivot ? attackPivot : (attackCollider ? attackCollider.transform : null);
@@ -134,7 +138,9 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator DoAttack(Transform target)
     {
         attacking = true;
-        cooldownTimer = attackCooldown;
+
+        // IMPORTANT: Cooldown uses AttackSpeed
+        cooldownTimer = GetEffectiveCooldown();
 
         FaceTargetInstant(target);
 
@@ -154,6 +160,20 @@ public class PlayerAttack : MonoBehaviour
         if (attackCollider) attackCollider.enabled = false;
 
         attacking = false;
+    }
+
+    // ---------------------------
+    // AttackSpeed -> Cooldown
+    // ---------------------------
+    private float GetEffectiveCooldown()
+    {
+        float atkSpeed = 1f;
+
+        if (stats != null)
+            atkSpeed = stats.GetValue(CoreStatId.AttackSpeed); // uses your stat system :contentReference[oaicite:3]{index=3}
+
+        atkSpeed = Mathf.Max(0.01f, atkSpeed); // safety
+        return Mathf.Max(0.01f, baseAttackCooldown) / atkSpeed;
     }
 
     private Transform FindNearestTarget()
@@ -233,27 +253,6 @@ public class PlayerAttack : MonoBehaviour
 
         p.rotation = Quaternion.RotateTowards(p.rotation, desired, faceTurnSpeed * Time.deltaTime);
     }
-    
-    private int CalculateDamage()
-    {
-        float baseDamage = damage;
-
-        // Damage aus Stats (Add)
-        if (stats != null)
-            baseDamage += stats.GetValue(CoreStatId.Damage);
-
-        // CritChance aus Stats (0..1)
-        float critChance = 0f;
-        if (stats != null)
-            critChance = Mathf.Clamp01(stats.GetValue(CoreStatId.CritChance));
-
-        bool isCrit = Random.value < critChance;
-        if (isCrit)
-            baseDamage *= critMultiplier;
-
-        return Mathf.RoundToInt(baseDamage);
-    }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -264,8 +263,7 @@ public class PlayerAttack : MonoBehaviour
         var hp = other.GetComponent<HealthComponent>() ?? other.GetComponentInParent<HealthComponent>();
         if (!hp) return;
 
-        int finalDamage = CalculateDamage();
-        hp.ApplyDamage(finalDamage, myHealth);
+        hp.ApplyDamage(damage, myHealth);
 
         var rb = other.attachedRigidbody;
         if (rb)

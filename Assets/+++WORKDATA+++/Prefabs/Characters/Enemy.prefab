@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 70181014462596856}
   - component: {fileID: -5925243694241844530}
   - component: {fileID: -8570287809886828214}
+  - component: {fileID: 5163675394969291044}
   m_Layer: 3
   m_Name: Enemy
   m_TagString: Untagged
@@ -158,8 +159,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -615577115
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 03248b54131cbcc4e9f37f2cbe72e586, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -335,6 +336,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseXP: 50
   xpGiver: {fileID: 0}
+--- !u!95 &5163675394969291044
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438347520461570845}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 90983d754c5c09c428311e1b1a2fe780, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1819689528345035555
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +396,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.05159378, y: 5.3305044}
+  m_AnchoredPosition: {x: 0.05159378, y: 6.07}
   m_SizeDelta: {x: 7.3092, y: 2.241}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &5371123997041269432
@@ -396,7 +419,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -615577115
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &6756463144974928665
@@ -606,8 +629,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -118586585
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 94d4f48114127f64581c4759b6bd13e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.6509804}
