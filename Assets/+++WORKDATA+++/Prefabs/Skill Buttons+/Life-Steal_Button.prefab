@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1171048725526327395}
   - component: {fileID: 7017029816726153254}
   - component: {fileID: 6318131043452323979}
+  - component: {fileID: 4033899903315051928}
   m_Layer: 5
   m_Name: Life-Steal_Button
   m_TagString: Untagged
@@ -142,7 +143,25 @@ MonoBehaviour:
   title: {fileID: 4725562460536258901}
   subtitle: {fileID: 0}
   icon: {fileID: 0}
+  tooltip: {fileID: -7469364382147103919, guid: fc5dccb978ad5d24bbc9ba3042376f16, type: 3}
   unlocked: 0
+--- !u!114 &4033899903315051928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5155712199376602139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8956b462347f947833f1f84fc783ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  titleText: {fileID: 0}
+  descText: {fileID: 0}
+  extraText: {fileID: 0}
+  iconImage: {fileID: 0}
 --- !u!1 &7181126148962594852
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,8 +254,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

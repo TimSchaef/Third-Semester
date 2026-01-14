@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6808646562973510644}
   - component: {fileID: 4638210396640514740}
   - component: {fileID: 4205748555921652083}
+  - component: {fileID: -7489266545741168198}
   m_Layer: 5
   m_Name: -XP-Gain_Button
   m_TagString: Untagged
@@ -142,7 +143,25 @@ MonoBehaviour:
   title: {fileID: 6485027893114267135}
   subtitle: {fileID: 0}
   icon: {fileID: 0}
+  tooltip: {fileID: -7469364382147103919, guid: fc5dccb978ad5d24bbc9ba3042376f16, type: 3}
   unlocked: 0
+--- !u!114 &-7489266545741168198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2833706817030379679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8956b462347f947833f1f84fc783ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  titleText: {fileID: 0}
+  descText: {fileID: 0}
+  extraText: {fileID: 0}
+  iconImage: {fileID: 0}
 --- !u!1 &7161717961671310304
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,8 +254,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

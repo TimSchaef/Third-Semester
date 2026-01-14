@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public enum SkillNodeRequirementMode
 {
@@ -27,6 +28,9 @@ public class SkillNodeButton : MonoBehaviour
     public TMP_Text title;
     public TMP_Text subtitle;
     public Image icon;
+    
+    [Header("Tooltip")]
+    public SkillTooltipUI tooltip;
 
     [HideInInspector]
     public bool unlocked = false;
@@ -134,6 +138,25 @@ public class SkillNodeButton : MonoBehaviour
 
         btn.interactable = !unlocked && prereqsOK && canByLevelAndPoints;
     }
+    
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("[Tooltip] Pointer Enter on: " + gameObject.name);
+        if (tooltip == null) return;
+        if (skills == null || skills.Count == 0) { tooltip.Hide(); return; }
+
+        var arr = skills.Where(s => s != null).ToArray();
+        if (arr.Length == 0) { tooltip.Hide(); return; }
+
+        if (arr.Length == 1) tooltip.ShowFor(arr[0]);
+        else tooltip.ShowForMultiple(arr);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (tooltip == null) return;
+        tooltip.Hide();
+    }
 
     void OnClick()
     {
@@ -158,7 +181,7 @@ public class SkillNodeButton : MonoBehaviour
                 return;
             }
         }
-
+        
         unlocked = true;
         Refresh();
     }

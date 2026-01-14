@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 6036135150008350273}
   - component: {fileID: 2249631865294156451}
   - component: {fileID: 6355806898149176522}
+  - component: {fileID: 2654057889980519263}
   m_Layer: 5
   m_Name: Max-HP_Button
   m_TagString: Untagged
@@ -278,4 +279,22 @@ MonoBehaviour:
   title: {fileID: 5205429283537492570}
   subtitle: {fileID: 0}
   icon: {fileID: 0}
+  tooltip: {fileID: -7469364382147103919, guid: fc5dccb978ad5d24bbc9ba3042376f16, type: 3}
   unlocked: 0
+--- !u!114 &2654057889980519263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9073096724689837671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8956b462347f947833f1f84fc783ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
+  titleText: {fileID: 0}
+  descText: {fileID: 0}
+  extraText: {fileID: 0}
+  iconImage: {fileID: 0}

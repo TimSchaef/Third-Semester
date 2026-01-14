@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 5129877898993010540, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
-  maxSpeed: 10
+  maxSpeed: 14
   acceleration: 20
   deceleration: 98.7
   strafeSpeed: 4
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 0}
-  fallbackMaxHP: 100
+  fallbackMaxHP: 40
   maxHpMultiplier: 1
 --- !u!114 &70181014462596856
 MonoBehaviour:
