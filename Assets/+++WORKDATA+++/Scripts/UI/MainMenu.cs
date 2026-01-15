@@ -21,8 +21,7 @@ public class MainMenu : MonoBehaviour
     public Slider masterSlider;
     public Slider musicSlider;
     public Slider sfxSlider;
-
-    private float musicVolumeFloat;
+    
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -48,7 +47,6 @@ public class MainMenu : MonoBehaviour
     
     public void UpdateMusicVolume(float volume)
     {
-        musicVolumeFloat = musicSlider.value;
         audioMixer.SetFloat("MusicVolume", volume);
     }
     
@@ -77,7 +75,7 @@ public class MainMenu : MonoBehaviour
     private void StartGame()
     {
         SceneManager.LoadScene(1);
-        MusicManager.Instance.PlayMusic("MainMenu");
+        MusicManager.Instance.PlayMusic("Game");
     }
     
     private void OpenSettingsPanel()
@@ -107,6 +105,7 @@ public class MainMenu : MonoBehaviour
         creditsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
+    
 
     private void ExitGame()
     {
