@@ -10,52 +10,73 @@ public class SkillTree : MonoBehaviour
     public PlayerProgress player;
     public List<SkillDefinition> allSkills = new();
 
-    [Header("Runtime State")]
-    [SerializeField] private List<SkillDefinition> unlockedSkills = new();
-    private HashSet<string> unlockedIds = new();
+    // how often each skill was picked in THIS run
+    private readonly Dictionary<string, int> pickCounts = new();
+
+    // effect source ids applied (so we can remove cleanly)
+    private readonly List<string> appliedSourceIds = new();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
 
     void Awake()
     {
-        // NICHTS mehr laden – immer frisch starten
-        unlockedSkills.Clear();
-        unlockedIds.Clear();
-
-        // sicherheitshalber Effekte neu setzen (am Anfang sind das 0)
+        pickCounts.Clear();
+        appliedSourceIds.Clear();
         ReapplyAllEffects();
     }
 
-    /// <summary>
-    /// Wird nur noch dafür benutzt, zu wissen,
-    /// ob ein Skill-Asset in DIESER RUNDE schon freigeschaltet wurde.
-    /// (z.B. für ReapplyAllEffects)
-    /// </summary>
-    public bool IsUnlocked(SkillDefinition skill) =>
-        skill != null && unlockedIds.Contains(skill.skillId);
+    public int GetPickCount(SkillDefinition skill)
+    {
+        if (skill == null || string.IsNullOrEmpty(skill.skillId)) return 0;
+        return pickCounts.TryGetValue(skill.skillId, out var c) ? c : 0;
+    }
 
-    /// <summary>
-    /// Prüft NUR:
-    /// - Skill != null
-    /// - PlayerProgress vorhanden
-    /// - Spielerlevel reicht
-    /// - genug Skillpunkte
-    /// KEIN Speichern, KEIN Laden, KEINE persistenten Daten.
-    /// Verzweigungen/Verkettung im Skillbaum machst du im SkillNodeButton.
-    /// </summary>
+    private bool PrerequisitesMet(SkillDefinition skill)
+    {
+        if (skill == null) return false;
+        if (skill.prerequisites == null || skill.prerequisites.Count == 0) return true;
+
+        bool PickedAtLeastOnce(SkillDefinition s) => s != null && GetPickCount(s) > 0;
+
+        var prereqs = skill.prerequisites.Where(p => p != null).ToList();
+        if (prereqs.Count == 0) return true;
+
+        return skill.prerequisiteMode switch
+        {
+            SkillPrerequisiteMode.All => prereqs.All(PickedAtLeastOnce),
+            SkillPrerequisiteMode.Any => prereqs.Any(PickedAtLeastOnce),
+            _ => true
+        };
+    }
+
     public bool CanUnlock(SkillDefinition skill, out string reason)
     {
         reason = "";
 
-        if (skill == null)
+        if (skill == null) { reason = "No skill."; return false; }
+        if (player == null) { reason = "No PlayerProgress reference."; return false; }
+        if (string.IsNullOrEmpty(skill.skillId)) { reason = "Skill has no skillId."; return false; }
+
+        // stacking cap
+        int alreadyPicked = GetPickCount(skill);
+        if (skill.maxPicks > 0 && alreadyPicked >= skill.maxPicks)
         {
-            reason = "No skill.";
+            reason = $"Max picks reached ({skill.maxPicks}).";
             return false;
         }
 
-        if (player == null)
+        // drop weight 0 = never offered
+        if (skill.dropWeight <= 0f)
         {
-            reason = "No PlayerProgress reference.";
+            reason = "Drop weight is 0.";
+            return false;
+        }
+
+        if (!PrerequisitesMet(skill))
+        {
+            reason = skill.prerequisiteMode == SkillPrerequisiteMode.All
+                ? "Requires all prerequisite skills."
+                : "Requires at least one prerequisite skill.";
             return false;
         }
 
@@ -74,19 +95,13 @@ public class SkillTree : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Zieht Skillpunkte ab, markiert das Skill-Asset für DIESEN RUN als freigeschaltet,
-    /// wendet Effekte an. KEIN Speichern für spätere Runs.
-    /// </summary>
     public bool TryUnlock(SkillDefinition skill)
     {
         if (skill == null) return false;
 
-        string reason;
-        if (!CanUnlock(skill, out reason))
+        if (!CanUnlock(skill, out var reason))
         {
-            Debug.Log($"[SkillTree] Cannot unlock {skill.skillId}: {reason} " +
-                      $"(Level={player?.Level}, SkillPoints={player?.SkillPoints})");
+            Debug.Log($"[SkillTree] Cannot pick {skill.skillId}: {reason}");
             return false;
         }
 
@@ -96,47 +111,128 @@ public class SkillTree : MonoBehaviour
             return false;
         }
 
-        // Für diese Session merken
-        if (!unlockedIds.Contains(skill.skillId))
-        {
-            unlockedSkills.Add(skill);
-            unlockedIds.Add(skill.skillId);
-        }
+        int newCount = GetPickCount(skill) + 1;
+        pickCounts[skill.skillId] = newCount;
 
-        ApplySkillEffects(skill);
+        // unique source id so effects stack
+        string sourceId = $"{skill.skillId}#{newCount}";
+        ApplySkillEffects(sourceId, skill);
 
         OnSkillUnlocked?.Invoke(skill);
-
-        Debug.Log($"[SkillTree] Unlocked {skill.skillId}. Remaining SkillPoints={player.SkillPoints}");
         return true;
     }
 
-    // ---------- EFFEKTE ----------
-
-    void ApplySkillEffects(SkillDefinition skill)
+    void ApplySkillEffects(string sourceId, SkillDefinition skill)
     {
         if (statsManager == null || skill == null) return;
-        statsManager.ApplyEffectsFrom(skill.skillId, skill.effects);
+        statsManager.ApplyEffectsFrom(sourceId, skill.effects);
+        appliedSourceIds.Add(sourceId);
     }
 
     public void ReapplyAllEffects()
     {
         if (statsManager == null) return;
 
-        // erst alle alten Effekte raus
-        foreach (var s in allSkills)
-        {
-            if (s != null && !string.IsNullOrEmpty(s.skillId))
-                statsManager.RemoveEffectsFrom(s.skillId);
-        }
+        foreach (var id in appliedSourceIds)
+            statsManager.RemoveEffectsFrom(id);
 
-        // dann alle freigeschalteten (nur für DIESE RUNDE) wieder drauf
-        foreach (var s in unlockedSkills)
+        appliedSourceIds.Clear();
+
+        foreach (var skill in allSkills)
         {
-            ApplySkillEffects(s);
+            if (skill == null || string.IsNullOrEmpty(skill.skillId)) continue;
+
+            int count = GetPickCount(skill);
+            for (int i = 1; i <= count; i++)
+            {
+                string sourceId = $"{skill.skillId}#{i}";
+                ApplySkillEffects(sourceId, skill);
+            }
         }
     }
+
+    // ----- Weighted selection from global list -----
+
+    public List<SkillDefinition> GetRandomUnlockableSkills(int count)
+    {
+        return GetRandomUnlockableSkillsWeightedFrom(allSkills, count, allowFallbackToGlobal: false);
+    }
+
+    // ----- NEW: Weighted selection from provided pool -----
+
+    public List<SkillDefinition> GetRandomUnlockableSkillsWeightedFrom(
+        IList<SkillDefinition> pool,
+        int count,
+        bool allowFallbackToGlobal)
+    {
+        count = Mathf.Max(0, count);
+        if (count == 0) return new List<SkillDefinition>();
+
+        var basePool = (pool ?? Array.Empty<SkillDefinition>())
+            .Where(s => s != null)
+            .Distinct()
+            .ToList();
+
+        // candidates from pool
+        var candidates = basePool
+            .Where(s => CanUnlock(s, out _))
+            .ToList();
+
+        // optional fallback to global pool if pool is too small / empty
+        if (allowFallbackToGlobal && candidates.Count < count)
+        {
+            var globalExtra = allSkills
+                .Where(s => s != null)
+                .Distinct()
+                .Where(s => !basePool.Contains(s))
+                .Where(s => CanUnlock(s, out _))
+                .ToList();
+
+            candidates.AddRange(globalExtra);
+        }
+
+        // pick without duplicates in the same offer
+        var result = new List<SkillDefinition>(count);
+        count = Mathf.Min(count, candidates.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            var picked = WeightedPick(candidates);
+            if (picked == null) break;
+
+            result.Add(picked);
+            candidates.Remove(picked);
+        }
+
+        return result;
+    }
+
+    private SkillDefinition WeightedPick(List<SkillDefinition> pool)
+    {
+        if (pool == null || pool.Count == 0) return null;
+
+        float total = 0f;
+        for (int i = 0; i < pool.Count; i++)
+            total += Mathf.Max(0f, pool[i].dropWeight);
+
+        if (total <= 0f) return null;
+
+        float r = UnityEngine.Random.Range(0f, total);
+        float acc = 0f;
+
+        for (int i = 0; i < pool.Count; i++)
+        {
+            acc += Mathf.Max(0f, pool[i].dropWeight);
+            if (r <= acc)
+                return pool[i];
+        }
+
+        return pool[pool.Count - 1];
+    }
 }
+
+
+
 
 
 

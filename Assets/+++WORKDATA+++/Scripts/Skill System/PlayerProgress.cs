@@ -27,6 +27,7 @@ public class PlayerProgress : MonoBehaviour
     public int SkillPoints => unspentSkillPoints;
 
     public event Action<int> OnSkillPointsChanged;
+    public event Action<int> OnLevelUp; // NEW
 
     private void Awake()
     {
@@ -45,7 +46,7 @@ public class PlayerProgress : MonoBehaviour
     {
         return currentLevel * 100;
     }
-    
+
     public void AddXP(int amount)
     {
         if (amount <= 0) return;
@@ -57,10 +58,12 @@ public class PlayerProgress : MonoBehaviour
             currentXP -= GetXPRequiredForNextLevel();
             currentLevel++;
             unspentSkillPoints++;
+
             OnSkillPointsChanged?.Invoke(unspentSkillPoints);
+            OnLevelUp?.Invoke(currentLevel); // NEW (fires once per level)
         }
     }
-    
+
     public void AddXPScaled(int baseAmount, float extraMultiplier = 1f)
     {
         if (baseAmount <= 0) return;
@@ -79,7 +82,7 @@ public class PlayerProgress : MonoBehaviour
 
         AddXP(finalXP);
     }
-    
+
     public void AddXPMultiplied(int baseAmount, float multiplier)
     {
         AddXPScaled(baseAmount, multiplier);
@@ -95,6 +98,7 @@ public class PlayerProgress : MonoBehaviour
         return true;
     }
 }
+
 
 
 

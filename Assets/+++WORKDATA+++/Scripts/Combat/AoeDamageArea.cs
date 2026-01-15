@@ -67,7 +67,7 @@ public class AoeDamageArea : MonoBehaviour
     // AOE Werte (separat)
     // -------------------------
 
-    private float GetAoeDamageOnly()
+    public float GetAoeDamageOnly()
     {
         // Wenn du es 100% stat-only willst:
         // return stats != null ? Mathf.Max(0f, stats.GetValue(CoreStatId.AoeDamage)) : 0f;
@@ -77,7 +77,7 @@ public class AoeDamageArea : MonoBehaviour
         return Mathf.Max(0f, stats.GetValue(CoreStatId.AoeDamage));
     }
 
-    private float GetRadius()
+    public float GetRadius()
     {
         if (stats == null) return Mathf.Max(0.1f, fallbackRadius);
         return Mathf.Max(0.1f, stats.GetValue(CoreStatId.AoeRadius));
@@ -88,5 +88,14 @@ public class AoeDamageArea : MonoBehaviour
         if (stats == null) return Mathf.Max(0.1f, fallbackTicksPerSecond);
         return Mathf.Max(0.1f, stats.GetValue(CoreStatId.AoeTickRate));
     }
+    
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        float radius = Application.isPlaying ? GetRadius() : fallbackRadius;
+        Gizmos.color = new Color(1f, 0f, 0f, 0.6f);
+        Gizmos.DrawWireSphere(transform.position, radius);
+    }
+#endif
 }
 
