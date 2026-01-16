@@ -1,4 +1,4 @@
-// TurretSpawner.cs
+// TurretSpawner.cs (FINAL: random around player, spread angles + jitter, no overlap)
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,8 +22,13 @@ public class TurretSpawner : MonoBehaviour
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
 
-    [Header("Spawn Safety")]
-    [SerializeField] private float minSpawnDistance = 0.75f;
+    [Header("Spawn Placement")]
+    [SerializeField] private float minDistanceToPlayer = 0.75f;
+    [SerializeField] private float minTurretSeparation = 1.25f; // Abstand zwischen Turrets
+    [SerializeField] private int maxTriesPerTurret = 30;
+
+    [Tooltip("Wie stark darf der Winkel pro Turret zufällig abweichen (in Grad). 0 = exakt verteilt.")]
+    [SerializeField] private float angleJitterDegrees = 25f;
 
     private readonly List<TurretController> active = new();
     private float respawnTimer;
@@ -39,7 +44,6 @@ public class TurretSpawner : MonoBehaviour
     {
         int count = GetTurretCount();
 
-        // Skill nicht freigeschaltet => nichts aktiv
         if (count <= 0)
         {
             DespawnAll();
@@ -49,10 +53,8 @@ public class TurretSpawner : MonoBehaviour
 
         CleanupNulls();
 
-        // Wenn Turrets aktiv sind: nichts tun (sie laufen aus)
         if (active.Count > 0) return;
 
-        // Keine aktiv: warte auf Respawn Delay
         if (respawnTimer > 0f)
         {
             respawnTimer -= Time.deltaTime;
@@ -81,11 +83,11 @@ public class TurretSpawner : MonoBehaviour
         float dmg = GetTurretDamage();
         float r = Mathf.Max(0.1f, spawnRadius);
 
-        for (int i = 0; i < count; i++)
-        {
-            Vector3 pos = GetRandomSpawnPos(r);
+        List<Vector3> positions = BuildSpawnPositions(count, r);
 
-            var t = Instantiate(turretPrefab, pos, Quaternion.identity);
+        for (int i = 0; i < positions.Count; i++)
+        {
+            var t = Instantiate(turretPrefab, positions[i], Quaternion.identity);
             t.Init(new TurretController.Config
             {
                 ownerRoot = root,
@@ -105,20 +107,114 @@ public class TurretSpawner : MonoBehaviour
         }
     }
 
-    private Vector3 GetRandomSpawnPos(float radius)
+    private List<Vector3> BuildSpawnPositions(int count, float radius)
     {
-        Vector2 circle = Random.insideUnitCircle;
-        if (circle.sqrMagnitude < 0.0001f) circle = Vector2.right;
+        var result = new List<Vector3>(count);
+        if (count <= 0) return result;
 
-        Vector3 offset = new Vector3(circle.x, 0f, circle.y).normalized * Random.Range(minSpawnDistance, radius);
-        return transform.position + offset;
+        float baseStep = 360f / count;
+        float startAngle = Random.Range(0f, 360f); // global random rotation each spawn set
+
+        for (int i = 0; i < count; i++)
+        {
+            // "random but spread": evenly spaced angles + per-turret jitter
+            float angle = startAngle + i * baseStep + Random.Range(-angleJitterDegrees, angleJitterDegrees);
+
+            // random distance within ring [minDistanceToPlayer..radius]
+            float dist = Random.Range(minDistanceToPlayer, radius);
+
+            // try to keep separation (if fails, we resample dist+angle around this sector)
+            if (!TryFindPosNearAngle(angle, dist, radius, result, out Vector3 pos))
+            {
+                pos = FallbackBestOfSamples(radius, result, samples: 25);
+            }
+
+            result.Add(pos);
+        }
+
+        return result;
+    }
+
+    private bool TryFindPosNearAngle(float baseAngleDeg, float baseDist, float radius, List<Vector3> existing, out Vector3 pos)
+    {
+        float minSepSqr = minTurretSeparation * minTurretSeparation;
+
+       int tries = Mathf.Max(1, maxTriesPerTurret);
+        for (int attempt = 0; attempt < tries; attempt++)
+        {
+            // resample slightly around the sector to avoid stacking
+            float a = baseAngleDeg + Random.Range(-angleJitterDegrees, angleJitterDegrees);
+            float d = Mathf.Clamp(baseDist + Random.Range(-0.5f, 0.5f), minDistanceToPlayer, radius);
+
+            Vector3 candidate = transform.position + DirFromAngleDeg(a) * d;
+
+            bool ok = true;
+            for (int j = 0; j < existing.Count; j++)
+            {
+                if ((existing[j] - candidate).sqrMagnitude < minSepSqr)
+                {
+                    ok = false;
+                    break;
+                }
+            }
+
+            if (ok)
+            {
+                pos = candidate;
+                return true;
+            }
+        }
+
+        pos = default;
+        return false;
+    }
+
+    private Vector3 FallbackBestOfSamples(float radius, List<Vector3> existing, int samples)
+    {
+        Vector3 best = transform.position;
+        float bestMinDistSqr = -1f;
+
+        float minSep = Mathf.Max(0.01f, minTurretSeparation);
+
+        for (int i = 0; i < Mathf.Max(1, samples); i++)
+        {
+            float a = Random.Range(0f, 360f);
+            float d = Random.Range(minDistanceToPlayer, radius);
+            Vector3 c = transform.position + DirFromAngleDeg(a) * d;
+
+            float minDistSqr = float.PositiveInfinity;
+            for (int j = 0; j < existing.Count; j++)
+                minDistSqr = Mathf.Min(minDistSqr, (existing[j] - c).sqrMagnitude);
+
+            // even if we can't reach minSep, choose the least-bad one
+            if (minDistSqr > bestMinDistSqr && minDistSqr >= (minSep * 0.25f) * (minSep * 0.25f))
+            {
+                bestMinDistSqr = minDistSqr;
+                best = c;
+            }
+        }
+
+        // If existing is empty, bestMinDistSqr will update; otherwise still okay.
+        if (bestMinDistSqr < 0f)
+        {
+            float a = Random.Range(0f, 360f);
+            float d = Random.Range(minDistanceToPlayer, radius);
+            best = transform.position + DirFromAngleDeg(a) * d;
+        }
+
+        return best;
+    }
+
+    private static Vector3 DirFromAngleDeg(float angleDeg)
+    {
+        float rad = angleDeg * Mathf.Deg2Rad;
+        return new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad));
     }
 
     private void OnTurretExpired(TurretController turret)
     {
         active.Remove(turret);
 
-        // Wenn letztes Turret weg ist, starte Respawn Delay
         if (active.Count == 0)
             respawnTimer = Mathf.Max(0f, respawnDelay);
     }
@@ -126,9 +222,8 @@ public class TurretSpawner : MonoBehaviour
     private void DespawnAll()
     {
         for (int i = active.Count - 1; i >= 0; i--)
-        {
             if (active[i]) Destroy(active[i].gameObject);
-        }
+
         active.Clear();
     }
 

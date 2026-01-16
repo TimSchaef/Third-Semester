@@ -7,6 +7,12 @@ public enum SkillPrerequisiteMode
     Any
 }
 
+public enum SkillRarity
+{
+    Common,
+    Uncommon
+}
+
 [CreateAssetMenu(menuName = "RPG/Skill", fileName = "NewSkill")]
 public class SkillDefinition : ScriptableObject
 {
@@ -16,23 +22,28 @@ public class SkillDefinition : ScriptableObject
     [TextArea] public string description;
     public Sprite icon;
 
+    [Header("Rarity")]
+    public SkillRarity rarity = SkillRarity.Common;
+
     [Header("Requirements")]
     [Min(1)] public int requiredPlayerLevel = 1;
     [Min(1)] public int costSkillPoints = 1;
 
     [Header("Stacking")]
-    [Min(0)] public int maxPicks = 0; // 0 = infinite
+    [Tooltip("0 = infinite picks")]
+    [Min(0)] public int maxPicks = 0;
 
     [Header("Drop Chance")]
-    [Tooltip("Relative weight for appearing in the level-up choices. 0 = never. 1 = normal. 5 = very common.")]
+    [Tooltip("Relative weight for appearing in the level-up choices. 0 = never.")]
     [Min(0f)] public float dropWeight = 1f;
 
     [Header("Prerequisites")]
     public SkillPrerequisiteMode prerequisiteMode = SkillPrerequisiteMode.All;
-    public List<SkillDefinition> prerequisites = new List<SkillDefinition>();
+    public List<SkillDefinition> prerequisites = new();
 
     [Header("Effects")]
-    public List<SkillEffect> effects = new List<SkillEffect>();
+    public List<SkillEffect> effects = new();
 }
+
 
 

@@ -12,6 +12,9 @@ public class SkillTooltipUI : MonoBehaviour
     [SerializeField] private TMP_Text descText;
     [SerializeField] private TMP_Text extraText;
     [SerializeField] private Image iconImage;
+    
+    [SerializeField] private TMP_Text title;
+    [SerializeField] private TMP_Text description;
 
     private void Awake()
     {
@@ -103,5 +106,22 @@ public class SkillTooltipUI : MonoBehaviour
     {
         if (root) root.SetActive(false);
     }
+    
+    
+
+        public void SetSkill(SkillDefinition skill)
+        {
+            if (!skill)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
+            if (title) title.text = skill.displayName;
+            if (description) description.text = skill.description;
+
+            gameObject.SetActive(true);
+        }
+    
 }
 

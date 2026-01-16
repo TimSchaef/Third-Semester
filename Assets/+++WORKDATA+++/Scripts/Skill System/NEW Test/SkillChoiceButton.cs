@@ -1,60 +1,64 @@
+// SkillChoiceButton.cs (FINAL: provides Setup(...) used by LevelUpSkillChoiceController,
+// does NOT touch colors; delegates visuals to SkillButtonUI)
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
-public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class SkillChoiceButton : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private TMP_Text title;
     [SerializeField] private TMP_Text subtitle;
     [SerializeField] private Image icon;
 
-    [Header("Tooltip (optional)")]
-    [SerializeField] private SkillTooltipUI tooltip;
+    [Header("Optional: Rarity UI (colors)")]
+    [SerializeField] private SkillButtonUI rarityUI;
 
     private Button btn;
-    private SkillDefinition current;
-    private Action<SkillDefinition> onPick;
+    private SkillDefinition boundSkill;
 
-    void Awake()
+    private void Awake()
     {
         btn = GetComponent<Button>();
-        btn.onClick.AddListener(() =>
-        {
-            if (current != null)
-                onPick?.Invoke(current);
-        });
+
+        // Auto-wire rarityUI if not set
+        if (!rarityUI) rarityUI = GetComponent<SkillButtonUI>();
     }
 
-    public void Setup(SkillDefinition skill, Action<SkillDefinition> pickCallback, bool interactable)
+    /// <summary>
+    /// This matches your LevelUpSkillChoiceController call:
+    /// btn.Setup(skill, OnPickSkill, interactable: (skill != null));
+    /// </summary>
+    public void Setup(SkillDefinition skill, Action<SkillDefinition> onPicked, bool interactable)
     {
-        current = skill;
-        onPick = pickCallback;
+        boundSkill = skill;
 
-        if (title) title.text = skill != null ? skill.displayName : "—";
-        if (subtitle) subtitle.text = skill != null ? skill.description : "";
+        // Interactable state
+        if (!btn) btn = GetComponent<Button>();
+        btn.interactable = interactable && (skill != null);
 
+        // Text/Icon
+        if (title) title.text = skill ? skill.displayName : "";
+        if (subtitle) subtitle.text = skill ? skill.description : "";
         if (icon)
         {
-            icon.sprite = (skill != null) ? skill.icon : null;
             icon.enabled = (skill != null && skill.icon != null);
+            icon.sprite = (skill != null) ? skill.icon : null;
         }
 
-        if (btn) btn.interactable = interactable && skill != null;
+        // Rarity coloring handled here (SkillButtonUI). SkillChoiceButton itself does not modify colors.
+        if (rarityUI != null && skill != null)
+            rarityUI.Bind(skill);
+
+        // Click
+        btn.onClick.RemoveAllListeners();
+        if (skill != null && onPicked != null)
+        {
+            btn.onClick.AddListener(() => onPicked(boundSkill));
+        }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (tooltip == null) return;
-        if (current == null) { tooltip.Hide(); return; }
-        tooltip.ShowFor(current);
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        tooltip?.Hide();
-    }
+    public SkillDefinition GetBoundSkill() => boundSkill;
 }
