@@ -22,7 +22,7 @@ MonoBehaviour:
   requiredPlayerLevel: 1
   costSkillPoints: 1
   maxPicks: 0
-  dropWeight: 5
+  dropWeight: 1
   prerequisiteMode: 0
   prerequisites: []
   effects:
