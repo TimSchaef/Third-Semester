@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(Collider))]
 public class PlayerAttack : MonoBehaviour
@@ -29,11 +30,27 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
 
-    [Header("Facing")]
+    [Header("Facing (Hitbox)")]
     [SerializeField] private bool rotateDuringActiveTime = true;
     [SerializeField] private float faceTurnSpeed = 720f;
     [Tooltip("Wenn die Hitbox rückwärts zeigt: 180. Wenn korrekt: 0. Seitlich: 90/-90.")]
     [SerializeField] private float yawOffsetDegrees = 180f;
+
+    [Header("VFX Graph (Existing VisualEffect)")]
+    [Tooltip("Ziehe hier das VisualEffect-Objekt aus der Szene rein (VFX Graph).")]
+    [SerializeField] private VisualEffect attackVfx;
+
+    [Tooltip("Optional: Wo die VFX sitzen soll. Wenn leer -> Pivot (attackPivot oder attackCollider.transform).")]
+    [SerializeField] private Transform vfxPivot;
+
+    [Tooltip("Wenn true, wird die VFX beim Attack auf das Target ausgerichtet.")]
+    [SerializeField] private bool vfxAlignToTarget = true;
+
+    [Tooltip("Eigener Yaw-Offset nur fuer VFX. Nutze 180, wenn die VFX entgegengesetzt zeigt.")]
+    [SerializeField] private float vfxYawOffsetDegrees = 0f;
+
+    [Tooltip("Wenn true, wird beim Triggern ein Stop() gemacht (Reset), dann Play().")]
+    [SerializeField] private bool vfxResetBeforePlay = true;
 
     [Header("Debug")]
     [SerializeField] private bool debugLogs = false;
@@ -69,6 +86,7 @@ public class PlayerAttack : MonoBehaviour
 
     // Pivot-Fallback: wenn attackPivot leer ist, rotiert direkt der Collider-Transform
     private Transform Pivot => attackPivot ? attackPivot : (attackCollider ? attackCollider.transform : null);
+    private Transform VfxPivot => vfxPivot ? vfxPivot : Pivot;
 
     private void Awake()
     {
@@ -79,18 +97,22 @@ public class PlayerAttack : MonoBehaviour
             Debug.LogError("[PlayerAttack] attackCollider ist nicht zugewiesen.", this);
 
         if (!Pivot)
-            Debug.LogError("[PlayerAttack] Weder attackPivot noch attackCollider.transform verfügbar.", this);
+            Debug.LogError("[PlayerAttack] Weder attackPivot noch attackCollider.transform verfuegbar.", this);
 
         if (attackCollider)
         {
             attackCollider.enabled = false;
             attackCollider.isTrigger = true;
         }
+
+        // Optional: VFX initial stoppen, damit sie nicht beim Start loslaeuft
+        if (attackVfx)
+            attackVfx.Stop();
     }
 
     private void Update()
     {
-        // Cooldown runterzählen
+        // Cooldown runterzaehlen
         if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
@@ -112,13 +134,13 @@ public class PlayerAttack : MonoBehaviour
                 }
                 else if (debugLogs)
                 {
-                    Debug.Log("[PlayerAttack] Kein Target gefunden (Layer/Range prüfen).", this);
+                    Debug.Log("[PlayerAttack] Kein Target gefunden (Layer/Range pruefen).", this);
                 }
             }
         }
     }
 
-    // Optional: weiterhin per Button möglich
+    // Optional: weiterhin per Button moeglich
     public void Attack(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
@@ -142,7 +164,11 @@ public class PlayerAttack : MonoBehaviour
         // IMPORTANT: Cooldown uses AttackSpeed
         cooldownTimer = GetEffectiveCooldown();
 
+        // Hitbox ausrichten
         FaceTargetInstant(target);
+
+        // VFX triggern
+        PlayAttackVfx(target);
 
         if (attackCollider) attackCollider.enabled = true;
 
@@ -152,7 +178,13 @@ public class PlayerAttack : MonoBehaviour
             t += Time.deltaTime;
 
             if (rotateDuringActiveTime)
+            {
                 FaceTargetSmooth(target);
+
+                // optional: VFX waehrend ActiveTime mitdrehen
+                if (vfxAlignToTarget)
+                    AlignVfxToTarget(target);
+            }
 
             yield return null;
         }
@@ -163,6 +195,50 @@ public class PlayerAttack : MonoBehaviour
     }
 
     // ---------------------------
+    // VFX Graph Helpers
+    // ---------------------------
+    private void PlayAttackVfx(Transform target)
+    {
+        if (!attackVfx) return;
+
+        // Optional: an Pivot snappen (falls VFX nicht als Child am Pivot haengt)
+        Transform p = VfxPivot;
+        if (p)
+        {
+            attackVfx.transform.position = p.position;
+            attackVfx.transform.rotation = p.rotation;
+        }
+
+        if (vfxAlignToTarget)
+            AlignVfxToTarget(target);
+
+        if (vfxResetBeforePlay)
+            attackVfx.Stop();
+
+        attackVfx.Play();
+
+        if (debugLogs)
+            Debug.Log("[PlayerAttack] VFX Play()", this);
+    }
+
+    private void AlignVfxToTarget(Transform target)
+    {
+        if (!attackVfx || !target) return;
+
+        Transform p = VfxPivot ? VfxPivot : attackVfx.transform;
+
+        Vector3 dir = target.position - p.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+
+        Quaternion desired =
+            Quaternion.LookRotation(dir.normalized, Vector3.up) *
+            Quaternion.Euler(0f, vfxYawOffsetDegrees, 0f);
+
+        attackVfx.transform.rotation = desired;
+    }
+
+    // ---------------------------
     // AttackSpeed -> Cooldown
     // ---------------------------
     private float GetEffectiveCooldown()
@@ -170,7 +246,7 @@ public class PlayerAttack : MonoBehaviour
         float atkSpeed = 1f;
 
         if (stats != null)
-            atkSpeed = stats.GetValue(CoreStatId.AttackSpeed); // uses your stat system :contentReference[oaicite:3]{index=3}
+            atkSpeed = stats.GetValue(CoreStatId.AttackSpeed);
 
         atkSpeed = Mathf.Max(0.01f, atkSpeed); // safety
         return Mathf.Max(0.01f, baseAttackCooldown) / atkSpeed;
@@ -284,6 +360,7 @@ public class PlayerAttack : MonoBehaviour
     }
 #endif
 }
+
 
 
 
