@@ -11,8 +11,12 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private StatRowUI statRowPrefab;         // Prefab für eine Zeile
 
     [Header("References")]
-    [SerializeField] private PlayerStatsManager statsManager; // liest Werte über GetValue :contentReference[oaicite:3]{index=3}
+    [SerializeField] private PlayerStatsManager statsManager; // liest Werte über GetValue
     [SerializeField] private PlayerProgress progress;         // optional (Level/XP etc.)
+
+    [Header("Locks")]
+    [Tooltip("Wenn dieses Menü offen ist (z.B. Skill-Menu), darf Pause nicht geöffnet werden.")]
+    [SerializeField] private LevelUpSkillChoiceController skillMenu;
 
     [Header("Behavior")]
     [SerializeField] private bool pauseGameOnOpen = true;
@@ -30,6 +34,11 @@ public class PauseMenuController : MonoBehaviour
     public void TogglePause(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
+
+        // BLOCK: Pause darf nicht öffnen, wenn Skill-Menü offen ist
+        if (skillMenu != null && skillMenu.IsOpen)
+            return;
+
         Toggle();
     }
 
@@ -42,6 +51,11 @@ public class PauseMenuController : MonoBehaviour
     public void Open()
     {
         if (isOpen) return;
+
+        // Zusätzliche Sicherheit: auch direkte Open()-Calls blocken
+        if (skillMenu != null && skillMenu.IsOpen)
+            return;
+
         isOpen = true;
 
         if (pausePanel) pausePanel.SetActive(true);

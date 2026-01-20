@@ -31,6 +31,8 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     public UnityEvent onWin;
 
     private bool isOpen;
+    public bool IsOpen => isOpen; // <- WICHTIG: Status nach außen (für Pause-Lock)
+
     private int pendingLevelUps;
     private readonly Queue<int> pendingLevels = new Queue<int>();
 

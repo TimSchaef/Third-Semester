@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 11
     op: 0
-    value: -8
+    value: 3
