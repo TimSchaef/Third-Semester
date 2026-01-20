@@ -39,10 +39,11 @@ public class HealthComponent : MonoBehaviour
     private bool isDead = false;
 
     // ---------------------------
-    // Damage Flash (Farbwechsel)
+    // Damage Flash (ShaderGraph Tint)
     // ---------------------------
     [Header("Damage Flash")]
     [SerializeField] private bool flashOnDamage = true;
+
     [Tooltip("Farbe beim Treffer (im Inspector auswählbar).")]
     [SerializeField] private Color damageFlashColor = Color.red;
 
@@ -55,6 +56,12 @@ public class HealthComponent : MonoBehaviour
     [Tooltip("Wenn true: nur Player flasht. Wenn false: alle (Player + Gegner).")]
     [SerializeField] private bool flashOnlyPlayer = false;
 
+    [Tooltip("Unscaled Time benutzen (empfohlen, wenn du irgendwo timeScale=0 setzt).")]
+    [SerializeField] private bool flashIgnoreTimeScale = false;
+
+    [Tooltip("ShaderGraph Tint Reference Name. Muss im ShaderGraph existieren und genutzt werden (Texture RGB * Tint -> BaseColor).")]
+    [SerializeField] private string tintPropertyName = "_TintColor";
+
     [Tooltip("Optional: Renderer manuell setzen. Leer = automatisch Children suchen.")]
     [SerializeField] private Renderer[] renderers3D;
 
@@ -64,16 +71,15 @@ public class HealthComponent : MonoBehaviour
     private Tween flashTween;
     private MaterialPropertyBlock mpb;
 
-    // Shader-Properties: Built-in/Legacy oft _Color, URP oft _BaseColor
-    private static readonly int ColorProp = Shader.PropertyToID("_Color");
-    private static readonly int BaseColorProp = Shader.PropertyToID("_BaseColor");
+    private int tintPropId;
 
     private Color[] originalSpriteColors;
-    private Color[] original3DColors;
+    private Color[] originalTintColors3D;
 
     void Awake()
     {
         mpb = new MaterialPropertyBlock();
+        tintPropId = Shader.PropertyToID(tintPropertyName);
 
         // Falls nicht im Inspector gesetzt: automatisch sammeln
         if (spriteRenderers == null || spriteRenderers.Length == 0)
@@ -87,36 +93,32 @@ public class HealthComponent : MonoBehaviour
         for (int i = 0; i < spriteRenderers.Length; i++)
             originalSpriteColors[i] = spriteRenderers[i] != null ? spriteRenderers[i].color : Color.white;
 
-        // Originalfarben merken (3D)
-        original3DColors = new Color[renderers3D.Length];
+        // Original Tint merken (3D / ShaderGraph)
+        // Standardmäßig ist Tint normalerweise Weiß, aber wir lesen falls möglich aus Material/PropertyBlock.
+        originalTintColors3D = new Color[renderers3D.Length];
         for (int i = 0; i < renderers3D.Length; i++)
         {
             var r = renderers3D[i];
-            if (r == null)
+            if (r == null || r.sharedMaterial == null)
             {
-                original3DColors[i] = Color.white;
+                originalTintColors3D[i] = Color.white;
                 continue;
             }
 
-            // Default aus Material holen (falls vorhanden)
-            Color baseColor = Color.white;
-            if (r.sharedMaterial != null)
-            {
-                if (r.sharedMaterial.HasProperty(BaseColorProp))
-                    baseColor = r.sharedMaterial.GetColor(BaseColorProp);
-                else if (r.sharedMaterial.HasProperty(ColorProp))
-                    baseColor = r.sharedMaterial.GetColor(ColorProp);
-            }
+            Color tint = Color.white;
 
-            // Wenn PropertyBlock schon Farbe gesetzt hat, nehmen; sonst baseColor
+            // 1) Falls Material die Property hat, nimm Material-Wert als Basis
+            if (r.sharedMaterial.HasProperty(tintPropId))
+                tint = r.sharedMaterial.GetColor(tintPropId);
+
+            // 2) Falls schon ein PropertyBlock gesetzt ist, überschreibt er ggf. das Material
             r.GetPropertyBlock(mpb);
-            Color pbColor = Color.clear;
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(BaseColorProp))
-                pbColor = mpb.GetColor(BaseColorProp);
-            else
-                pbColor = mpb.GetColor(ColorProp);
+            // Achtung: GetColor liefert (0,0,0,0) wenn nicht gesetzt – daher nur übernehmen, wenn sinnvoll
+            Color pb = mpb.GetColor(tintPropId);
+            if (pb.a > 0f || pb.r > 0f || pb.g > 0f || pb.b > 0f)
+                tint = pb;
 
-            original3DColors[i] = (pbColor.a == 0f && baseColor.a != 0f) ? baseColor : pbColor;
+            originalTintColors3D[i] = tint;
         }
     }
 
@@ -171,7 +173,6 @@ public class HealthComponent : MonoBehaviour
         float previousHP = CurrentHP;
         CurrentHP -= taken;
 
-        // Farb-Flash bei Schaden
         FlashDamage();
 
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
@@ -196,11 +197,13 @@ public class HealthComponent : MonoBehaviour
             }
         }
 
+        // Camera Shake nur beim Player
         if (CompareTag("Player"))
         {
             if (Camera.main != null)
             {
-                Camera.main.DOShakePosition(0.5f, new Vector3(0.2f, 0.2f, 0f));
+                Camera.main.DOShakePosition(0.5f, new Vector3(0.2f, 0.2f, 0f))
+                          .SetUpdate(flashIgnoreTimeScale);
             }
         }
 
@@ -216,7 +219,6 @@ public class HealthComponent : MonoBehaviour
 
         CurrentHP -= amount;
 
-        // Farb-Flash bei PureDamage
         FlashDamage();
 
         if (CurrentHP <= 0f)
@@ -238,7 +240,6 @@ public class HealthComponent : MonoBehaviour
         isDead = true;
         CurrentHP = 0f;
 
-        // Flash abbrechen und Originalfarbe wiederherstellen (optional sauber)
         if (flashTween != null && flashTween.IsActive()) flashTween.Kill();
         RestoreOriginalColors();
 
@@ -255,7 +256,7 @@ public class HealthComponent : MonoBehaviour
     }
 
     // ---------------------------
-    // Flash Implementierung
+    // Flash Implementierung (Tint)
     // ---------------------------
     private void FlashDamage()
     {
@@ -266,43 +267,43 @@ public class HealthComponent : MonoBehaviour
         if (flashTween != null && flashTween.IsActive())
             flashTween.Kill();
 
-        SetAllToColor(damageFlashColor);
+        SetAllToFlashColor(damageFlashColor);
 
         // Nach kurzer Hold-Time zurückblenden
-        flashTween = DOVirtual.DelayedCall(flashHoldTime, () =>
+        Tween hold = DOVirtual.DelayedCall(flashHoldTime, () =>
         {
             float t = 0f;
             flashTween = DOTween.To(() => t, x =>
             {
                 t = x;
                 LerpBackToOriginal(t);
-            }, 1f, flashReturnTime);
+            }, 1f, flashReturnTime).SetUpdate(flashIgnoreTimeScale);
         });
+
+        hold.SetUpdate(flashIgnoreTimeScale);
+        flashTween = hold;
     }
 
-    private void SetAllToColor(Color c)
+    private void SetAllToFlashColor(Color c)
     {
-        // 2D
+        // 2D: SpriteRenderer.color (funktioniert nur, wenn Shader das auch nutzt)
         for (int i = 0; i < spriteRenderers.Length; i++)
         {
             if (spriteRenderers[i] != null)
                 spriteRenderers[i].color = c;
         }
 
-        // 3D (MaterialPropertyBlock, keine Material-Instanzen)
+        // 3D: ShaderGraph Tint via PropertyBlock
         for (int i = 0; i < renderers3D.Length; i++)
         {
             var r = renderers3D[i];
-            if (r == null) continue;
+            if (r == null || r.sharedMaterial == null) continue;
+
+            if (!r.sharedMaterial.HasProperty(tintPropId))
+                continue;
 
             r.GetPropertyBlock(mpb);
-
-            // Setze beide Properties (URP + Built-in), wenn möglich
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(BaseColorProp))
-                mpb.SetColor(BaseColorProp, c);
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(ColorProp))
-                mpb.SetColor(ColorProp, c);
-
+            mpb.SetColor(tintPropId, c);
             r.SetPropertyBlock(mpb);
         }
     }
@@ -322,18 +323,16 @@ public class HealthComponent : MonoBehaviour
         for (int i = 0; i < renderers3D.Length; i++)
         {
             var r = renderers3D[i];
-            if (r == null) continue;
+            if (r == null || r.sharedMaterial == null) continue;
 
-            Color target = original3DColors[i];
+            if (!r.sharedMaterial.HasProperty(tintPropId))
+                continue;
+
+            Color target = originalTintColors3D[i];
             Color current = Color.Lerp(damageFlashColor, target, t01);
 
             r.GetPropertyBlock(mpb);
-
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(BaseColorProp))
-                mpb.SetColor(BaseColorProp, current);
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(ColorProp))
-                mpb.SetColor(ColorProp, current);
-
+            mpb.SetColor(tintPropId, current);
             r.SetPropertyBlock(mpb);
         }
     }
@@ -352,15 +351,13 @@ public class HealthComponent : MonoBehaviour
         for (int i = 0; i < renderers3D.Length; i++)
         {
             var r = renderers3D[i];
-            if (r == null) continue;
+            if (r == null || r.sharedMaterial == null) continue;
 
-            Color target = original3DColors[i];
+            if (!r.sharedMaterial.HasProperty(tintPropId))
+                continue;
 
             r.GetPropertyBlock(mpb);
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(BaseColorProp))
-                mpb.SetColor(BaseColorProp, target);
-            if (r.sharedMaterial != null && r.sharedMaterial.HasProperty(ColorProp))
-                mpb.SetColor(ColorProp, target);
+            mpb.SetColor(tintPropId, originalTintColors3D[i]);
             r.SetPropertyBlock(mpb);
         }
     }
