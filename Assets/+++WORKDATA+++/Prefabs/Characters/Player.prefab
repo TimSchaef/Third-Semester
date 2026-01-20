@@ -160,13 +160,13 @@ GameObject:
   - component: {fileID: 5637119226119703134}
   - component: {fileID: 7641209192148689415}
   - component: {fileID: 1640932607949527615}
-  - component: {fileID: 9163934548025895123}
   - component: {fileID: 2681993167726318184}
   - component: {fileID: 6992839715270156423}
   - component: {fileID: 9006165888835563375}
   - component: {fileID: 8039557404693863005}
   - component: {fileID: 2580028070786386987}
   - component: {fileID: 5024687537567495881}
+  - component: {fileID: 4149577518967333286}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -278,7 +278,7 @@ MonoBehaviour:
   attackCollider: {fileID: 6582326336129708729}
   attackPivot: {fileID: 3041541123724220908}
   damage: 20
-  knockbackForce: 14
+  knockbackForce: 20
   activeTime: 0.1
   baseAttackCooldown: 1
   stats: {fileID: 2681993167726318184}
@@ -487,27 +487,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!65 &9163934548025895123
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6053158358163126664}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3.1569571, y: 8.06, z: 2.6502643}
-  m_Center: {x: 0.55640954, y: 4.03, z: 0.034583807}
 --- !u!114 &2681993167726318184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,7 +555,10 @@ MonoBehaviour:
   flashHoldTime: 0.05
   flashReturnTime: 0.1
   flashOnlyPlayer: 0
-  renderers3D: []
+  flashIgnoreTimeScale: 0
+  tintPropertyName: _TintColor
+  renderers3D:
+  - {fileID: 5430387086433423122}
   spriteRenderers:
   - {fileID: 5430387086433423122}
 --- !u!114 &8039557404693863005
@@ -674,6 +656,29 @@ MonoBehaviour:
     - rid: 5181380780840190024
       type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
+--- !u!136 &4149577518967333286
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053158358163126664}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.6660972
+  m_Height: 6.745514
+  m_Direction: 1
+  m_Center: {x: 0.06906247, y: 3.372757, z: -0.07805872}
 --- !u!1 &8920848240511295213
 GameObject:
   m_ObjectHideFlags: 0

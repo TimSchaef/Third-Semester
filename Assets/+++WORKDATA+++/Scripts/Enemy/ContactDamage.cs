@@ -125,10 +125,14 @@ public class ContactDamage : MonoBehaviour
 
         Vector3 dir = (other.transform.position - transform.position).normalized;
 
-        // Schaden + Armor + Thorns + LifeSteal-on-kill
         targetHp.ApplyDamage(damage, _myHealth);
 
-        // Physischer Knockback
+        var enemyMove = GetComponentInParent<EnemyMovement>();
+        if (enemyMove != null)
+        {
+            enemyMove.OnDealtDamage(other.transform.position);
+        }
+
         var rb = other.attachedRigidbody;
         if (rb != null)
         {
@@ -136,6 +140,7 @@ public class ContactDamage : MonoBehaviour
             rb.AddForce(dir.normalized * knockbackForce, ForceMode.Impulse);
         }
     }
+
 
     private static bool IsInMask(int layer, LayerMask mask) => (mask.value & (1 << layer)) != 0;
 }

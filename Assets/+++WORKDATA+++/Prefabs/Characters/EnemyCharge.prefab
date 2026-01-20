@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: -5925243694241844530}
   - component: {fileID: -8570287809886828214}
   m_Layer: 3
-  m_Name: Enemy
+  m_Name: EnemyCharge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,7 +160,7 @@ SpriteRenderer:
   m_SortingLayerID: -615577115
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f711a8f7c661b67439c045258913fe55, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7bad4afaa07b05e4fba31bdc187abf16, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -186,13 +186,13 @@ MonoBehaviour:
   player: {fileID: 5129877898993010540, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
   detectRange: 800
   moveSpeed: 14
-  chargeRange: 0
-  telegraphTime: 0
-  chargeSpeed: 0
-  chargeDuration: 0
-  chargeCooldown: 0
+  chargeRange: 15
+  telegraphTime: 0.5
+  chargeSpeed: 35
+  chargeDuration: 1
+  chargeCooldown: 2
   retreatAfterHit: 1
-  afterHitTime: 0.52
+  afterHitTime: 1.2
   retreatSpeed: 12.11
 --- !u!114 &3496537972283027139
 MonoBehaviour:

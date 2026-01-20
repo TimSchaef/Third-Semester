@@ -3,8 +3,17 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    public GameObject[] enemyPrefabs;
+    [System.Serializable]
+    public class EnemySpawnEntry
+    {
+        public GameObject prefab;
+
+        [Tooltip("Spawn-Gewicht. 1 = normal, 2 = doppelt so häufig, 0 = nie.")]
+        public float weight = 1f;
+    }
+
+    [Header("Spawn Settings (Weighted)")]
+    public EnemySpawnEntry[] enemies;
 
     [Header("Spawn Area (Box)")]
     public Transform areaCenter;
@@ -90,7 +99,7 @@ public class WaveSpawner : MonoBehaviour
 
     private void SpawnEnemyForCurrentWave()
     {
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+        if (enemies == null || enemies.Length == 0)
             return;
 
         if (playerTransform == null)
@@ -99,15 +108,16 @@ public class WaveSpawner : MonoBehaviour
         if (!TryGetValidSpawnPoint(out Vector3 spawnPos))
             return;
 
-        GameObject prefab =
-            enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        GameObject prefab = PickWeightedEnemyPrefab();
+        if (prefab == null)
+            return;
 
         GameObject enemyGO =
             Instantiate(prefab, spawnPos, Quaternion.identity);
 
         enemiesAlive++;
 
-        var ai = enemyGO.GetComponent<CotLStyleEnemy3D>();
+        var ai = enemyGO.GetComponent<EnemyMovement>();
         if (ai != null)
             ai.player = playerTransform;
 
@@ -121,6 +131,46 @@ public class WaveSpawner : MonoBehaviour
             float mult = 1f + hpMultiplierPerWave * (currentWave - 1);
             hp.SetMaxHpMultiplier(mult, true);
         }
+    }
+
+    private GameObject PickWeightedEnemyPrefab()
+    {
+        float total = 0f;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            var e = enemies[i];
+            if (e == null || e.prefab == null) continue;
+            if (e.weight <= 0f) continue;
+            total += e.weight;
+        }
+
+        if (total <= 0f)
+            return null;
+
+        float r = Random.Range(0f, total);
+        float acc = 0f;
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            var e = enemies[i];
+            if (e == null || e.prefab == null) continue;
+            if (e.weight <= 0f) continue;
+
+            acc += e.weight;
+            if (r <= acc)
+                return e.prefab;
+        }
+
+        // Fallback
+        for (int i = enemies.Length - 1; i >= 0; i--)
+        {
+            var e = enemies[i];
+            if (e != null && e.prefab != null && e.weight > 0f)
+                return e.prefab;
+        }
+
+        return null;
     }
 
     private bool TryGetValidSpawnPoint(out Vector3 spawnPos)
@@ -182,6 +232,7 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 }
+
 
 
 
