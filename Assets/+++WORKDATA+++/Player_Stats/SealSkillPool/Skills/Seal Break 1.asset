@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392e26805821c28499f6840a43b97f42, type: 3}
+  m_Name: Seal Break 1
+  m_EditorClassIdentifier: 
+  skillId: aoe_damage_1
+  displayName: Seal Break
+  description: '- 15% Thorns
+
+
+    + 2 HP Regen / s'
+  icon: {fileID: 0}
+  rarity: 0
+  requiredPlayerLevel: 1
+  costSkillPoints: 1
+  maxPicks: 0
+  dropWeight: 5
+  prerequisiteMode: 0
+  prerequisites: []
+  effects:
+  - stat: 6
+    op: 0
+    value: -0.15
+  - stat: 3
+    op: 0
+    value: 2

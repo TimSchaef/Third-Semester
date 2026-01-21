@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 8039557404693863005}
   - component: {fileID: 2580028070786386987}
   - component: {fileID: 5024687537567495881}
-  - component: {fileID: 4149577518967333286}
+  - component: {fileID: 8466230652113254132}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -656,8 +656,8 @@ MonoBehaviour:
     - rid: 5181380780840190024
       type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
---- !u!136 &4149577518967333286
-CapsuleCollider:
+--- !u!65 &8466230652113254132
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -674,11 +674,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.6660972
-  m_Height: 6.745514
-  m_Direction: 1
-  m_Center: {x: 0.06906247, y: 3.372757, z: -0.07805872}
+  serializedVersion: 3
+  m_Size: {x: 3.252254, y: 6.9505177, z: 2.3404732}
+  m_Center: {x: -0.13037497, y: 3.4752588, z: 0.021058321}
 --- !u!1001 &5023031094303250460
 PrefabInstance:
   m_ObjectHideFlags: 0

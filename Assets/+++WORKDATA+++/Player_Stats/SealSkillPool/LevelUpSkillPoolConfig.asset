@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b15cbf932f8aff4d8b5b21390949c6e, type: 3}
+  m_Name: LevelUpSkillPoolConfig
+  m_EditorClassIdentifier: 
+  pools:
+  - exactLevels: 0a000000
+    minLevel: 0
+    maxLevel: 0
+    skills:
+    - {fileID: 11400000, guid: 2e9c2e03bd5088148bb2d0bba104e404, type: 2}
+    - {fileID: 11400000, guid: 07ed01c475190e144a0f93a7c748c026, type: 2}
+    - {fileID: 11400000, guid: 87a6d30442d41744bba9089a325b1a94, type: 2}
+    - {fileID: 11400000, guid: 19195ac9d287653429a4d8c671a37ee0, type: 2}
+    - {fileID: 11400000, guid: 50e43be14d924394b8e408cc0f2cbaf0, type: 2}
+    allowFallbackToGlobalPool: 0
+  - exactLevels: 14000000
+    minLevel: 0
+    maxLevel: 0
+    skills:
+    - {fileID: 11400000, guid: 2e9c2e03bd5088148bb2d0bba104e404, type: 2}
+    - {fileID: 11400000, guid: 07ed01c475190e144a0f93a7c748c026, type: 2}
+    - {fileID: 11400000, guid: 87a6d30442d41744bba9089a325b1a94, type: 2}
+    - {fileID: 11400000, guid: 19195ac9d287653429a4d8c671a37ee0, type: 2}
+    - {fileID: 11400000, guid: 50e43be14d924394b8e408cc0f2cbaf0, type: 2}
+    allowFallbackToGlobalPool: 0
+  - exactLevels: 1e000000
+    minLevel: 0
+    maxLevel: 0
+    skills:
+    - {fileID: 11400000, guid: 2e9c2e03bd5088148bb2d0bba104e404, type: 2}
+    - {fileID: 11400000, guid: 07ed01c475190e144a0f93a7c748c026, type: 2}
+    - {fileID: 11400000, guid: 87a6d30442d41744bba9089a325b1a94, type: 2}
+    - {fileID: 11400000, guid: 19195ac9d287653429a4d8c671a37ee0, type: 2}
+    - {fileID: 11400000, guid: 50e43be14d924394b8e408cc0f2cbaf0, type: 2}
+    allowFallbackToGlobalPool: 0

@@ -93,7 +93,6 @@ GameObject:
   - component: {fileID: 70181014462596856}
   - component: {fileID: -5925243694241844530}
   - component: {fileID: -8570287809886828214}
-  - component: {fileID: 236600800516741916}
   m_Layer: 3
   m_Name: EnemyCharge
   m_TagString: Untagged
@@ -187,14 +186,15 @@ MonoBehaviour:
   player: {fileID: 5129877898993010540, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
   detectRange: 800
   moveSpeed: 14
+  stopDistance: 1.25
   chargeRange: 15
-  telegraphTime: 0.5
   chargeSpeed: 35
+  telegraphTime: 0.5
   chargeDuration: 1
   chargeCooldown: 2
-  retreatAfterHit: 1
   afterHitTime: 1.2
-  retreatSpeed: 12.11
+  afterHitSpeed: 2.5
+  rotateToMoveDirection: 0
 --- !u!114 &3496537972283027139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,24 +328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 747fc75d1a215ea4087e8b8bae2befdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseXP: 50
-  xpGiver: {fileID: 0}
---- !u!114 &236600800516741916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438347520461570845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 112e1f3f8fa0de14fb3a8ce90b19829c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyBodyCollider: {fileID: 8684421987492140076}
-  playerBodyCollider: {fileID: 4149577518967333286, guid: 21adbfa4e4d07d3488398e1fb0fa3f3c, type: 3}
-  autoFindPlayerByTag: 1
-  playerTag: Player
+  baseXP: 300
+  xpDropPrefab: {fileID: 6285680339925368690, guid: 03d9c11183257194481ffe2044d4aabd, type: 3}
+  dropOffset: {x: 0, y: 1.5, z: 0}
 --- !u!1 &1819689528345035555
 GameObject:
   m_ObjectHideFlags: 0

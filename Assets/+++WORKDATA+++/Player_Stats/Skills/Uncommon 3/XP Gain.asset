@@ -9,17 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
-  m_Name: TurretCount
+  m_Script: {fileID: 11500000, guid: 392e26805821c28499f6840a43b97f42, type: 3}
+  m_Name: XP Gain
   m_EditorClassIdentifier: 
-  statId: 13
-  displayName: TurretCount
-  description: 'increases the Turret count
-
-'
-  maxLevel: 1
-  costPerUpgrade: 1
+  skillId: aoe_damage_1
+  displayName: XP Gain
+  description: + 6% Xp Gain
+  icon: {fileID: 0}
+  rarity: 1
   requiredPlayerLevel: 1
+  costSkillPoints: 1
+  maxPicks: 0
+  dropWeight: 0
+  prerequisiteMode: 0
   prerequisites: []
-  baseValue: 1
-  incrementPerLevel: 0
+  effects:
+  - stat: 5
+    op: 0
+    value: 0.06
