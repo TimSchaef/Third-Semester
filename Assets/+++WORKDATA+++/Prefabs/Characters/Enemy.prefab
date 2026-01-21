@@ -278,6 +278,9 @@ MonoBehaviour:
   stats: {fileID: 0}
   fallbackMaxHP: 40
   maxHpMultiplier: 1
+  damageNumberPrefab: {fileID: 4582129948371270225, guid: 3186ab648e54c5b46ae939680be281b3, type: 3}
+  damageNumberOffset: {x: 0, y: 8, z: 0}
+  damageNumbersOnlyForEnemies: 1
   flashOnDamage: 1
   damageFlashColor: {r: 1, g: 0, b: 0, a: 1}
   flashHoldTime: 0.05

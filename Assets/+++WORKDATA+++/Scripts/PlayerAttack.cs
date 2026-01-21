@@ -9,7 +9,6 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private Collider attackCollider;     // IsTrigger = true
     [SerializeField] private Transform attackPivot;       // eigener Pivot NUR für AttackBox (optional)
-    [SerializeField] private int damage = 10;
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
 
@@ -17,8 +16,8 @@ public class PlayerAttack : MonoBehaviour
     [Tooltip("Basis-Cooldown bei AttackSpeed = 1.0")]
     [SerializeField] private float baseAttackCooldown = 1.0f;
 
-    [Header("Stats (optional)")]
-    [Tooltip("Wenn gesetzt, skaliert AttackSpeed den Cooldown: effective = base / AttackSpeed")]
+    [Header("Stats (required for Damage)")]
+    [Tooltip("MUSS gesetzt sein, weil Damage vollständig aus CoreStatId.Damage kommt.")]
     [SerializeField] private PlayerStatsManager stats;
 
     [Header("Auto Attack")]
@@ -66,24 +65,6 @@ public class PlayerAttack : MonoBehaviour
 
     private readonly Collider[] overlapBuffer = new Collider[64];
 
-    // =========================
-    // === COOLDOWN UI API ===
-    // =========================
-
-    /// <summary>0..1: 0 = im Cooldown, 1 = bereit.</summary>
-    public float CooldownFill01
-    {
-        get
-        {
-            float cd = GetEffectiveCooldown();
-            if (cd <= 0f) return 1f;
-            return Mathf.Clamp01(1f - (cooldownTimer / cd));
-        }
-    }
-
-    public float RemainingCooldown => Mathf.Max(0f, cooldownTimer);
-    public float CooldownDuration => GetEffectiveCooldown();
-
     // Pivot-Fallback: wenn attackPivot leer ist, rotiert direkt der Collider-Transform
     private Transform Pivot => attackPivot ? attackPivot : (attackCollider ? attackCollider.transform : null);
     private Transform VfxPivot => vfxPivot ? vfxPivot : Pivot;
@@ -99,13 +80,15 @@ public class PlayerAttack : MonoBehaviour
         if (!Pivot)
             Debug.LogError("[PlayerAttack] Weder attackPivot noch attackCollider.transform verfuegbar.", this);
 
+        if (!stats)
+            Debug.LogError("[PlayerAttack] stats ist NICHT gesetzt, aber Damage kommt aus Stats.", this);
+
         if (attackCollider)
         {
             attackCollider.enabled = false;
             attackCollider.isTrigger = true;
         }
 
-        // Optional: VFX initial stoppen, damit sie nicht beim Start loslaeuft
         if (attackVfx)
             attackVfx.Stop();
     }
@@ -161,7 +144,7 @@ public class PlayerAttack : MonoBehaviour
     {
         attacking = true;
 
-        // IMPORTANT: Cooldown uses AttackSpeed
+        // Cooldown uses AttackSpeed
         cooldownTimer = GetEffectiveCooldown();
 
         // Hitbox ausrichten
@@ -181,7 +164,6 @@ public class PlayerAttack : MonoBehaviour
             {
                 FaceTargetSmooth(target);
 
-                // optional: VFX waehrend ActiveTime mitdrehen
                 if (vfxAlignToTarget)
                     AlignVfxToTarget(target);
             }
@@ -195,13 +177,23 @@ public class PlayerAttack : MonoBehaviour
     }
 
     // ---------------------------
+    // Damage kommt ausschließlich aus CoreStatId.Damage
+    // ---------------------------
+    private float GetFinalDamageFromStats()
+    {
+        if (!stats) return 0f;
+        // Dein System: (baseVal + add) * (1 + mult)
+        // => baseVal muss bei Damage sinnvoll gesetzt sein
+        return Mathf.Max(0f, stats.GetValue(CoreStatId.Damage));
+    }
+
+    // ---------------------------
     // VFX Graph Helpers
     // ---------------------------
     private void PlayAttackVfx(Transform target)
     {
         if (!attackVfx) return;
 
-        // Optional: an Pivot snappen (falls VFX nicht als Child am Pivot haengt)
         Transform p = VfxPivot;
         if (p)
         {
@@ -256,7 +248,6 @@ public class PlayerAttack : MonoBehaviour
     {
         Vector3 center = transform.position;
 
-        // WICHTIG: Collide, damit Trigger-Collider gefunden werden
         int count = Physics.OverlapSphereNonAlloc(
             center,
             targetRange,
@@ -264,9 +255,6 @@ public class PlayerAttack : MonoBehaviour
             targetLayers,
             QueryTriggerInteraction.Collide
         );
-
-        if (debugLogs)
-            Debug.Log($"[PlayerAttack] Overlap count = {count} in Range {targetRange}.", this);
 
         float bestSqr = float.PositiveInfinity;
         Transform best = null;
@@ -339,7 +327,9 @@ public class PlayerAttack : MonoBehaviour
         var hp = other.GetComponent<HealthComponent>() ?? other.GetComponentInParent<HealthComponent>();
         if (!hp) return;
 
-        hp.ApplyDamage(damage, myHealth);
+        float finalDamage = GetFinalDamageFromStats();
+        if (finalDamage > 0f)
+            hp.ApplyDamage(finalDamage, myHealth);
 
         var rb = other.attachedRigidbody;
         if (rb)
@@ -360,6 +350,8 @@ public class PlayerAttack : MonoBehaviour
     }
 #endif
 }
+
+
 
 
 

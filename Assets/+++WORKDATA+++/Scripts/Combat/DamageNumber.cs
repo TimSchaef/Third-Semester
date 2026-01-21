@@ -1,49 +1,66 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup))]
 public class DamageNumber : MonoBehaviour
 {
-    [Header("Refs")]
-    public TMP_Text text;
+    [Header("Motion")]
+    [SerializeField] private float floatUpSpeed = 1.25f;
+    [SerializeField] private Vector3 randomOffset = new Vector3(0.25f, 0.10f, 0.25f);
 
-    [Header("Anim")]
-    public float lifetime = 0.8f;
-    public Vector3 startOffset = new Vector3(0f, 1.4f, 0f);
-    public Vector3 scatter = new Vector3(0.3f, 0.3f, 0.3f); // zufällige Abweichung
-    public float riseDistance = 1.2f;
+    [Header("Lifetime")]
+    [SerializeField] private float lifetime = 0.9f;
 
-    private float t;
-    private Vector3 startPos;
-    private Vector3 endPos;
-    private CanvasGroup cg;
-    private Camera cam;
+    [Header("Look")]
+    [SerializeField] private bool faceCamera = true;
 
-    void Awake()
+    private TextMeshProUGUI tmp;
+    private Color startColor;
+    private float timer;
+
+    public void Init(float amount)
     {
-        cg = GetComponent<CanvasGroup>();
-        cam = Camera.main;
+        if (!tmp) tmp = GetComponentInChildren<TextMeshProUGUI>(true);
+
+        if (tmp)
+        {
+            tmp.text = Mathf.RoundToInt(amount).ToString();
+            startColor = tmp.color;
+        }
+
+        // leichter Random-Offset, damit mehrere Zahlen nicht exakt übereinander liegen
+        transform.position += new Vector3(
+            Random.Range(-randomOffset.x, randomOffset.x),
+            Random.Range(0f, randomOffset.y),
+            Random.Range(-randomOffset.z, randomOffset.z)
+        );
     }
 
-    public void Init(string txt, Color color, Transform follow)
+    private void Update()
     {
-        if (text) { text.text = txt; text.color = color; }
-        var rnd = new Vector3(Random.Range(-scatter.x, scatter.x), Random.Range(0f, scatter.y), Random.Range(-scatter.z, scatter.z));
-        startPos = (follow ? follow.position : transform.position) + startOffset + rnd;
-        endPos   = startPos + Vector3.up * riseDistance;
-        transform.position = startPos;
-    }
+        timer += Time.deltaTime;
 
-    void Update()
-    {
-        t += Time.deltaTime / Mathf.Max(0.01f, lifetime);
-        float e = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t));
-        transform.position = Vector3.Lerp(startPos, endPos, e);
+        // nach oben floaten
+        transform.position += Vector3.up * floatUpSpeed * Time.deltaTime;
 
-        if (cam) transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
+        // zur Kamera drehen (optional)
+        if (faceCamera && Camera.main)
+        {
+            Vector3 dir = transform.position - Camera.main.transform.position;
+            if (dir.sqrMagnitude > 0.0001f)
+                transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+        }
 
-        cg.alpha = 1f - e;
-        if (t >= 1f) Destroy(gameObject);
+        // ausfaden
+        if (tmp)
+        {
+            float t = Mathf.Clamp01(timer / Mathf.Max(0.0001f, lifetime));
+            Color c = startColor;
+            c.a = Mathf.Lerp(startColor.a, 0f, t);
+            tmp.color = c;
+        }
+
+        if (timer >= lifetime)
+            Destroy(gameObject);
     }
 }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Damage
-  description: + 9 Damage
+  description: + 15% Damage
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -25,5 +25,5 @@ MonoBehaviour:
   prerequisites: []
   effects:
   - stat: 8
-    op: 0
-    value: 9
+    op: 1
+    value: 0.15

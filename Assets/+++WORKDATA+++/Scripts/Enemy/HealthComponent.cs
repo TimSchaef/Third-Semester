@@ -39,6 +39,19 @@ public class HealthComponent : MonoBehaviour
     private bool isDead = false;
 
     // ---------------------------
+    // Damage Numbers
+    // ---------------------------
+    [Header("Damage Numbers")]
+    [Tooltip("Prefab (WorldSpace Canvas + TMP) das die Zahl anzeigt.")]
+    [SerializeField] private DamageNumber damageNumberPrefab;
+
+    [Tooltip("Offset über dem Gegner, wo die Zahl erscheinen soll.")]
+    [SerializeField] private Vector3 damageNumberOffset = new Vector3(0f, 1.5f, 0f);
+
+    [Tooltip("Wenn true: Zahlen nur für Gegner (nicht Player).")]
+    [SerializeField] private bool damageNumbersOnlyForEnemies = true;
+
+    // ---------------------------
     // Damage Flash (ShaderGraph Tint)
     // ---------------------------
     [Header("Damage Flash")]
@@ -173,6 +186,9 @@ public class HealthComponent : MonoBehaviour
         float previousHP = CurrentHP;
         CurrentHP -= taken;
 
+        // >>> Damage Number anzeigen
+        SpawnDamageNumber(taken);
+
         FlashDamage();
 
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
@@ -219,6 +235,9 @@ public class HealthComponent : MonoBehaviour
 
         CurrentHP -= amount;
 
+        // >>> Damage Number anzeigen (auch für PureDamage)
+        SpawnDamageNumber(amount);
+
         FlashDamage();
 
         if (CurrentHP <= 0f)
@@ -253,6 +272,21 @@ public class HealthComponent : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    // ---------------------------
+    // Damage Numbers Implementierung
+    // ---------------------------
+    private void SpawnDamageNumber(float amount)
+    {
+        if (!damageNumberPrefab) return;
+
+        // optional: nur Gegner
+        if (damageNumbersOnlyForEnemies && CompareTag("Player")) return;
+
+        Vector3 pos = transform.position + damageNumberOffset;
+        DamageNumber dn = Instantiate(damageNumberPrefab, pos, Quaternion.identity);
+        dn.Init(amount);
     }
 
     // ---------------------------
@@ -362,6 +396,7 @@ public class HealthComponent : MonoBehaviour
         }
     }
 }
+
 
 
 

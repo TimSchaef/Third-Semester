@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Absorbiton 1
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Seal Break
+  displayName: Absorbtion
   description: '-7% Thorns
 
 
@@ -32,4 +32,4 @@ MonoBehaviour:
     value: -0.07
   - stat: 7
     op: 0
-    value: 0
+    value: 0.07
