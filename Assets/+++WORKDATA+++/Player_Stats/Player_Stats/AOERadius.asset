@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
   m_Name: AOERadius
   m_EditorClassIdentifier: 
-  statId: 11
+  statId: 12
   displayName: AOE Radius
   description: 'Changes the AOE Radius Value
 
@@ -21,5 +21,5 @@ MonoBehaviour:
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
-  baseValue: 12
+  baseValue: 0
   incrementPerLevel: 0

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
-  m_Name: MaxHP
+  m_Name: CritDamage
   m_EditorClassIdentifier: 
-  statId: 2
-  displayName: Max HP
-  description: 'Changes the Max HP
+  statId: 10
+  displayName: Crit Damage
+  description: 'Changes the Crit Damage Value
 
 '
   maxLevel: 1
   costPerUpgrade: 1
   requiredPlayerLevel: 1
   prerequisites: []
-  baseValue: 100
-  incrementPerLevel: 1
+  baseValue: 1
+  incrementPerLevel: 0

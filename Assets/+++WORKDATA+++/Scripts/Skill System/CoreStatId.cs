@@ -10,6 +10,7 @@ public enum CoreStatId
     LifeSteal,
     Damage,
     CritChance,
+    CritDamage,
     AoeDamage,
     AoeRadius,
     AoeTickRate,

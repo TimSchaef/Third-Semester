@@ -3,7 +3,12 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class LevelUpSkillChoiceController : MonoBehaviour
+
+
 {
+    [Header("UI Objects")]
+    [SerializeField] private GameObject[] disableObjectsWhenOpen;
+    
     [Header("Refs")]
     [SerializeField] private PlayerProgress progress;
     [SerializeField] private SkillTree tree;
@@ -185,6 +190,8 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void ApplyOpenState(bool open)
     {
+        Debug.Log($"[LevelUp] ApplyOpenState(open={open})");
+
         Cursor.visible = open;
         Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked;
 
@@ -196,7 +203,18 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             foreach (var comp in disableWhenOpen)
                 if (comp != null) comp.enabled = !open;
         }
+
+        if (disableObjectsWhenOpen != null)
+        {
+            foreach (var go in disableObjectsWhenOpen)
+            {
+                if (go == null) continue;
+                Debug.Log($"[LevelUp] Toggling GO: {go.name} -> {!open}");
+                go.SetActive(!open);
+            }
+        }
     }
+
 }
 
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: XPGain
   m_EditorClassIdentifier: 
   statId: 5
-  displayName: MoveSpeed
+  displayName: XP Gain
   description: 'Changes the Xp Gain
 
 '

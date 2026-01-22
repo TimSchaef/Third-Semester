@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
   m_Name: AOETickRate
   m_EditorClassIdentifier: 
-  statId: 12
+  statId: 13
   displayName: AOE Tick Rate
   description: 'Changes the AOE Tick Rate Value
 

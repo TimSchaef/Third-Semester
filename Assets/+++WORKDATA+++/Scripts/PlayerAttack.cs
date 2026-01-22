@@ -36,19 +36,10 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float yawOffsetDegrees = 180f;
 
     [Header("VFX Graph (Existing VisualEffect)")]
-    [Tooltip("Ziehe hier das VisualEffect-Objekt aus der Szene rein (VFX Graph).")]
     [SerializeField] private VisualEffect attackVfx;
-
-    [Tooltip("Optional: Wo die VFX sitzen soll. Wenn leer -> Pivot (attackPivot oder attackCollider.transform).")]
     [SerializeField] private Transform vfxPivot;
-
-    [Tooltip("Wenn true, wird die VFX beim Attack auf das Target ausgerichtet.")]
     [SerializeField] private bool vfxAlignToTarget = true;
-
-    [Tooltip("Eigener Yaw-Offset nur fuer VFX. Nutze 180, wenn die VFX entgegengesetzt zeigt.")]
     [SerializeField] private float vfxYawOffsetDegrees = 0f;
-
-    [Tooltip("Wenn true, wird beim Triggern ein Stop() gemacht (Reset), dann Play().")]
     [SerializeField] private bool vfxResetBeforePlay = true;
 
     [Header("Debug")]
@@ -65,7 +56,6 @@ public class PlayerAttack : MonoBehaviour
 
     private readonly Collider[] overlapBuffer = new Collider[64];
 
-    // Pivot-Fallback: wenn attackPivot leer ist, rotiert direkt der Collider-Transform
     private Transform Pivot => attackPivot ? attackPivot : (attackCollider ? attackCollider.transform : null);
     private Transform VfxPivot => vfxPivot ? vfxPivot : Pivot;
 
@@ -95,14 +85,12 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        // Cooldown runterzaehlen
         if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
             if (cooldownTimer < 0f) cooldownTimer = 0f;
         }
 
-        // Auto-Attack
         if (autoAttack && !attacking && cooldownTimer <= 0f)
         {
             autoTimer -= Time.deltaTime;
@@ -123,7 +111,6 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    // Optional: weiterhin per Button moeglich
     public void Attack(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed) return;
@@ -144,13 +131,9 @@ public class PlayerAttack : MonoBehaviour
     {
         attacking = true;
 
-        // Cooldown uses AttackSpeed
         cooldownTimer = GetEffectiveCooldown();
 
-        // Hitbox ausrichten
         FaceTargetInstant(target);
-
-        // VFX triggern
         PlayAttackVfx(target);
 
         if (attackCollider) attackCollider.enabled = true;
@@ -176,20 +159,28 @@ public class PlayerAttack : MonoBehaviour
         attacking = false;
     }
 
-    // ---------------------------
-    // Damage kommt ausschließlich aus CoreStatId.Damage
-    // ---------------------------
-    private float GetFinalDamageFromStats()
+    // Damage inkl. Crit:
+    // CritChance: 0..1
+    // CritDamage: +% (0.5 => +50%)
+    private float GetFinalDamageFromStats(out bool isCrit)
     {
+        isCrit = false;
         if (!stats) return 0f;
-        // Dein System: (baseVal + add) * (1 + mult)
-        // => baseVal muss bei Damage sinnvoll gesetzt sein
-        return Mathf.Max(0f, stats.GetValue(CoreStatId.Damage));
+
+        float dmg = Mathf.Max(0f, stats.GetValue(CoreStatId.Damage));
+
+        float critChance = Mathf.Clamp01(stats.GetValue(CoreStatId.CritChance));
+        float critDamage = Mathf.Max(0f, stats.GetValue(CoreStatId.CritDamage));
+
+        if (critChance > 0f && Random.value <= critChance)
+        {
+            isCrit = true;
+            dmg *= (1f + critDamage);
+        }
+
+        return dmg;
     }
 
-    // ---------------------------
-    // VFX Graph Helpers
-    // ---------------------------
     private void PlayAttackVfx(Transform target)
     {
         if (!attackVfx) return;
@@ -230,17 +221,13 @@ public class PlayerAttack : MonoBehaviour
         attackVfx.transform.rotation = desired;
     }
 
-    // ---------------------------
-    // AttackSpeed -> Cooldown
-    // ---------------------------
     private float GetEffectiveCooldown()
     {
         float atkSpeed = 1f;
-
         if (stats != null)
             atkSpeed = stats.GetValue(CoreStatId.AttackSpeed);
 
-        atkSpeed = Mathf.Max(0.01f, atkSpeed); // safety
+        atkSpeed = Mathf.Max(0.01f, atkSpeed);
         return Mathf.Max(0.01f, baseAttackCooldown) / atkSpeed;
     }
 
@@ -327,9 +314,11 @@ public class PlayerAttack : MonoBehaviour
         var hp = other.GetComponent<HealthComponent>() ?? other.GetComponentInParent<HealthComponent>();
         if (!hp) return;
 
-        float finalDamage = GetFinalDamageFromStats();
+        bool isCrit;
+        float finalDamage = GetFinalDamageFromStats(out isCrit);
+
         if (finalDamage > 0f)
-            hp.ApplyDamage(finalDamage, myHealth);
+            hp.ApplyDamage(finalDamage, myHealth, isCrit);
 
         var rb = other.attachedRigidbody;
         if (rb)

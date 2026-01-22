@@ -13,17 +13,36 @@ public class DamageNumber : MonoBehaviour
     [Header("Look")]
     [SerializeField] private bool faceCamera = true;
 
+    [Header("Crit Look")]
+    [SerializeField] private Color critColor = Color.yellow;
+    [SerializeField] private float critSizeMultiplier = 1.25f;
+
     private TextMeshProUGUI tmp;
     private Color startColor;
     private float timer;
+    private float baseFontSize;
 
-    public void Init(float amount)
+    public void Init(float amount, bool isCrit = false)
     {
         if (!tmp) tmp = GetComponentInChildren<TextMeshProUGUI>(true);
 
         if (tmp)
         {
             tmp.text = Mathf.RoundToInt(amount).ToString();
+
+            if (baseFontSize <= 0f)
+                baseFontSize = tmp.fontSize;
+
+            if (isCrit)
+            {
+                tmp.color = critColor;
+                tmp.fontSize = baseFontSize * Mathf.Max(1f, critSizeMultiplier);
+            }
+            else
+            {
+                tmp.fontSize = baseFontSize; // reset
+            }
+
             startColor = tmp.color;
         }
 

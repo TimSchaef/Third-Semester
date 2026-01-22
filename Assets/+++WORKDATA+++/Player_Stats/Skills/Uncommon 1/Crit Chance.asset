@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Crit Chance
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Crit chance
+  displayName: Crit Chance
   description: + 7% Chrit Chance
   icon: {fileID: 0}
   rarity: 1

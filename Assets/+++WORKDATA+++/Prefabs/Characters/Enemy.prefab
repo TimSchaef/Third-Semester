@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 747fc75d1a215ea4087e8b8bae2befdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseXP: 300
+  baseXP: 50
   xpDropPrefab: {fileID: 6285680339925368690, guid: 03d9c11183257194481ffe2044d4aabd, type: 3}
   dropOffset: {x: 0, y: 1.5, z: 0}
 --- !u!1 &1819689528345035555

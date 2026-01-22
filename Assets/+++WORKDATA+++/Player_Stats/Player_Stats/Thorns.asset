@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Thorns
   m_EditorClassIdentifier: 
   statId: 6
-  displayName: MoveSpeed
+  displayName: Thorns
   description: 'Changes the Thorns DMG
 
 '
