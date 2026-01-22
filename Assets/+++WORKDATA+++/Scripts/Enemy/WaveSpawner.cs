@@ -50,6 +50,18 @@ public class WaveSpawner : MonoBehaviour
     [Header("Difficulty Scaling")]
     public float hpMultiplierPerWave = 0.2f;
 
+    [Header("Spawn Indicator")]
+    public GameObject spawnIndicatorPrefab;
+
+    [Tooltip("Wie lange der Indicator angezeigt wird, bevor der Gegner spawnt.")]
+    public float indicatorDuration = 1.0f;
+
+    [Tooltip("Y-Offset des Indicators über dem Boden (gegen Flackern/Z-Fighting).")]
+    public float indicatorYOffset = 0.05f;
+
+    [Tooltip("Rotation des Indicators (z.B. X=90, damit ein Sprite flach auf dem Boden liegt).")]
+    public Vector3 indicatorRotationEuler = new Vector3(90f, 0f, 0f);
+
     [Header("Runtime")]
     public int currentWave = 0;
     public int enemiesAlive = 0;
@@ -112,8 +124,39 @@ public class WaveSpawner : MonoBehaviour
         if (prefab == null)
             return;
 
+        // Spawn mit vorherigem Boden-Indicator
+        StartCoroutine(SpawnWithIndicatorRoutine(prefab, spawnPos));
+    }
+
+    private IEnumerator SpawnWithIndicatorRoutine(GameObject enemyPrefab, Vector3 spawnPos)
+    {
+        GameObject indicator = null;
+
+        // Indicator-Position mit Y-Offset
+        Vector3 indicatorPos = spawnPos;
+        indicatorPos.y += indicatorYOffset;
+
+        // Indicator instantiieren (mit Rotation um X=90°)
+        if (spawnIndicatorPrefab != null)
+        {
+            indicator = Instantiate(
+                spawnIndicatorPrefab,
+                indicatorPos,
+                Quaternion.Euler(indicatorRotationEuler)
+            );
+        }
+
+        // Warten bis der Spawn passieren soll
+        if (indicatorDuration > 0f)
+            yield return new WaitForSeconds(indicatorDuration);
+
+        // Indicator entfernen
+        if (indicator != null)
+            Destroy(indicator);
+
+        // Gegner spawnen
         GameObject enemyGO =
-            Instantiate(prefab, spawnPos, Quaternion.identity);
+            Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
 
         enemiesAlive++;
 

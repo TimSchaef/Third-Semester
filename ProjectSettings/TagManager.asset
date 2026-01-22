@@ -14,8 +14,8 @@ TagManager:
   - Player
   - PlayerAttack
   - Foe
-  - 
-  - 
+  - EnemyProjectile
+  - Ground
   - 
   - 
   - 
