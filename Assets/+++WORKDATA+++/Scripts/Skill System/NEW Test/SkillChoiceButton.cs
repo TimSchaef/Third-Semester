@@ -9,17 +9,16 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 {
     [Header("UI")]
     [SerializeField] private TMP_Text title;
+    [SerializeField] private TMP_Text infoText;          // <-- Info-Text bleibt erhalten
     [SerializeField] private Image icon;
+
+    [Header("Rarity Visuals")]
+    [SerializeField] private Image background;
+    [SerializeField] private Color commonColor = Color.white;
+    [SerializeField] private Color uncommonColor = Color.green;
 
     [Header("Tooltip")]
     [SerializeField] private SkillTooltipUI tooltip;
-
-    [Header("Per-Button Info Text (Inspector)")]
-    [TextArea]
-    [SerializeField] private string buttonInfoText;
-
-    [Tooltip("Wenn true: hängt automatisch die Skill.description an den Button-Text an.")]
-    [SerializeField] private bool appendSkillDescription = true;
 
     private Button btn;
     private SkillDefinition boundSkill;
@@ -35,37 +34,59 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         btn.interactable = interactable && skill != null;
 
-        if (title) title.text = skill ? skill.displayName : "";
+        // Titel
+        if (title)
+            title.text = skill ? skill.displayName : "";
+
+        // Info-Text
+        if (infoText)
+            infoText.text = skill ? skill.description : "";
+
+        // Icon
         if (icon)
         {
             icon.enabled = skill && skill.icon;
             icon.sprite = skill ? skill.icon : null;
         }
 
+        // Rarity-Farbe anwenden
+        ApplyRarityColor(skill);
+
         btn.onClick.RemoveAllListeners();
         if (skill != null && onPicked != null)
             btn.onClick.AddListener(() => onPicked(boundSkill));
     }
 
+    private void ApplyRarityColor(SkillDefinition skill)
+    {
+        if (background == null) return;
+
+        if (skill == null)
+        {
+            background.color = commonColor;
+            return;
+        }
+
+        switch (skill.rarity)
+        {
+            case SkillRarity.Common:
+                background.color = commonColor;
+                break;
+
+            case SkillRarity.Uncommon:
+                background.color = uncommonColor;
+                break;
+
+            default:
+                background.color = commonColor;
+                break;
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (tooltip == null || boundSkill == null) return;
-
-        // Button-eigener Text (pro Prefab/Instanz einstellbar)
-        string info = buttonInfoText ?? "";
-
-        if (appendSkillDescription)
-        {
-            string desc = boundSkill.description ?? "";
-            if (!string.IsNullOrWhiteSpace(desc))
-            {
-                if (!string.IsNullOrWhiteSpace(info))
-                    info += "\n\n";
-                info += desc;
-            }
-        }
-
-        tooltip.ShowSkill(boundSkill, info);
+        tooltip.ShowSkill(boundSkill, boundSkill.description);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -74,6 +95,9 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
             tooltip.SetDefault();
     }
 }
+
+
+
 
 
 

@@ -16,7 +16,6 @@ public class SkillTooltipUI : MonoBehaviour
 
     [Header("Default")]
     [SerializeField] private string defaultTitle = "Wähle ein Upgrade";
-    [TextArea] [SerializeField] private string defaultInfo = "";
     [SerializeField] private string defaultStats = "";
 
     private const string PREVIEW_SOURCE_ID = "skill_preview";
@@ -26,11 +25,11 @@ public class SkillTooltipUI : MonoBehaviour
         ClearPreview();
 
         if (titleText) titleText.text = defaultTitle;
-        if (infoText) infoText.text = defaultInfo;
+        if (infoText) infoText.text = ""; // kein Default-Info-Text mehr
         if (statsText) statsText.text = defaultStats;
     }
 
-    public void ShowSkill(SkillDefinition skill, string infoFromButton)
+    public void ShowSkill(SkillDefinition skill, string infoTextFromSkill)
     {
         ClearPreview();
 
@@ -41,7 +40,7 @@ public class SkillTooltipUI : MonoBehaviour
         }
 
         if (titleText) titleText.text = skill.displayName;
-        if (infoText) infoText.text = infoFromButton ?? "";
+        if (infoText) infoText.text = infoTextFromSkill ?? "";
         if (statsText) statsText.text = BuildStatsPreview(skill);
     }
 
@@ -90,5 +89,7 @@ public class SkillTooltipUI : MonoBehaviour
             statsManager.RemoveEffectsFrom(PREVIEW_SOURCE_ID);
     }
 }
+
+
 
 
