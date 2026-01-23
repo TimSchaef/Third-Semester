@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class LevelUpSkillChoiceController : MonoBehaviour
-
-
 {
-    [Header("UI Objects")]
-    [SerializeField] private GameObject[] disableObjectsWhenOpen;
-    
     [Header("Refs")]
     [SerializeField] private PlayerProgress progress;
     [SerializeField] private SkillTree tree;
@@ -20,9 +16,18 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     [SerializeField] private GameObject panelRoot;
     [SerializeField] private SkillChoiceButton[] choiceButtons; // 3
 
+    [Header("Refresh")]
+    [Tooltip("Optional: Assign a UI Button to allow one reroll per shown panel.")]
+    [SerializeField] private Button refreshButton;
+    [SerializeField] private bool allowRefreshOncePerPanel = true;
+
     [Header("Behavior")]
     [SerializeField] private bool pauseGameOnOpen = true;
     [SerializeField] private MonoBehaviour[] disableWhenOpen;
+
+    [Header("Disable Root While Open")]
+    [Tooltip("Dieses Root-GameObject wird deaktiviert, solange das Skill-Panel offen ist, und beim Schließen wiederhergestellt.")]
+    [SerializeField] private GameObject rootToDisableWhileOpen;
 
     [Header("Win Condition")]
     [Tooltip("How many level-up choice panels must the player complete to win.")]
@@ -36,13 +41,20 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     public UnityEvent onWin;
 
     private bool isOpen;
-    public bool IsOpen => isOpen; // <- WICHTIG: Status nach außen (für Pause-Lock)
+    public bool IsOpen => isOpen;
 
     private int pendingLevelUps;
     private readonly Queue<int> pendingLevels = new Queue<int>();
 
     private int panelsShown;
     private bool hasWon;
+
+    // Refresh state
+    private bool refreshUsedThisPanel;
+
+    // Root disable state (restore correctly)
+    private bool rootPrevActive;
+    private bool rootStateCached;
 
     void Start()
     {
@@ -56,6 +68,18 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         pendingLevelUps = 0;
         panelsShown = 0;
         hasWon = false;
+        refreshUsedThisPanel = false;
+
+        // Ensure cache is clean on start
+        rootStateCached = false;
+
+        if (refreshButton != null)
+        {
+            refreshButton.onClick.RemoveAllListeners();
+            refreshButton.onClick.AddListener(OnRefreshPressed);
+            refreshButton.gameObject.SetActive(true);
+        }
+        UpdateRefreshButton();
 
         if (progress != null)
             progress.OnLevelUp += HandleLevelUp;
@@ -75,32 +99,49 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         pendingLevels.Enqueue(newLevel);
 
         if (!isOpen)
-            OpenAndShowChoicesForNextPendingLevel();
+            OpenAndShowChoicesForNextPendingLevel(countAsPanel: true);
     }
 
-    private void OpenAndShowChoicesForNextPendingLevel()
+    private void OpenAndShowChoicesForNextPendingLevel(bool countAsPanel)
     {
         if (hasWon) return;
         if (tree == null || progress == null || panelRoot == null) return;
         if (pendingLevels.Count == 0) return;
 
-        isOpen = true;
-        panelRoot.SetActive(true);
-        ApplyOpenState(true);
-
-        // count a "panel completed" as each time we present a choice set
-        panelsShown++;
-
-        // Win check happens when panel is shown (you can change to "after pick" if you prefer)
-        if (panelsShown >= panelsToWin)
+        if (!isOpen)
         {
-            TriggerWin();
-            return;
+            isOpen = true;
+            panelRoot.SetActive(true);
+
+            // Disable the chosen root while the skill panel is open
+            SetRootDisabledWhileOpen(true);
+
+            ApplyOpenState(true);
+        }
+        else
+        {
+            panelRoot.SetActive(true);
+
+            // Enforce disabled root even if something else re-enabled it
+            SetRootDisabledWhileOpen(true);
+        }
+
+        if (countAsPanel)
+        {
+            panelsShown++;
+
+            // reset refresh for this panel
+            refreshUsedThisPanel = false;
+
+            if (panelsShown >= panelsToWin)
+            {
+                TriggerWin();
+                return;
+            }
         }
 
         int level = pendingLevels.Peek();
 
-        // Determine pool
         List<SkillDefinition> choices;
         if (poolConfig != null && poolConfig.TryGetPoolForLevel(level, out var poolSkills, out var allowFallback))
         {
@@ -108,11 +149,9 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
         else
         {
-            // default: global pool
             choices = tree.GetRandomUnlockableSkillsWeightedFrom(tree.allSkills, 3, allowFallbackToGlobal: false);
         }
 
-        // If pool yields fewer than 3, buttons will be disabled for missing items
         for (int i = 0; i < choiceButtons.Length; i++)
         {
             var btn = choiceButtons[i];
@@ -121,6 +160,8 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             SkillDefinition skill = (i < choices.Count) ? choices[i] : null;
             btn.Setup(skill, OnPickSkill, interactable: (skill != null));
         }
+
+        UpdateRefreshButton();
     }
 
     private void OnPickSkill(SkillDefinition skill)
@@ -131,18 +172,16 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         bool ok = tree.TryUnlock(skill);
         if (!ok)
         {
-            // reroll same level
-            OpenAndShowChoicesForNextPendingLevel();
+            OpenAndShowChoicesForNextPendingLevel(countAsPanel: false);
             return;
         }
 
-        // consume one pending level
         if (pendingLevels.Count > 0) pendingLevels.Dequeue();
         pendingLevelUps = Mathf.Max(0, pendingLevelUps - 1);
 
         if (pendingLevelUps > 0)
         {
-            OpenAndShowChoicesForNextPendingLevel();
+            OpenAndShowChoicesForNextPendingLevel(countAsPanel: true);
         }
         else
         {
@@ -150,15 +189,40 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
     }
 
+    public void OnRefreshPressed()
+    {
+        if (!allowRefreshOncePerPanel) return;
+        if (hasWon) return;
+        if (!isOpen) return;
+        if (refreshUsedThisPanel) return;
+        if (pendingLevels.Count == 0) return;
+
+        refreshUsedThisPanel = true;
+
+        OpenAndShowChoicesForNextPendingLevel(countAsPanel: false);
+        UpdateRefreshButton();
+    }
+
+    private void UpdateRefreshButton()
+    {
+        if (refreshButton == null) return;
+
+        refreshButton.interactable =
+            allowRefreshOncePerPanel &&
+            isOpen &&
+            !hasWon &&
+            !refreshUsedThisPanel &&
+            pendingLevels.Count > 0;
+    }
+
     private void TriggerWin()
     {
         hasWon = true;
 
-        // close choice UI
         if (panelRoot != null)
             panelRoot.SetActive(false);
 
-        // keep game paused by default when winning
+        // keep game paused
         if (pauseGameOnOpen)
             Time.timeScale = 0f;
 
@@ -171,9 +235,13 @@ public class LevelUpSkillChoiceController : MonoBehaviour
                 if (comp != null) comp.enabled = false;
         }
 
+        // Keep root disabled on win (end state)
+        SetRootDisabledWhileOpen(true);
+
         if (winPanel != null)
             winPanel.SetActive(true);
 
+        UpdateRefreshButton();
         onWin?.Invoke();
     }
 
@@ -186,6 +254,11 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             panelRoot.SetActive(false);
 
         ApplyOpenState(false);
+
+        // Restore root state when closing
+        SetRootDisabledWhileOpen(false);
+
+        UpdateRefreshButton();
     }
 
     private void ApplyOpenState(bool open)
@@ -203,19 +276,39 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             foreach (var comp in disableWhenOpen)
                 if (comp != null) comp.enabled = !open;
         }
+    }
 
-        if (disableObjectsWhenOpen != null)
+    /// <summary>
+    /// Disables rootToDisableWhileOpen while open==true, and restores its previous activeSelf when open==false.
+    /// Designed to be safe (won't permanently change state) and resilient (re-applies disable while open).
+    /// </summary>
+    private void SetRootDisabledWhileOpen(bool open)
+    {
+        if (rootToDisableWhileOpen == null) return;
+
+        if (open)
         {
-            foreach (var go in disableObjectsWhenOpen)
+            // Capture the previous state once per open-cycle
+            if (!rootStateCached)
             {
-                if (go == null) continue;
-                Debug.Log($"[LevelUp] Toggling GO: {go.name} -> {!open}");
-                go.SetActive(!open);
+                rootPrevActive = rootToDisableWhileOpen.activeSelf;
+                rootStateCached = true;
+            }
+
+            // Enforce disabled while open
+            if (rootToDisableWhileOpen.activeSelf)
+                rootToDisableWhileOpen.SetActive(false);
+        }
+        else
+        {
+            // Restore exactly to the captured state
+            if (rootStateCached)
+            {
+                rootToDisableWhileOpen.SetActive(rootPrevActive);
+                rootStateCached = false;
             }
         }
     }
-
 }
-
 
 

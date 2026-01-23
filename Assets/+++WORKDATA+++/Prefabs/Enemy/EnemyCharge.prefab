@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 0}
-  fallbackMaxHP: 40
+  fallbackMaxHP: 20
   maxHpMultiplier: 1
   damageNumberPrefab: {fileID: 4582129948371270225, guid: 3186ab648e54c5b46ae939680be281b3, type: 3}
   damageNumberOffset: {x: 0, y: 8, z: 0}

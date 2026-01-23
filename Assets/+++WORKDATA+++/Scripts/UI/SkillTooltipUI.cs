@@ -1,127 +1,94 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SkillTooltipUI : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject root;          // TooltipPanel
     [SerializeField] private TMP_Text titleText;
-    [SerializeField] private TMP_Text descText;
-    [SerializeField] private TMP_Text extraText;
-    [SerializeField] private Image iconImage;
-    
-    [SerializeField] private TMP_Text title;
-    [SerializeField] private TMP_Text description;
+    [SerializeField] private TMP_Text infoText;
+    [SerializeField] private TMP_Text statsText;
 
-    private void Awake()
+    [Header("Refs")]
+    [SerializeField] private PlayerStatsManager statsManager;
+
+    [Header("Default")]
+    [SerializeField] private string defaultTitle = "Wähle ein Upgrade";
+    [TextArea] [SerializeField] private string defaultInfo = "";
+    [SerializeField] private string defaultStats = "";
+
+    private const string PREVIEW_SOURCE_ID = "skill_preview";
+
+    public void SetDefault()
     {
-        Hide();
+        ClearPreview();
+
+        if (titleText) titleText.text = defaultTitle;
+        if (infoText) infoText.text = defaultInfo;
+        if (statsText) statsText.text = defaultStats;
     }
 
-    public void ShowFor(SkillDefinition skill)
+    public void ShowSkill(SkillDefinition skill, string infoFromButton)
     {
-        if (skill == null) { Hide(); return; }
+        ClearPreview();
 
-        if (root) root.SetActive(true);
+        if (skill == null)
+        {
+            SetDefault();
+            return;
+        }
 
         if (titleText) titleText.text = skill.displayName;
-        if (descText) descText.text = skill.description;
-
-        if (iconImage)
-        {
-            iconImage.enabled = skill.icon != null;
-            iconImage.sprite = skill.icon;
-        }
-
-        if (extraText)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine($"Cost: {skill.costSkillPoints}  |  Req Lvl: {skill.requiredPlayerLevel}");
-
-            if (skill.effects != null && skill.effects.Count > 0)
-            {
-                sb.AppendLine();
-                sb.AppendLine("Effects:");
-                foreach (var e in skill.effects)
-                    sb.AppendLine($"- {e.stat} {e.op} {e.value}");
-            }
-
-            extraText.text = sb.ToString().TrimEnd();
-        }
+        if (infoText) infoText.text = infoFromButton ?? "";
+        if (statsText) statsText.text = BuildStatsPreview(skill);
     }
 
-    public void ShowForMultiple(SkillDefinition[] skills)
+    private string BuildStatsPreview(SkillDefinition skill)
     {
-        if (skills == null || skills.Length == 0) { Hide(); return; }
+        if (statsManager == null || skill.effects == null || skill.effects.Count == 0)
+            return "";
 
-        // pick a primary for title/icon
-        var primary = skills.FirstOrDefault(s => s != null);
-        if (primary == null) { Hide(); return; }
+        var affectedStats = skill.effects.Select(e => e.stat).Distinct().ToList();
 
-        if (root) root.SetActive(true);
+        var before = new Dictionary<CoreStatId, float>();
+        foreach (var stat in affectedStats)
+            before[stat] = statsManager.GetValue(stat);
 
-        if (titleText) titleText.text = primary.displayName + (skills.Length > 1 ? $" (+{skills.Length - 1})" : "");
-        if (descText) descText.text = primary.description;
+        statsManager.ApplyEffectsFrom(PREVIEW_SOURCE_ID, skill.effects);
 
-        if (iconImage)
+        var after = new Dictionary<CoreStatId, float>();
+        foreach (var stat in affectedStats)
+            after[stat] = statsManager.GetValue(stat);
+
+        ClearPreview();
+
+        var sb = new StringBuilder();
+        foreach (var stat in affectedStats)
         {
-            iconImage.enabled = primary.icon != null;
-            iconImage.sprite = primary.icon;
+            float b = before[stat];
+            float a = after[stat];
+
+            if (Mathf.Approximately(a, b))
+                continue;
+
+            sb.Append(StatTextUtil.GetDisplayName(stat))
+              .Append(": ")
+              .Append(StatTextUtil.FormatValue(stat, b))
+              .Append(" → ")
+              .Append(StatTextUtil.FormatValue(stat, a))
+              .AppendLine();
         }
 
-        if (extraText)
-        {
-            int totalCost = skills.Where(s => s != null).Sum(s => s.costSkillPoints);
-            int maxReq = skills.Where(s => s != null).Max(s => s.requiredPlayerLevel);
-
-            var sb = new StringBuilder();
-            sb.AppendLine($"{skills.Length} Skills  |  Total Cost: {totalCost}  |  Req Lvl: {maxReq}");
-
-            // list effects grouped per skill
-            sb.AppendLine();
-            sb.AppendLine("Effects:");
-            foreach (var s in skills.Where(s => s != null))
-            {
-                sb.AppendLine($"{s.displayName}:");
-                if (s.effects != null && s.effects.Count > 0)
-                {
-                    foreach (var e in s.effects)
-                        sb.AppendLine($"- {e.stat} {e.op} {e.value}");
-                }
-                else
-                {
-                    sb.AppendLine("- (none)");
-                }
-                sb.AppendLine();
-            }
-
-            extraText.text = sb.ToString().TrimEnd();
-        }
+        return sb.ToString().TrimEnd();
     }
 
-    public void Hide()
+    private void ClearPreview()
     {
-        if (root) root.SetActive(false);
+        if (statsManager != null)
+            statsManager.RemoveEffectsFrom(PREVIEW_SOURCE_ID);
     }
-    
-    
-
-        public void SetSkill(SkillDefinition skill)
-        {
-            if (!skill)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
-
-            if (title) title.text = skill.displayName;
-            if (description) description.text = skill.description;
-
-            gameObject.SetActive(true);
-        }
-    
 }
+
 
