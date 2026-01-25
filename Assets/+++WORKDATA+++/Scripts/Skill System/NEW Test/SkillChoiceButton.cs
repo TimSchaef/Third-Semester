@@ -54,7 +54,14 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         btn.onClick.RemoveAllListeners();
         if (skill != null && onPicked != null)
-            btn.onClick.AddListener(() => onPicked(boundSkill));
+        {
+            btn.onClick.AddListener(() =>
+            {
+                SoundManager.Instance.PlaySound2D("ButtonClick");
+                onPicked(boundSkill);
+            });
+        }
+           
     }
 
     private void ApplyRarityColor(SkillDefinition skill)
@@ -86,6 +93,8 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (tooltip == null || boundSkill == null) return;
+        
+        SoundManager.Instance.PlaySound2D("skillHover");
         tooltip.ShowSkill(boundSkill, boundSkill.description);
     }
 

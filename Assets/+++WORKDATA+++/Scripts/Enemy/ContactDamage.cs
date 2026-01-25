@@ -126,7 +126,8 @@ public class ContactDamage : MonoBehaviour
         Vector3 dir = (other.transform.position - transform.position).normalized;
 
         targetHp.ApplyDamage(damage, _myHealth);
-
+        
+        
         var enemyMove = GetComponentInParent<EnemyMovement>();
         if (enemyMove != null)
         {

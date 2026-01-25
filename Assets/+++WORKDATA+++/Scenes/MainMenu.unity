@@ -520,7 +520,7 @@ MonoBehaviour:
   - TrackName: MainMenu
     clip: {fileID: 8300000, guid: 1ff0ca2b6e340784bbae7dfc936c70a5, type: 3}
   - TrackName: Game
-    clip: {fileID: 8300000, guid: 9ad6409476183ba45aad108f6b84cb5e, type: 3}
+    clip: {fileID: 8300000, guid: 221697341e42ed94b9a53e643432096e, type: 3}
 --- !u!114 &248378380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,7 +550,25 @@ MonoBehaviour:
   soundEffects:
   - groupID: ButtonClick
     clips:
-    - {fileID: 8300000, guid: c09d6cc448e0a7b4d97ac57297c0d29c, type: 3}
+    - {fileID: 8300000, guid: dfe1293d82aec184eae8996c773c877d, type: 3}
+  - groupID: attack
+    clips:
+    - {fileID: 8300000, guid: b0a0ffdbb7b0fd847b8d27dda633e3f0, type: 3}
+  - groupID: attackHit
+    clips:
+    - {fileID: 8300000, guid: ec69a68d1f41c11418e58d195ca7cbc3, type: 3}
+  - groupID: attackCritHit
+    clips:
+    - {fileID: 8300000, guid: d16757e1544703b4fa8bcc5eb4e7b624, type: 3}
+  - groupID: playerHit
+    clips:
+    - {fileID: 8300000, guid: 963b040543ec9a84bb1a94521569c0d3, type: 3}
+  - groupID: xp
+    clips:
+    - {fileID: 8300000, guid: 327aa3990114438419efb02036d8ef7c, type: 3}
+  - groupID: skillHover
+    clips:
+    - {fileID: 8300000, guid: ed82cef072156504fa485370bbacd864, type: 3}
 --- !u!4 &248378382
 Transform:
   m_ObjectHideFlags: 0
@@ -1936,6 +1954,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 7960797405460796626, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
+      propertyPath: m_text
+      value: Close
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2174,6 +2196,10 @@ PrefabInstance:
     - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7960797405460796626, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
+      propertyPath: m_text
+      value: Close
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -2440,18 +2466,6 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2725,6 +2739,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 248378380}
+    - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlaySound2D
+      objectReference: {fileID: 0}
     - target: {fileID: 7960797405460796626, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
       propertyPath: m_text
       value: Credits
@@ -4488,6 +4506,10 @@ PrefabInstance:
       value: SoundManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
+      value: ButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
@@ -4931,7 +4953,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: 
+      value: ButtonClick
       objectReference: {fileID: 0}
     - target: {fileID: 6943707120699079169, guid: e3ea95f7e643d7e4a9a76cede8088948, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

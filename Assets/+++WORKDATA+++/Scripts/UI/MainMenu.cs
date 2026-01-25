@@ -74,7 +74,7 @@ public class MainMenu : MonoBehaviour
     
     private void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("Game-Random Skills");
         MusicManager.Instance.PlayMusic("Game");
     }
     

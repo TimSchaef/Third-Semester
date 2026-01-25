@@ -113,6 +113,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext ctx)
     {
+        
         if (!ctx.performed) return;
         if (attacking) return;
         if (cooldownTimer > 0f) return;
@@ -130,6 +131,8 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator DoAttack(Transform target)
     {
         attacking = true;
+        
+        SoundManager.Instance.PlaySound3D("attack", transform.position);
 
         cooldownTimer = GetEffectiveCooldown();
 
@@ -318,7 +321,19 @@ public class PlayerAttack : MonoBehaviour
         float finalDamage = GetFinalDamageFromStats(out isCrit);
 
         if (finalDamage > 0f)
+        {
             hp.ApplyDamage(finalDamage, myHealth, isCrit);
+            
+            if (isCrit)
+            {
+                SoundManager.Instance.PlaySound3D("attackCritHit", other.transform.position);
+            }
+            else
+            {
+                SoundManager.Instance.PlaySound3D("attackHit", other.transform.position);
+            }
+        }
+
 
         var rb = other.attachedRigidbody;
         if (rb)

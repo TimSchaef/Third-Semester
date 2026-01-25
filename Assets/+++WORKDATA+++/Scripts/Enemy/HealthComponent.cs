@@ -173,7 +173,13 @@ public class HealthComponent : MonoBehaviour
 
         SpawnDamageNumber(taken, isCrit);
         FlashDamage();
+        
+        if (CompareTag("Player"))
+        {
+            SoundManager.Instance.PlaySound3D("playerHit", transform.position);
+        }
 
+        
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
 
         float thornsPct = 0f;

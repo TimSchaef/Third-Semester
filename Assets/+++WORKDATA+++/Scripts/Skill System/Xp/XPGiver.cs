@@ -17,6 +17,8 @@ public class XPGiver : MonoBehaviour
         // XPGain-Stat als Multiplikator (1.0 = normal, 1.2 = +20% XP, 0.5 = -50% XP)
         float mult = Mathf.Max(0f, stats.GetValue(CoreStatId.XPGain));
         progress.AddXPMultiplied(baseAmount, mult);
+        
+        SoundManager.Instance.PlaySound3D("xp", transform.position);
     }
 }
 
