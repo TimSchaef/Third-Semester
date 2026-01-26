@@ -31,7 +31,7 @@ public class WaveSpawner : MonoBehaviour
     public int startEnemies = 3;
     public int enemiesPerWaveIncrease = 2;
 
-    [Header("Wave Timing")]
+    [Header("Wave Timing (between groups)")]
     [Tooltip("Basis-Zeit zwischen zwei Waves.")]
     public float baseTimeBetweenWaves = 5f;
 
@@ -124,7 +124,6 @@ public class WaveSpawner : MonoBehaviour
         if (prefab == null)
             return;
 
-        // Spawn mit vorherigem Boden-Indicator
         StartCoroutine(SpawnWithIndicatorRoutine(prefab, spawnPos));
     }
 
@@ -132,11 +131,9 @@ public class WaveSpawner : MonoBehaviour
     {
         GameObject indicator = null;
 
-        // Indicator-Position mit Y-Offset
         Vector3 indicatorPos = spawnPos;
         indicatorPos.y += indicatorYOffset;
 
-        // Indicator instantiieren (mit Rotation um X=90°)
         if (spawnIndicatorPrefab != null)
         {
             indicator = Instantiate(
@@ -146,19 +143,26 @@ public class WaveSpawner : MonoBehaviour
             );
         }
 
-        // Warten bis der Spawn passieren soll
         if (indicatorDuration > 0f)
             yield return new WaitForSeconds(indicatorDuration);
 
-        // Indicator entfernen
         if (indicator != null)
             Destroy(indicator);
 
-        // Gegner spawnen
         GameObject enemyGO =
             Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
 
         enemiesAlive++;
+
+        // -------- SPAWN VFX TRIGGER --------
+        var dissolve = enemyGO.GetComponent<dissolve2D>();
+        if (dissolve != null)
+        {
+            dissolve.isSpawning = true;
+            dissolve.playOnStart = false;
+            dissolve.Spawn();
+        }
+        // ----------------------------------
 
         var ai = enemyGO.GetComponent<EnemyMovement>();
         if (ai != null)
@@ -205,7 +209,6 @@ public class WaveSpawner : MonoBehaviour
                 return e.prefab;
         }
 
-        // Fallback
         for (int i = enemies.Length - 1; i >= 0; i--)
         {
             var e = enemies[i];
@@ -275,6 +278,7 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 }
+
 
 
 

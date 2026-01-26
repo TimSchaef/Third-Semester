@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HP Regen
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: HP regen
+  displayName: Eternal Healing
   description: + 0.4 HP Regen / s
   icon: {fileID: 0}
   rarity: 1

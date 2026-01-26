@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Max HP
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Max HP
+  displayName: Life Surge
   description: + 14 Max HP
   icon: {fileID: 0}
   rarity: 1

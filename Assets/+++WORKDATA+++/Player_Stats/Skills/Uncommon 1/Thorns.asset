@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Thorns
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Thorns
+  displayName: Thorn Burst
   description: + 7% Thorns
   icon: {fileID: 0}
   rarity: 1

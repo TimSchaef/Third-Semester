@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: XP Gain
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: XP Gain
+  displayName: Experience
   description: + 7% Xp Gain
   icon: {fileID: 0}
   rarity: 1

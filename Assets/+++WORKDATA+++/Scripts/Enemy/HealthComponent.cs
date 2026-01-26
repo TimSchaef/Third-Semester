@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -164,7 +165,6 @@ public class HealthComponent : MonoBehaviour
     {
         if (isDead || CurrentHP <= 0f) return 0f;
 
-        // ARMOR ENTFERNT: Schaden 1:1
         float taken = Mathf.Max(0f, rawDamage);
         if (taken <= 0f) return 0f;
 
@@ -173,13 +173,12 @@ public class HealthComponent : MonoBehaviour
 
         SpawnDamageNumber(taken, isCrit);
         FlashDamage();
-        
+
         if (CompareTag("Player"))
         {
             SoundManager.Instance.PlaySound3D("playerHit", transform.position);
         }
 
-        
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
 
         float thornsPct = 0f;
@@ -247,12 +246,67 @@ public class HealthComponent : MonoBehaviour
         if (flashTween != null && flashTween.IsActive()) flashTween.Kill();
         RestoreOriginalColors();
 
+        // Wichtig: OnDeath sofort feuern, damit WaveCounter etc. direkt zählen
         OnDeath?.Invoke();
 
         if (CompareTag("Player"))
+        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        else
-            Destroy(gameObject);
+            return;
+        }
+
+        // Enemy: Despawn-VFX + delayed destroy
+        StartCoroutine(EnemyDeathRoutine());
+    }
+
+    private IEnumerator EnemyDeathRoutine()
+    {
+        // Sofort "gefahrlos" machen: keine Hits mehr, keine Kollisionen
+        foreach (var c in GetComponentsInChildren<Collider>(true))
+            c.enabled = false;
+
+        foreach (var c2d in GetComponentsInChildren<Collider2D>(true))
+            c2d.enabled = false;
+
+        // Häufige Damage-/Attack-Skripte ausschalten (aus deinen Uploads)
+        var contact = GetComponent<ContactDamage>();
+        if (contact != null) contact.enabled = false;
+
+        var bulletDmg = GetComponent<EnemyBulletDamage>();
+        if (bulletDmg != null) bulletDmg.enabled = false;
+
+        var aoe = GetComponent<AoeDamageArea>();
+        if (aoe != null) aoe.enabled = false;
+
+        var playerAtk = GetComponent<PlayerAttack>();
+        if (playerAtk != null) playerAtk.enabled = false;
+
+        var atkController = GetComponent<AttackController>();
+        if (atkController != null) atkController.enabled = false;
+
+        // Movement stoppen
+        var enemyMove = GetComponent<EnemyMovement>();
+        if (enemyMove != null) enemyMove.enabled = false;
+
+        // Despawn-VFX
+        float wait = 0f;
+        var dissolve = GetComponent<dissolve2D>();
+        if (dissolve != null)
+        {
+            dissolve.playOnStart = false;
+            dissolve.isSpawning = false;
+
+            // WICHTIG: HealthComponent übernimmt Destroy, damit Coroutine sicher fertig wird
+            dissolve.destroyOnDissolve = false;
+
+            dissolve.Dissolve();
+            wait = dissolve.TotalTime;
+        }
+
+        if (wait > 0f)
+            yield return new WaitForSeconds(wait);
+
+        Destroy(gameObject);
     }
 
     private void SpawnDamageNumber(float amount, bool isCrit)
@@ -354,6 +408,8 @@ public class HealthComponent : MonoBehaviour
         }
     }
 }
+
+
 
 
 

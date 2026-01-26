@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Damage
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Damage
+  displayName: Mortal Blow
   description: + 15% Damage
   icon: {fileID: 0}
   rarity: 1

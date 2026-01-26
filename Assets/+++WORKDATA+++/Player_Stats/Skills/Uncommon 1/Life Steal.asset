@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Life Steal
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Lfie Steal
+  displayName: Leech
   description: + 8% Lfie Steal
   icon: {fileID: 0}
   rarity: 1

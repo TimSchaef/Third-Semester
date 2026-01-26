@@ -18,7 +18,8 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -42,11 +43,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _DissolveAmount: 0
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _VerticalDissolve: 1
     - _dissolveScale: 30
     - _outlineThickness: 0.0321
     m_Colors:
     - _OutlineColor: {r: 3.7935672, g: 0, b: 4.5412054, a: 1}
+    - _TintColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &8691804002937333214

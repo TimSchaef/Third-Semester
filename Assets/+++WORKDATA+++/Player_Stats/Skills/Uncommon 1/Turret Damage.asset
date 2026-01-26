@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Turret Damage
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Turret Damage
+  displayName: Soul Damage
   description: + 4 Turret Damage
   icon: {fileID: 0}
   rarity: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Attack Speed
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Attack Speed
+  displayName: Swift Strike
   description: + 8% Attack Speed
   icon: {fileID: 0}
   rarity: 1

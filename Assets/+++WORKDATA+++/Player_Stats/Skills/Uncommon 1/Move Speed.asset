@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Move Speed
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Move Speed
+  displayName: Swiftness
   description: + 6% Move Speed
   icon: {fileID: 0}
   rarity: 1

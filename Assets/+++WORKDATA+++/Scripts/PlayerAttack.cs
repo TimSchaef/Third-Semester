@@ -113,7 +113,6 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext ctx)
     {
-        
         if (!ctx.performed) return;
         if (attacking) return;
         if (cooldownTimer > 0f) return;
@@ -131,7 +130,7 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator DoAttack(Transform target)
     {
         attacking = true;
-        
+
         SoundManager.Instance.PlaySound3D("attack", transform.position);
 
         cooldownTimer = GetEffectiveCooldown();
@@ -323,7 +322,7 @@ public class PlayerAttack : MonoBehaviour
         if (finalDamage > 0f)
         {
             hp.ApplyDamage(finalDamage, myHealth, isCrit);
-            
+
             if (isCrit)
             {
                 SoundManager.Instance.PlaySound3D("attackCritHit", other.transform.position);
@@ -334,13 +333,18 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
+        // Knockback über EnemyMovement (statt Rigidbody.AddForce)
+        var enemyMove =
+            other.GetComponent<EnemyMovement>() ??
+            other.GetComponentInParent<EnemyMovement>();
 
-        var rb = other.attachedRigidbody;
-        if (rb)
+        if (enemyMove)
         {
-            Vector3 dir = (other.transform.position - transform.position).normalized;
-            dir.y = 0f;
-            rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
+            enemyMove.ApplyKnockback(
+                sourcePosition: transform.position,
+                force: knockbackForce,
+                duration: 0.15f
+            );
         }
     }
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AOE Damage
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: AOE Damage
+  displayName: Chaos Damage
   description: + 5 AOE Damage
   icon: {fileID: 0}
   rarity: 1

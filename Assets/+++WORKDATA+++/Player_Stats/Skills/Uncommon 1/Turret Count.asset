@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Turret Count
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: Turret Count
+  displayName: Soul Shooter
   description: + 1 Turret
   icon: {fileID: 0}
   rarity: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AOE TickRate
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
-  displayName: AOE TickRate
+  displayName: Chaos Release
   description: + 1 AOE Tickrate
   icon: {fileID: 0}
   rarity: 1
