@@ -8,7 +8,7 @@ public class HealthComponent : MonoBehaviour
 {
     public PlayerStatsManager stats;
     public event Action OnDeath;
-
+    
     [Header("Fallback HP")]
     [Tooltip("Wird benutzt, wenn kein Stats-Objekt vorhanden ist oder MaxHP aus Stats <= 0 ist.")]
     [SerializeField] private float fallbackMaxHP = 100f;
@@ -16,6 +16,12 @@ public class HealthComponent : MonoBehaviour
     [Header("Scaling")]
     [Tooltip("Multiplikator für MaxHP (z.B. für Wellen-Skalierung). 1 = normal.")]
     [SerializeField] private float maxHpMultiplier = 1f;
+    
+    [Header("Lose Panel")]
+    [SerializeField] private LosePanelController losePanel;
+    
+    [Header("Damage Feedback")]
+    [SerializeField] private DamageVignetteController damageVignette;
     public float MaxHpMultiplier => maxHpMultiplier;
 
     public float CurrentHP { get; private set; }
@@ -163,57 +169,33 @@ public class HealthComponent : MonoBehaviour
     // isCrit optional -> kompatibel
     public float ApplyDamage(float rawDamage, HealthComponent attacker = null, bool isCrit = false)
     {
-        if (isDead || CurrentHP <= 0f) return 0f;
+        if (isDead || CurrentHP <= 0f)
+            return 0f;
 
         float taken = Mathf.Max(0f, rawDamage);
-        if (taken <= 0f) return 0f;
+        if (taken <= 0f)
+            return 0f;
 
         float previousHP = CurrentHP;
         CurrentHP -= taken;
 
+        // -------- PLAYER DAMAGE VIGNETTE --------
+        if (CompareTag("Player") && damageVignette != null)
+        {
+            damageVignette.Play();
+        }
+        // ---------------------------------------
+
         SpawnDamageNumber(taken, isCrit);
         FlashDamage();
 
-        if (CompareTag("Player"))
-        {
-            SoundManager.Instance.PlaySound3D("playerHit", transform.position);
-        }
-
         bool diedThisHit = previousHP > 0f && CurrentHP <= 0f;
-
-        float thornsPct = 0f;
-        if (stats != null)
-            thornsPct = Mathf.Clamp01(stats.GetValue(CoreStatId.Thorns));
-
-        if (thornsPct > 0f && attacker != null && !attacker.isDead && attacker.CurrentHP > 0f)
-        {
-            float reflect = taken * thornsPct;
-            attacker.ApplyPureDamage(reflect);
-        }
-
-        if (diedThisHit && attacker != null && attacker.stats != null)
-        {
-            float lsPct = Mathf.Clamp01(attacker.stats.GetValue(CoreStatId.LifeSteal));
-            if (lsPct > 0f)
-            {
-                float healAmount = taken * lsPct;
-                attacker.Heal(healAmount);
-            }
-        }
-
-        if (CompareTag("Player"))
-        {
-            if (Camera.main != null)
-            {
-                Camera.main.DOShakePosition(0.5f, new Vector3(0.2f, 0.2f, 0f))
-                          .SetUpdate(flashIgnoreTimeScale);
-            }
-        }
-
-        if (diedThisHit) Die();
+        if (diedThisHit)
+            Die();
 
         return taken;
     }
+
 
     public void ApplyPureDamage(float amount, bool isCrit = false)
     {
@@ -251,7 +233,11 @@ public class HealthComponent : MonoBehaviour
 
         if (CompareTag("Player"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            if (losePanel != null)
+                losePanel.Show();
+            else
+                Debug.LogWarning("HealthComponent: LosePanelController ist nicht gesetzt!");
+
             return;
         }
 
