@@ -9,7 +9,7 @@ public class SpriteTintController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private MaterialPropertyBlock mpb;
 
-    // Muss exakt mit der Reference im Shader Graph übereinstimmen
+   
     private static readonly int TintColorID = Shader.PropertyToID("_TintColor");
 
     void Awake()
@@ -41,7 +41,7 @@ public class SpriteTintController : MonoBehaviour
         spriteRenderer.SetPropertyBlock(mpb);
     }
 
-    // Optional weiterhin per Code nutzbar
+    
     public void SetTint(Color color)
     {
         tintColor = color;

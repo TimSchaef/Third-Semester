@@ -9,7 +9,7 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 {
     [Header("UI")]
     [SerializeField] private TMP_Text title;
-    [SerializeField] private TMP_Text infoText;          // <-- Info-Text bleibt erhalten
+    [SerializeField] private TMP_Text infoText;          
     [SerializeField] private Image icon;
 
     [Header("Rarity Visuals")]
@@ -34,22 +34,22 @@ public class SkillChoiceButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         btn.interactable = interactable && skill != null;
 
-        // Titel
+       
         if (title)
             title.text = skill ? skill.displayName : "";
 
-        // Info-Text
+       
         if (infoText)
             infoText.text = skill ? skill.description : "";
 
-        // Icon
+        
         if (icon)
         {
             icon.enabled = skill && skill.icon;
             icon.sprite = skill ? skill.icon : null;
         }
 
-        // Rarity-Farbe anwenden
+       
         ApplyRarityColor(skill);
 
         btn.onClick.RemoveAllListeners();

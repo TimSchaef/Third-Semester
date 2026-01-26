@@ -10,10 +10,10 @@ public class SkillTree : MonoBehaviour
     public PlayerProgress player;
     public List<SkillDefinition> allSkills = new();
 
-    // how often each skill was picked in THIS run
+    
     private readonly Dictionary<string, int> pickCounts = new();
 
-    // effect source ids applied (so we can remove cleanly)
+   
     private readonly List<string> appliedSourceIds = new();
 
     public event Action<SkillDefinition> OnSkillUnlocked;
@@ -57,7 +57,7 @@ public class SkillTree : MonoBehaviour
         if (player == null) { reason = "No PlayerProgress reference."; return false; }
         if (string.IsNullOrEmpty(skill.skillId)) { reason = "Skill has no skillId."; return false; }
 
-        // stacking cap
+        
         int alreadyPicked = GetPickCount(skill);
         if (skill.maxPicks > 0 && alreadyPicked >= skill.maxPicks)
         {
@@ -65,7 +65,7 @@ public class SkillTree : MonoBehaviour
             return false;
         }
 
-        // drop weight 0 = never offered
+        
         if (skill.dropWeight <= 0f)
         {
             reason = "Drop weight is 0.";
@@ -114,7 +114,7 @@ public class SkillTree : MonoBehaviour
         int newCount = GetPickCount(skill) + 1;
         pickCounts[skill.skillId] = newCount;
 
-        // unique source id so effects stack
+        
         string sourceId = $"{skill.skillId}#{newCount}";
         ApplySkillEffects(sourceId, skill);
 
@@ -151,14 +151,13 @@ public class SkillTree : MonoBehaviour
         }
     }
 
-    // ----- Weighted selection from global list -----
+   
 
     public List<SkillDefinition> GetRandomUnlockableSkills(int count)
     {
         return GetRandomUnlockableSkillsWeightedFrom(allSkills, count, allowFallbackToGlobal: false);
     }
 
-    // ----- NEW: Weighted selection from provided pool -----
 
     public List<SkillDefinition> GetRandomUnlockableSkillsWeightedFrom(
         IList<SkillDefinition> pool,
@@ -173,12 +172,12 @@ public class SkillTree : MonoBehaviour
             .Distinct()
             .ToList();
 
-        // candidates from pool
+        
         var candidates = basePool
             .Where(s => CanUnlock(s, out _))
             .ToList();
 
-        // optional fallback to global pool if pool is too small / empty
+        
         if (allowFallbackToGlobal && candidates.Count < count)
         {
             var globalExtra = allSkills
@@ -191,7 +190,7 @@ public class SkillTree : MonoBehaviour
             candidates.AddRange(globalExtra);
         }
 
-        // pick without duplicates in the same offer
+        
         var result = new List<SkillDefinition>(count);
         count = Mathf.Min(count, candidates.Count);
 

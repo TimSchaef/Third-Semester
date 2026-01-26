@@ -5,12 +5,12 @@ using UnityEngine;
 public class StatPanel : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private Transform statsContent;   // Content der ScrollView
-    [SerializeField] private StatRowUI statRowPrefab;  // Prefab für eine Zeile
+    [SerializeField] private Transform statsContent;  
+    [SerializeField] private StatRowUI statRowPrefab;  
 
     [Header("References")]
-    [SerializeField] private PlayerStatsManager statsManager; // liest Werte über GetValue(...)
-    [SerializeField] private PlayerProgress progress;         // optional (Level/XP etc.)
+    [SerializeField] private PlayerStatsManager statsManager; 
+    [SerializeField] private PlayerProgress progress;         
 
     [Header("Options")]
     [SerializeField] private bool rebuildOnEnable = true;
@@ -21,11 +21,7 @@ public class StatPanel : MonoBehaviour
         if (rebuildOnEnable)
             Refresh();
     }
-
-    /// <summary>
-    /// Baut die Stats-Liste komplett neu.
-    /// Kannst du aufrufen, wenn sich Werte ändern (z.B. nach Items/LevelUp).
-    /// </summary>
+    
     public void Refresh()
     {
         if (!statsContent || !statRowPrefab || statsManager == null)
@@ -60,15 +56,15 @@ public class StatPanel : MonoBehaviour
 
     private string FormatStat(CoreStatId id, float v)
     {
-        // Prozent-Stats (0..1)
+       
         if (id == CoreStatId.CritChance || id == CoreStatId.LifeSteal || id == CoreStatId.Thorns)
             return $"{Mathf.RoundToInt(v * 100f)}%";
 
-        // Multiplikator/Rate-Stats
+      
         if (id == CoreStatId.AttackSpeed || id == CoreStatId.XPGain || id == CoreStatId.MoveSpeed)
             return v.ToString("0.00");
 
-        // Rest
+       
         return v.ToString("0.##");
     }
 }

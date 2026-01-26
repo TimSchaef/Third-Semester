@@ -3,15 +3,14 @@ using UnityEngine;
 
 public class UIHealthText : MonoBehaviour
 {
-    [SerializeField] private HealthComponent health;      // Player oder Enemy
-    [SerializeField] private TMP_Text hitpointsTextmesh;  // TextMeshPro Text
+    [SerializeField] private HealthComponent health;      
+    [SerializeField] private TMP_Text hitpointsTextmesh;  
 
     private void Awake()
     {
         if (hitpointsTextmesh == null)
             hitpointsTextmesh = GetComponentInChildren<TMP_Text>();
-
-        // Falls health nicht gesetzt wurde, versuchen wir den Player zu finden
+        
         if (health == null)
         {
             var player = GameObject.FindGameObjectWithTag("Player");

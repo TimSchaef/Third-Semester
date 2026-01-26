@@ -69,9 +69,7 @@ public class LosePanelController : MonoBehaviour
                 if (comp != null) comp.enabled = true;
         }
     }
-
-    // --- Button hooks ---
-
+    
     public void OnRetryPressed()
     {
         Time.timeScale = 1f;

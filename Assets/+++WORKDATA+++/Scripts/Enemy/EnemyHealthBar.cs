@@ -4,13 +4,13 @@ using UnityEngine.UI;
 public class EnemyHealthBar : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private HealthComponent health;   // Hier HealthComponent reinziehen
-    [SerializeField] private Transform followTarget;   // optional, sonst wird health.transform benutzt
+    [SerializeField] private HealthComponent health;   
+    [SerializeField] private Transform followTarget;   
 
     [Header("UI")]
-    [SerializeField] private Image fillImage;          // Filled Image
-    [SerializeField] private bool hideWhenFull = true; // bei 100% ausblenden
-    [SerializeField] private CanvasGroup visualGroup;  // CanvasGroup auf dem UI-Container
+    [SerializeField] private Image fillImage;          
+    [SerializeField] private bool hideWhenFull = true;
+    [SerializeField] private CanvasGroup visualGroup; 
 
     [Header("Behavior")]
     [SerializeField] private Vector3 worldOffset = new Vector3(0f, 2f, 0f);
@@ -28,7 +28,7 @@ public class EnemyHealthBar : MonoBehaviour
             followTarget = health.transform;
         }
 
-        // Wenn der Gegner stirbt → Healthbar zerstören
+        
         if (health != null)
         {
             health.OnDeath += () => Destroy(gameObject);
@@ -39,13 +39,13 @@ public class EnemyHealthBar : MonoBehaviour
     {
         if (!health || !followTarget) return;
 
-        // Füllung aktualisieren
+        
         UpdateFill();
 
-        // folgen
+        
         transform.position = followTarget.position + worldOffset;
 
-        // zur Kamera drehen
+       
         if (billboardToCamera && Camera.main)
         {
             Vector3 forward = transform.position - Camera.main.transform.position;

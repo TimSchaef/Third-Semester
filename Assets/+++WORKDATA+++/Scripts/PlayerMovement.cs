@@ -9,9 +9,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float fallbackSpeed = 5f;
 
     [Header("Rotation (Body only)")]
-    [SerializeField] private Transform bodyPivot;      // NUR Model/Body hier rein (nicht AttackPivot)
+    [SerializeField] private Transform bodyPivot;    
     [SerializeField] private float turnSmoothTime = 0.1f;
-    [SerializeField] private bool faceOppositeMove = true; // falls du weiterhin 180° willst
+    [SerializeField] private bool faceOppositeMove = true; 
 
     private Rigidbody rb;
     private Vector2 moveInput;
@@ -37,8 +37,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 velocity = dir * moveSpeed;
             velocity.y = rb.linearVelocity.y;
             rb.linearVelocity = velocity;
-
-            // Drehung nur am BodyPivot (AttackPivot bleibt unberührt)
+            
             if (bodyPivot)
             {
                 float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;

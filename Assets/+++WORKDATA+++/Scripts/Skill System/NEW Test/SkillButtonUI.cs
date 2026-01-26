@@ -1,4 +1,3 @@
-// SkillButtonUI.cs (FINAL: sets button background color by rarity; no Unity transition required)
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +5,8 @@ using UnityEngine.UI;
 public class SkillButtonUI : MonoBehaviour
 {
     [Header("UI Refs")]
-    [SerializeField] private Image background; // das sichtbare Button-Image (bei dir: Button(Image))
-    [SerializeField] private Image icon;       // optional: Skill-Icon
+    [SerializeField] private Image background; 
+    [SerializeField] private Image icon;       
 
     [Header("Rarity Colors")]
     [SerializeField] private Color commonColor = Color.white;
@@ -20,7 +19,7 @@ public class SkillButtonUI : MonoBehaviour
     {
         btn = GetComponent<Button>();
 
-        // WICHTIG: Unity Button soll NICHT automatisch tinten (wir übernehmen die Farbe)
+        
         btn.transition = Selectable.Transition.None;
     }
 

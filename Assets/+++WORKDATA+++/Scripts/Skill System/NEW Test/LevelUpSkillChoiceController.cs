@@ -14,7 +14,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject panelRoot;
-    [SerializeField] private SkillChoiceButton[] choiceButtons; // 3
+    [SerializeField] private SkillChoiceButton[] choiceButtons; 
 
     [Header("Refresh")]
     [Tooltip("Optional: Assign a UI Button to allow one reroll per shown panel.")]
@@ -49,10 +49,10 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     private int panelsShown;
     private bool hasWon;
 
-    // Refresh state
+   
     private bool refreshUsedThisPanel;
 
-    // Root disable state (restore correctly)
+    
     private bool rootPrevActive;
     private bool rootStateCached;
 
@@ -70,7 +70,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         hasWon = false;
         refreshUsedThisPanel = false;
 
-        // Ensure cache is clean on start
+       
         rootStateCached = false;
 
         if (refreshButton != null)
@@ -113,7 +113,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             isOpen = true;
             panelRoot.SetActive(true);
 
-            // Disable the chosen root while the skill panel is open
+            
             SetRootDisabledWhileOpen(true);
 
             ApplyOpenState(true);
@@ -122,7 +122,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         {
             panelRoot.SetActive(true);
 
-            // Enforce disabled root even if something else re-enabled it
+            
             SetRootDisabledWhileOpen(true);
         }
 
@@ -130,7 +130,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         {
             panelsShown++;
 
-            // reset refresh for this panel
+            
             refreshUsedThisPanel = false;
 
             if (panelsShown >= panelsToWin)
@@ -222,7 +222,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         if (panelRoot != null)
             panelRoot.SetActive(false);
 
-        // keep game paused
+        
         if (pauseGameOnOpen)
             Time.timeScale = 0f;
 
@@ -235,7 +235,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
                 if (comp != null) comp.enabled = false;
         }
 
-        // Keep root disabled on win (end state)
+        
         SetRootDisabledWhileOpen(true);
 
         if (winPanel != null)
@@ -255,7 +255,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
         ApplyOpenState(false);
 
-        // Restore root state when closing
+      
         SetRootDisabledWhileOpen(false);
 
         UpdateRefreshButton();
@@ -278,30 +278,27 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Disables rootToDisableWhileOpen while open==true, and restores its previous activeSelf when open==false.
-    /// Designed to be safe (won't permanently change state) and resilient (re-applies disable while open).
-    /// </summary>
+    
     private void SetRootDisabledWhileOpen(bool open)
     {
         if (rootToDisableWhileOpen == null) return;
 
         if (open)
         {
-            // Capture the previous state once per open-cycle
+            
             if (!rootStateCached)
             {
                 rootPrevActive = rootToDisableWhileOpen.activeSelf;
                 rootStateCached = true;
             }
 
-            // Enforce disabled while open
+           
             if (rootToDisableWhileOpen.activeSelf)
                 rootToDisableWhileOpen.SetActive(false);
         }
         else
         {
-            // Restore exactly to the captured state
+            
             if (rootStateCached)
             {
                 rootToDisableWhileOpen.SetActive(rootPrevActive);

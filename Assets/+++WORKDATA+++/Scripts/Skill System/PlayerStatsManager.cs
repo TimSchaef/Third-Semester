@@ -21,7 +21,7 @@ public class PlayerStatsManager : MonoBehaviour
     private readonly Dictionary<CoreStatId, int> levels = new();
     private readonly Dictionary<string, List<SkillEffect>> activeSourceEffects = new();
 
-    // --- SAVE SUPPORT TYPES ---
+  
     [System.Serializable]
     public class StatLevelSave
     {
@@ -56,7 +56,7 @@ public class PlayerStatsManager : MonoBehaviour
         return lv > 0 ? def.GetValueAtLevel(lv) : def.baseValue;
     }
 
-    // --- Modifikatoren ---
+    
     public void ApplyEffectsFrom(string sourceId, IEnumerable<SkillEffect> effects)
     {
         if (string.IsNullOrEmpty(sourceId)) return;
@@ -87,19 +87,18 @@ public class PlayerStatsManager : MonoBehaviour
 
         float result = (baseVal + add) * (1f + mult);
 
-        // einfache Sicherheit:
+        
         switch (id)
         {
             case CoreStatId.MoveSpeed:
-                return Mathf.Max(0f, result);   // nie negative Geschwindigkeit
+                return Mathf.Max(0f, result);  
             case CoreStatId.MaxHP:
-                return Mathf.Max(1f, result);   // mind. 1 HP
+                return Mathf.Max(1f, result);   
             default:
                 return result;
         }
     }
-
-    // --- Saving Stat Levels ---
+    
     const string KEY_STAT_LEVELS = "player_stat_levels";
 
     public void SaveStats()
@@ -125,8 +124,7 @@ public class PlayerStatsManager : MonoBehaviour
         foreach (var entry in container.stats)
             levels[entry.id] = entry.level;
     }
-
-    // --- Upgrade logic (unverändert) ---
+    
     public bool CanUpgrade(PlayerStatDefinition s, out string reason)
     {
         reason = "";

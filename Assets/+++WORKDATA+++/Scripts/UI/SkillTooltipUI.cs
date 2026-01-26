@@ -25,7 +25,7 @@ public class SkillTooltipUI : MonoBehaviour
         ClearPreview();
 
         if (titleText) titleText.text = defaultTitle;
-        if (infoText) infoText.text = ""; // kein Default-Info-Text mehr
+        if (infoText) infoText.text = ""; 
         if (statsText) statsText.text = defaultStats;
     }
 

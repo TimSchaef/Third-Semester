@@ -14,10 +14,8 @@ public enum CoreStatId
     AoeDamage,
     AoeRadius,
     AoeTickRate,
-
-    // --- NEW: Turrets ---
-    TurretCount,    // float, wird gerundet
-    TurretDamage    // damage pro shot
+    TurretCount,    
+    TurretDamage   
 }
 
 

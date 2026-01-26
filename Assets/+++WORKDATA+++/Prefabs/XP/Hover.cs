@@ -7,7 +7,7 @@ public class Hover : MonoBehaviour
     public float frequency = 1f;
 
     [Header("Phase Offset")]
-    public float randomPhaseOffset = 1f; // Stärke der Zufallsverschiebung
+    public float randomPhaseOffset = 1f;
 
     private Vector3 startPos;
     private float phase;

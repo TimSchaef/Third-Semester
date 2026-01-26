@@ -8,26 +8,24 @@ public class TurretSpawner : MonoBehaviour
     [SerializeField] private PlayerStatsManager stats;
     [SerializeField] private HealthComponent ownerHealth;
 
-    [Header("Turret Prefab")]
+    [Header("Prefab")]
     [SerializeField] private TurretController turretPrefab;
 
-    [Header("Fixed Settings (Inspector)")]
+    [Header("Adjustments")]
     [SerializeField] private float spawnRadius = 3f;
     [SerializeField] private float turretLifetime = 6f;
     [SerializeField] private float respawnDelay = 4f;
     [SerializeField] private float turretRange = 8f;
-    [SerializeField] private float fireRate = 2f; // shots/sec
+    [SerializeField] private float fireRate = 2f;
 
     [Header("Targeting")]
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
 
-    [Header("Spawn Placement")]
+    [Header("Placement")]
     [SerializeField] private float minDistanceToPlayer = 0.75f;
-    [SerializeField] private float minTurretSeparation = 1.25f; // Abstand zwischen Turrets
+    [SerializeField] private float minTurretSeparation = 1.25f; 
     [SerializeField] private int maxTriesPerTurret = 30;
-
-    [Tooltip("Wie stark darf der Winkel pro Turret zufällig abweichen (in Grad). 0 = exakt verteilt.")]
     [SerializeField] private float angleJitterDegrees = 25f;
 
     private readonly List<TurretController> active = new();
@@ -83,7 +81,7 @@ public class TurretSpawner : MonoBehaviour
         float dmg = GetTurretDamage();
         float r = Mathf.Max(0.1f, spawnRadius);
 
-        List<Vector3> positions = BuildSpawnPositions(count, r);
+        List<Vector3> positions = SpawnPositions(count, r);
 
         for (int i = 0; i < positions.Count; i++)
         {
@@ -107,23 +105,20 @@ public class TurretSpawner : MonoBehaviour
         }
     }
 
-    private List<Vector3> BuildSpawnPositions(int count, float radius)
+    private List<Vector3> SpawnPositions(int count, float radius)
     {
         var result = new List<Vector3>(count);
         if (count <= 0) return result;
 
         float baseStep = 360f / count;
-        float startAngle = Random.Range(0f, 360f); // global random rotation each spawn set
+        float startAngle = Random.Range(0f, 360f); 
 
         for (int i = 0; i < count; i++)
         {
-            // "random but spread": evenly spaced angles + per-turret jitter
             float angle = startAngle + i * baseStep + Random.Range(-angleJitterDegrees, angleJitterDegrees);
-
-            // random distance within ring [minDistanceToPlayer..radius]
+            
             float dist = Random.Range(minDistanceToPlayer, radius);
-
-            // try to keep separation (if fails, we resample dist+angle around this sector)
+            
             if (!TryFindPosNearAngle(angle, dist, radius, result, out Vector3 pos))
             {
                 pos = FallbackBestOfSamples(radius, result, samples: 25);
@@ -142,7 +137,6 @@ public class TurretSpawner : MonoBehaviour
        int tries = Mathf.Max(1, maxTriesPerTurret);
         for (int attempt = 0; attempt < tries; attempt++)
         {
-            // resample slightly around the sector to avoid stacking
             float a = baseAngleDeg + Random.Range(-angleJitterDegrees, angleJitterDegrees);
             float d = Mathf.Clamp(baseDist + Random.Range(-0.5f, 0.5f), minDistanceToPlayer, radius);
 
@@ -186,7 +180,7 @@ public class TurretSpawner : MonoBehaviour
             for (int j = 0; j < existing.Count; j++)
                 minDistSqr = Mathf.Min(minDistSqr, (existing[j] - c).sqrMagnitude);
 
-            // even if we can't reach minSep, choose the least-bad one
+            
             if (minDistSqr > bestMinDistSqr && minDistSqr >= (minSep * 0.25f) * (minSep * 0.25f))
             {
                 bestMinDistSqr = minDistSqr;
@@ -194,7 +188,7 @@ public class TurretSpawner : MonoBehaviour
             }
         }
 
-        // If existing is empty, bestMinDistSqr will update; otherwise still okay.
+        
         if (bestMinDistSqr < 0f)
         {
             float a = Random.Range(0f, 360f);

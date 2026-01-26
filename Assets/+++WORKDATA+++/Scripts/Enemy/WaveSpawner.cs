@@ -154,7 +154,7 @@ public class WaveSpawner : MonoBehaviour
 
         enemiesAlive++;
 
-        // -------- SPAWN VFX TRIGGER --------
+        
         var dissolve = enemyGO.GetComponent<dissolve2D>();
         if (dissolve != null)
         {
@@ -162,7 +162,7 @@ public class WaveSpawner : MonoBehaviour
             dissolve.playOnStart = false;
             dissolve.Spawn();
         }
-        // ----------------------------------
+        
 
         var ai = enemyGO.GetComponent<EnemyMovement>();
         if (ai != null)

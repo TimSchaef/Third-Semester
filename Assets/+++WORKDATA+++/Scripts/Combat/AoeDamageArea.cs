@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AoeDamageArea : MonoBehaviour
 {
-    [Header("Required Refs")]
+    [Header("Refs")]
     [SerializeField] private PlayerStatsManager stats;
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
@@ -37,7 +37,7 @@ public class AoeDamageArea : MonoBehaviour
 
         root = transform.root;
         myHealth = GetComponentInParent<HealthComponent>();
-        CacheVfxComponents();
+        VfxComponents();
     }
 
     private void Update()
@@ -89,12 +89,8 @@ public class AoeDamageArea : MonoBehaviour
             hp.ApplyDamage(Mathf.RoundToInt(damage), myHealth);
         }
     }
-
-    // -------------------------
-    // VFX
-    // -------------------------
-
-    private void CacheVfxComponents()
+    
+    private void VfxComponents()
     {
         if (aoeVfx == null) return;
         vfxRenderers = aoeVfx.GetComponentsInChildren<Renderer>(true);

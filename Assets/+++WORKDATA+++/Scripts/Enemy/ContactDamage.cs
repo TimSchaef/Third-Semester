@@ -7,17 +7,16 @@ public class ContactDamage : MonoBehaviour
     [Header("Damage")]
     [SerializeField] private int damage = 10;
     [SerializeField] private float knockbackForce = 5f;
-    [SerializeField] private float damageInterval = 1f; // alle X Sekunden bei dauerhaftem Kontakt
+    [SerializeField] private float damageInterval = 1f; 
 
-    [Header("Collision Mode")]
+    [Header("Collision")]
     [SerializeField] private bool useTrigger = true;
-    [SerializeField] private LayerMask targetLayers;   // z.B. Player
+    [SerializeField] private LayerMask targetLayers;   
     [SerializeField] private bool ignoreSameRoot = true;
 
     private Transform _root;
     private HealthComponent _myHealth;
-
-    // Für Dauer-Schaden: wie lange bis zum nächsten Tick pro Collider
+    
     private readonly Dictionary<Collider, float> _nextDamageTime = new Dictionary<Collider, float>();
 
     private void Awake()
@@ -28,9 +27,7 @@ public class ContactDamage : MonoBehaviour
         var col = GetComponent<Collider>();
         if (col) col.isTrigger = useTrigger;
     }
-
-    // ---------- TRIGGER VARIANTE ----------
-
+    
     private void OnTriggerEnter(Collider other)
     {
         if (!useTrigger) return;
@@ -49,8 +46,6 @@ public class ContactDamage : MonoBehaviour
         HandleExit(other);
     }
 
-    // ---------- COLLISION VARIANTE ----------
-
     private void OnCollisionEnter(Collision collision)
     {
         if (useTrigger) return;
@@ -68,17 +63,14 @@ public class ContactDamage : MonoBehaviour
         if (useTrigger) return;
         HandleExit(collision.collider);
     }
-
-    // ---------- LOGIK ----------
+    
 
     private void HandleEnter(Collider other)
     {
         if (!IsValidTarget(other)) return;
-
-        // Sofort-Schaden beim ersten Kontakt
+        
         ApplyDamage(other);
-
-        // Nächster Tick in damageInterval Sekunden
+        
         if (damageInterval > 0f)
         {
             _nextDamageTime[other] = Time.time + damageInterval;

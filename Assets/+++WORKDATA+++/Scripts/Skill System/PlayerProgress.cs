@@ -27,7 +27,7 @@ public class PlayerProgress : MonoBehaviour
     public int SkillPoints => unspentSkillPoints;
 
     public event Action<int> OnSkillPointsChanged;
-    public event Action<int> OnLevelUp; // NEW
+    public event Action<int> OnLevelUp; 
 
     private void Awake()
     {
@@ -60,7 +60,7 @@ public class PlayerProgress : MonoBehaviour
             unspentSkillPoints++;
 
             OnSkillPointsChanged?.Invoke(unspentSkillPoints);
-            OnLevelUp?.Invoke(currentLevel); // NEW (fires once per level)
+            OnLevelUp?.Invoke(currentLevel); 
         }
     }
 
@@ -73,7 +73,6 @@ public class PlayerProgress : MonoBehaviour
         float statMult = 1f;
         if (useXPGainStat && statsManager != null)
         {
-            // Erwartung: XPGain ist ein Multiplikator (1.0 = normal, 1.25 = +25%)
             statMult = Mathf.Max(0f, statsManager.GetValue(CoreStatId.XPGain));
         }
 

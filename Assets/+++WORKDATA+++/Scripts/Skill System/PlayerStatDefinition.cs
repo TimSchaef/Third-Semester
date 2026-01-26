@@ -16,7 +16,7 @@ public class PlayerStatDefinition : ScriptableObject
 
     [Header("Values")]
     public float baseValue = 0f;
-    public float incrementPerLevel = 0f;  // wird pro Upgrade addiert
+    public float incrementPerLevel = 0f;  
 
     public float GetValueAtLevel(int level)
     {

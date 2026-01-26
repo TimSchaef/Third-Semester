@@ -28,22 +28,16 @@ public class DamageVignetteController : MonoBehaviour
 
         SetAlpha(0f);
     }
-
-    /// <summary>
-    /// Wird aufgerufen, wenn der Spieler Schaden nimmt
-    /// </summary>
+    
     public void Play()
     {
         if (vignetteImage == null)
             return;
-
-        // laufende Animation abbrechen
+        
         currentTween?.Kill();
-
-        // sofort auf 0 setzen (sauberer Start)
+        
         SetAlpha(0f);
-
-        // Fade In → Fade Out
+        
         Sequence seq = DOTween.Sequence();
         seq.SetUpdate(ignoreTimeScale);
 

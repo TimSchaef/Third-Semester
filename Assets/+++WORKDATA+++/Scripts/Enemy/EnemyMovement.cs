@@ -14,10 +14,8 @@ public class EnemyMovement : MonoBehaviour
     public float stopDistance = 1.25f;
 
     [Header("Chase Acceleration")]
-    [Tooltip("Wie schnell der Gegner im Chase auf moveSpeed beschleunigt (Units pro Sekunde).")]
     public float chaseAcceleration = 20f;
-
-    [Tooltip("Welche Chase-Geschwindigkeit der Gegner direkt nach Knockback/HitRecover hat (ramped dann hoch).")]
+    
     public float minChaseSpeedAfterKnockback = 0.75f;
 
     [Header("Charge")]
@@ -27,24 +25,20 @@ public class EnemyMovement : MonoBehaviour
     public float chargeDuration = 0.45f;
     public float chargeCooldown = 1.5f;
 
-    [Header("Knockback (Decelerate -> Stop -> Chase)")]
-    [Tooltip("Wie schnell der Knockback-Speed pro Sekunde abgebaut wird, bis 0 erreicht ist.")]
+    [Header("Knockback")]
     public float knockbackDeceleration = 25f;
-
-    [Tooltip("Optional: wie lange der Gegner nach dem Auslaufen (Speed=0) stillsteht, bevor er wieder chased.")]
+    
     public float knockbackStopHoldTime = 0.05f;
 
-    [Header("Hit Recover (legacy/contact)")]
+    [Header("Hit Recover")]
     public float afterHitTime = 0.15f;
     public float afterHitSpeed = 2.5f;
 
     [Header("Rotation")]
     public bool rotateToMoveDirection = true;
 
-    // ---------------------------
-    // Idle Hover (VISUAL ONLY)
-    // ---------------------------
-    [Header("Idle Hover (Visual Only, Optional)")]
+    
+    [Header("Hover Animation")]
     public bool enableIdleHover = false;
     public Transform hoverVisualTransform;
     public float hoverHeight = 0.5f;
@@ -61,12 +55,11 @@ public class EnemyMovement : MonoBehaviour
 
     private Vector3 chargeDir;
 
-    // Knockback runtime
+    
     private Vector3 hitRecoverDir;
     private float currentKnockbackSpeed = 0f;
     private bool inKnockbackStopPhase = false;
-
-    // Chase runtime
+    
     private float currentChaseSpeed = 0f;
 
     private void Awake()
@@ -202,7 +195,6 @@ public class EnemyMovement : MonoBehaviour
 
             case State.HitRecover:
             {
-                // Phase A: Knockback läuft aus (decelerate -> 0)
                 if (!inKnockbackStopPhase)
                 {
                     float decel = Mathf.Max(0.01f, knockbackDeceleration);
@@ -214,7 +206,6 @@ public class EnemyMovement : MonoBehaviour
                     }
                     else
                     {
-                        // Stillstand erreicht -> Phase B (optional kurz stehen)
                         SetVelocityBounded(Vector3.zero);
                         inKnockbackStopPhase = true;
                         stateTimer = Mathf.Max(0f, knockbackStopHoldTime);
@@ -222,12 +213,10 @@ public class EnemyMovement : MonoBehaviour
                 }
                 else
                 {
-                    // Phase B: kurz stillstehen
                     SetVelocityBounded(Vector3.zero);
 
                     if (stateTimer <= 0f)
                     {
-                        // zurück in Chase, aber nicht sofort Vollgas
                         state = State.Chase;
                         float minAfter = Mathf.Clamp(minChaseSpeedAfterKnockback, 0f, moveSpeed);
                         currentChaseSpeed = Mathf.Min(currentChaseSpeed, minAfter);
@@ -261,12 +250,10 @@ public class EnemyMovement : MonoBehaviour
         hoverVisualTransform.localPosition = hoverVisualLocalStartPos + Vector3.up * yOffset;
     }
 
-    /// <summary>
-    /// Für Kontakt-Damage: nutzt ebenfalls das neue Knockback-Verhalten (decelerate->stop->chase).
-    /// </summary>
+    
     public void OnDealtDamage(Vector3 targetPosition)
     {
-        // Weg vom Ziel
+       
         Vector3 away = (transform.position - targetPosition);
         away.y = 0f;
 
@@ -275,14 +262,10 @@ public class EnemyMovement : MonoBehaviour
 
         BeginKnockback(away.normalized, afterHitSpeed, afterHitTime);
 
-        // verhindert sofortiges Re-Charge-Spam
+        
         cooldownTimer = Mathf.Max(cooldownTimer, 0.2f);
     }
-
-    /// <summary>
-    /// Knockback von einer Quelle weg (Player Attack).
-    /// force wird als Start-Speed interpretiert, dann bis 0 abgebremst.
-    /// </summary>
+    
     public void ApplyKnockback(Vector3 sourcePosition, float force, float duration = 0.15f, float minForce = 0f)
     {
         Vector3 away = (transform.position - sourcePosition);
@@ -302,18 +285,14 @@ public class EnemyMovement : MonoBehaviour
     {
         hitRecoverDir = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.zero;
 
-        // Wichtig: Dauer sorgt dafür, dass wir nicht sofort in Chase springen,
-        // falls du extrem hohe Deceleration einstellst.
+        
         state = State.HitRecover;
         inKnockbackStopPhase = false;
 
         currentKnockbackSpeed = Mathf.Max(0f, startSpeed);
-
-        // optionales Minimum an Zeit im Recover, bevor überhaupt "Stop-Phase" passieren darf
-        // (wenn du das nicht willst: einfach 0 lassen)
+        
         stateTimer = Mathf.Max(0f, minDuration);
-
-        // Nach Knockback: Chase-Speed vorbereiten (ramped dann hoch)
+        
         currentChaseSpeed = Mathf.Min(currentChaseSpeed, minChaseSpeedAfterKnockback);
     }
 

@@ -37,10 +37,10 @@ public class UIHealthDisplay : MonoBehaviour
 
         float percent = (max <= 0f) ? 0f : Mathf.Clamp01(cur / max);
 
-        // HP-Bar
+        
         hpFillImage.fillAmount = percent;
 
-        // Text
+       
         if (hitpointsTextmesh != null)
         {
             if (showAsIntegers)

@@ -1,4 +1,3 @@
-// TurretController.cs
 using System;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ public class TurretController : MonoBehaviour
         public bool ignoreSameRoot;
 
         public float range;
-        public float fireRate; // shots/sec
+        public float fireRate;
         public float damage;
 
         public float lifetime;
@@ -38,9 +37,6 @@ public class TurretController : MonoBehaviour
 
     private void Update()
     {
-        FaceCamera(); // <<< immer zur Kamera, NICHT zum Target
-
-        // lifetime
         lifeTimer -= Time.deltaTime;
         if (lifeTimer <= 0f)
         {
@@ -48,8 +44,7 @@ public class TurretController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        // shooting cadence
+        
         float interval = 1f / Mathf.Max(0.1f, cfg.fireRate);
         shotTimer -= Time.deltaTime;
         if (shotTimer > 0f) return;
@@ -57,25 +52,10 @@ public class TurretController : MonoBehaviour
 
         var target = FindNearestTarget();
         if (!target) return;
-
-        // Schaden (kein Drehen zum Target)
+        
         target.ApplyDamage(cfg.damage, cfg.ownerHealth);
     }
-
-    private void FaceCamera()
-    {
-        if (!cam) cam = Camera.main;
-        if (!cam) return;
-
-        // Yaw-only billboard: steht stabil auf dem Boden
-        Vector3 dir = cam.transform.position - transform.position;
-        dir.y = 0f;
-
-        if (dir.sqrMagnitude < 0.0001f) return;
-
-        transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
-    }
-
+    
     private HealthComponent FindNearestTarget()
     {
         int count = Physics.OverlapSphereNonAlloc(

@@ -67,8 +67,7 @@ public class EnemyProjectileShooter : MonoBehaviour
                 spawnPos.y = hit.point.y + groundOffset;
             }
         }
-
-        // IMMER aktuelle Zielposition zur Schusszeit:
+        
         Vector3 targetPos = target.position;
 
         if (aimFlatIgnoreY)
@@ -79,14 +78,12 @@ public class EnemyProjectileShooter : MonoBehaviour
         dir.Normalize();
 
         Rigidbody rb = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
-
-        // Wichtig: velocity (nicht linearVelocity), damit es in den meisten Unity-Versionen korrekt ist
+        
         rb.linearVelocity = dir * projectileSpeed;
     }
 
     private Transform ResolveTargetTransform()
     {
-        // 1) Root holen/validieren
         if (!targetRoot)
         {
             GameObject go = GameObject.FindGameObjectWithTag("Player");
@@ -95,14 +92,14 @@ public class EnemyProjectileShooter : MonoBehaviour
 
         if (!targetRoot) return null;
 
-        // 2) Wenn ein Child-Name angegeben ist: den mitlaufenden Transform nutzen
+        
         if (!string.IsNullOrWhiteSpace(targetChildName))
         {
             Transform child = targetRoot.Find(targetChildName);
             if (child) return child;
         }
 
-        // Fallback: Root selbst
+        
         return targetRoot;
     }
 

@@ -15,10 +15,10 @@ public class EnemyArenaBounds : MonoBehaviour
 
     public Vector3 ClampToBounds(Vector3 worldPos)
     {
-        // Welt -> Lokal
+        
         Vector3 local = transform.InverseTransformPoint(worldPos);
 
-        // BoxCollider.center berücksichtigen
+       
         local -= box.center;
 
         Vector3 half = box.size * 0.5f;
@@ -29,7 +29,7 @@ public class EnemyArenaBounds : MonoBehaviour
 
         local += box.center;
 
-        // Lokal -> Welt
+        
         return transform.TransformPoint(local);
     }
 }

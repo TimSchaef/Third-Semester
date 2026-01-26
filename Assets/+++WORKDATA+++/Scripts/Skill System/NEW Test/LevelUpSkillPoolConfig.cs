@@ -28,9 +28,7 @@ public class LevelUpSkillPoolConfig : ScriptableObject
     [Header("Pools (top to bottom priority)")]
     public List<PoolEntry> pools = new List<PoolEntry>();
 
-    /// <summary>
-    /// Returns the first matching pool (priority = list order).
-    /// </summary>
+    
     public bool TryGetPoolForLevel(int level, out List<SkillDefinition> skills, out bool allowFallbackToGlobalPool)
     {
         skills = null;

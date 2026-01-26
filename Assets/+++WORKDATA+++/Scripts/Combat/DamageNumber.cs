@@ -7,13 +7,13 @@ public class DamageNumber : MonoBehaviour
     [SerializeField] private float floatUpSpeed = 1.25f;
     [SerializeField] private Vector3 randomOffset = new Vector3(0.25f, 0.10f, 0.25f);
 
-    [Header("Lifetime")]
+    [Header("Time")]
     [SerializeField] private float lifetime = 0.9f;
 
     [Header("Look")]
     [SerializeField] private bool faceCamera = true;
 
-    [Header("Crit Look")]
+    [Header("Crit")]
     [SerializeField] private Color critColor = Color.yellow;
     [SerializeField] private float critSizeMultiplier = 1.25f;
 
@@ -40,13 +40,12 @@ public class DamageNumber : MonoBehaviour
             }
             else
             {
-                tmp.fontSize = baseFontSize; // reset
+                tmp.fontSize = baseFontSize; 
             }
 
             startColor = tmp.color;
         }
-
-        // leichter Random-Offset, damit mehrere Zahlen nicht exakt übereinander liegen
+        
         transform.position += new Vector3(
             Random.Range(-randomOffset.x, randomOffset.x),
             Random.Range(0f, randomOffset.y),
@@ -57,19 +56,16 @@ public class DamageNumber : MonoBehaviour
     private void Update()
     {
         timer += Time.deltaTime;
-
-        // nach oben floaten
+        
         transform.position += Vector3.up * floatUpSpeed * Time.deltaTime;
-
-        // zur Kamera drehen (optional)
+        
         if (faceCamera && Camera.main)
         {
             Vector3 dir = transform.position - Camera.main.transform.position;
             if (dir.sqrMagnitude > 0.0001f)
                 transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
         }
-
-        // ausfaden
+        
         if (tmp)
         {
             float t = Mathf.Clamp01(timer / Mathf.Max(0.0001f, lifetime));

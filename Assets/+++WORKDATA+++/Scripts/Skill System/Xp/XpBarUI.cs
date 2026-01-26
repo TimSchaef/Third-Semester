@@ -6,9 +6,9 @@ public class XpBarUI : MonoBehaviour
 {
     [Header("Refs")]
     public PlayerProgress progress;
-    public Slider xpSlider;          // UI Slider
-    public TMP_Text levelText;       // "Lv 3"
-    public TMP_Text xpText;          // "150 / 200"
+    public Slider xpSlider;          
+    public TMP_Text levelText;       
+    public TMP_Text xpText;          
 
     void Awake()
     {

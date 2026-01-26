@@ -10,8 +10,8 @@ public class XPPickup : MonoBehaviour
 
     [Header("Billboard")]
     public bool faceCamera = true;
-    public bool lockYAxis = false; // Für Top-Down meist FALSE lassen!
-    public bool flipForward180 = false; // anmachen, falls es "rückwärts" schaut
+    public bool lockYAxis = false; 
+    public bool flipForward180 = false; 
 
     private Transform cam;
 
@@ -22,17 +22,17 @@ public class XPPickup : MonoBehaviour
         if (cam == null)
         {
             var c = Camera.main;
-            if (c == null) return;              // keine MainCamera -> siehe Checkliste unten
+            if (c == null) return;             
             cam = c.transform;
         }
 
         if (lockYAxis)
         {
-            // Nur Yaw drehen (horizontal)
+           
             Vector3 dir = cam.position - transform.position;
             dir.y = 0f;
 
-            // Wenn Kamera quasi genau über dem Drop steht -> fallback
+           
             if (dir.sqrMagnitude < 0.0001f)
                 dir = Vector3.ProjectOnPlane(cam.forward, Vector3.up);
 
@@ -40,7 +40,7 @@ public class XPPickup : MonoBehaviour
         }
         else
         {
-            // Voll zur Kamera ausrichten, unabhängig von Position (Top-Down-sicher)
+            
             transform.rotation = Quaternion.LookRotation(-cam.forward, cam.up);
         }
 

@@ -7,7 +7,7 @@ public class XPOnDeath : MonoBehaviour
     public int baseXP = 10;
 
     [Header("Drop Settings")]
-    public GameObject xpDropPrefab;       // Prefab mit XPPickup + Trigger Collider
+    public GameObject xpDropPrefab;       
     public Vector3 dropOffset = new Vector3(0, 0.5f, 0);
 
     private HealthComponent health;
@@ -33,10 +33,10 @@ public class XPOnDeath : MonoBehaviour
             return;
         }
 
-        // Drop spawnen
+        
         var go = Instantiate(xpDropPrefab, transform.position + dropOffset, Quaternion.identity);
 
-        // XP-Wert setzen
+       
         var pickup = go.GetComponent<XPPickup>();
         if (pickup != null)
             pickup.xpAmount = baseXP;

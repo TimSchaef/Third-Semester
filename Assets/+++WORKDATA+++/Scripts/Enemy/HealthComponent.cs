@@ -44,10 +44,7 @@ public class HealthComponent : MonoBehaviour
     public float MaxHP => BaseMaxHP * Mathf.Max(0.1f, maxHpMultiplier);
 
     private bool isDead = false;
-
-    // ---------------------------
-    // Damage Numbers
-    // ---------------------------
+    
     [Header("Damage Numbers")]
     [Tooltip("Prefab (WorldSpace Canvas + TMP) das die Zahl anzeigt.")]
     [SerializeField] private DamageNumber damageNumberPrefab;
@@ -58,9 +55,7 @@ public class HealthComponent : MonoBehaviour
     [Tooltip("Wenn true: Zahlen nur für Gegner (nicht Player).")]
     [SerializeField] private bool damageNumbersOnlyForEnemies = true;
 
-    // ---------------------------
-    // Damage Flash (ShaderGraph Tint)
-    // ---------------------------
+   
     [Header("Damage Flash")]
     [SerializeField] private bool flashOnDamage = true;
 
@@ -165,8 +160,7 @@ public class HealthComponent : MonoBehaviour
         maxHpMultiplier = Mathf.Max(0.1f, mult);
         if (healToFull) CurrentHP = MaxHP;
     }
-
-    // isCrit optional -> kompatibel
+    
     public float ApplyDamage(float rawDamage, HealthComponent attacker = null, bool isCrit = false)
     {
         if (isDead || CurrentHP <= 0f)
@@ -178,13 +172,12 @@ public class HealthComponent : MonoBehaviour
 
         float previousHP = CurrentHP;
         CurrentHP -= taken;
-
-        // -------- PLAYER DAMAGE VIGNETTE --------
+        
         if (CompareTag("Player") && damageVignette != null)
         {
             damageVignette.Play();
         }
-        // ---------------------------------------
+        
 
         SpawnDamageNumber(taken, isCrit);
         FlashDamage();
@@ -228,7 +221,7 @@ public class HealthComponent : MonoBehaviour
         if (flashTween != null && flashTween.IsActive()) flashTween.Kill();
         RestoreOriginalColors();
 
-        // Wichtig: OnDeath sofort feuern, damit WaveCounter etc. direkt zählen
+        
         OnDeath?.Invoke();
 
         if (CompareTag("Player"))
@@ -241,20 +234,20 @@ public class HealthComponent : MonoBehaviour
             return;
         }
 
-        // Enemy: Despawn-VFX + delayed destroy
+      
         StartCoroutine(EnemyDeathRoutine());
     }
 
     private IEnumerator EnemyDeathRoutine()
     {
-        // Sofort "gefahrlos" machen: keine Hits mehr, keine Kollisionen
+        
         foreach (var c in GetComponentsInChildren<Collider>(true))
             c.enabled = false;
 
         foreach (var c2d in GetComponentsInChildren<Collider2D>(true))
             c2d.enabled = false;
 
-        // Häufige Damage-/Attack-Skripte ausschalten (aus deinen Uploads)
+       
         var contact = GetComponent<ContactDamage>();
         if (contact != null) contact.enabled = false;
 
@@ -270,11 +263,11 @@ public class HealthComponent : MonoBehaviour
         var atkController = GetComponent<AttackController>();
         if (atkController != null) atkController.enabled = false;
 
-        // Movement stoppen
+        
         var enemyMove = GetComponent<EnemyMovement>();
         if (enemyMove != null) enemyMove.enabled = false;
 
-        // Despawn-VFX
+       
         float wait = 0f;
         var dissolve = GetComponent<dissolve2D>();
         if (dissolve != null)
@@ -282,7 +275,7 @@ public class HealthComponent : MonoBehaviour
             dissolve.playOnStart = false;
             dissolve.isSpawning = false;
 
-            // WICHTIG: HealthComponent übernimmt Destroy, damit Coroutine sicher fertig wird
+           
             dissolve.destroyOnDissolve = false;
 
             dissolve.Dissolve();

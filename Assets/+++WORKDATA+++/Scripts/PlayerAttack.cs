@@ -7,8 +7,8 @@ using UnityEngine.VFX;
 public class PlayerAttack : MonoBehaviour
 {
     [Header("Attack")]
-    [SerializeField] private Collider attackCollider;     // IsTrigger = true
-    [SerializeField] private Transform attackPivot;       // eigener Pivot NUR für AttackBox (optional)
+    [SerializeField] private Collider attackCollider;     
+    [SerializeField] private Transform attackPivot;       
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
 
@@ -160,10 +160,7 @@ public class PlayerAttack : MonoBehaviour
 
         attacking = false;
     }
-
-    // Damage inkl. Crit:
-    // CritChance: 0..1
-    // CritDamage: +% (0.5 => +50%)
+    
     private float GetFinalDamageFromStats(out bool isCrit)
     {
         isCrit = false;
@@ -332,8 +329,7 @@ public class PlayerAttack : MonoBehaviour
                 SoundManager.Instance.PlaySound3D("attackHit", other.transform.position);
             }
         }
-
-        // Knockback über EnemyMovement (statt Rigidbody.AddForce)
+        
         var enemyMove =
             other.GetComponent<EnemyMovement>() ??
             other.GetComponentInParent<EnemyMovement>();
