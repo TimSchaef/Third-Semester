@@ -21,12 +21,12 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    public void PlayMusic(string trackName, float fadeDuration = 0.5f)
+    public void PlayMusic(string trackName, float fadeDuration = 0.6f)
     {
         StartCoroutine(AnimateMusicFade(musicLibrary.GetAudioClipFromName(trackName), fadeDuration));
     }
 
-    IEnumerator AnimateMusicFade(AudioClip nextTrack, float fadeDuration = 0.5f)
+    IEnumerator AnimateMusicFade(AudioClip nextTrack, float fadeDuration = 0.6f)
     {
         float percent = 0;
         while (percent < 1)
