@@ -12,12 +12,12 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
 
-    [Header("Cooldown (Base)")]
-    [Tooltip("Basis-Cooldown bei AttackSpeed = 1.0")]
+    [Header("Cooldown")]
+    
     [SerializeField] private float baseAttackCooldown = 1.0f;
 
-    [Header("Stats (required for Damage)")]
-    [Tooltip("MUSS gesetzt sein, weil Damage vollständig aus CoreStatId.Damage kommt.")]
+    [Header("Stats")]
+    
     [SerializeField] private PlayerStatsManager stats;
 
     [Header("Auto Attack")]
@@ -29,13 +29,12 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private bool ignoreSameRoot = true;
 
-    [Header("Facing (Hitbox)")]
+    [Header("Facing")]
     [SerializeField] private bool rotateDuringActiveTime = true;
     [SerializeField] private float faceTurnSpeed = 720f;
-    [Tooltip("Wenn die Hitbox rückwärts zeigt: 180. Wenn korrekt: 0. Seitlich: 90/-90.")]
     [SerializeField] private float yawOffsetDegrees = 180f;
 
-    [Header("VFX Graph (Existing VisualEffect)")]
+    [Header("VFX")]
     [SerializeField] private VisualEffect attackVfx;
     [SerializeField] private Transform vfxPivot;
     [SerializeField] private bool vfxAlignToTarget = true;
@@ -63,15 +62,6 @@ public class PlayerAttack : MonoBehaviour
     {
         root = transform.root;
         myHealth = GetComponentInParent<HealthComponent>();
-
-        if (!attackCollider)
-            Debug.LogError("[PlayerAttack] attackCollider ist nicht zugewiesen.", this);
-
-        if (!Pivot)
-            Debug.LogError("[PlayerAttack] Weder attackPivot noch attackCollider.transform verfuegbar.", this);
-
-        if (!stats)
-            Debug.LogError("[PlayerAttack] stats ist NICHT gesetzt, aber Damage kommt aus Stats.", this);
 
         if (attackCollider)
         {
@@ -103,10 +93,6 @@ public class PlayerAttack : MonoBehaviour
                 {
                     StartCoroutine(DoAttack(target));
                 }
-                else if (debugLogs)
-                {
-                    Debug.Log("[PlayerAttack] Kein Target gefunden (Layer/Range pruefen).", this);
-                }
             }
         }
     }
@@ -120,7 +106,6 @@ public class PlayerAttack : MonoBehaviour
         Transform target = FindNearestTarget();
         if (!target)
         {
-            if (debugLogs) Debug.Log("[PlayerAttack] Button: kein Target in Range.", this);
             return;
         }
 
@@ -198,9 +183,7 @@ public class PlayerAttack : MonoBehaviour
             attackVfx.Stop();
 
         attackVfx.Play();
-
-        if (debugLogs)
-            Debug.Log("[PlayerAttack] VFX Play()", this);
+        
     }
 
     private void AlignVfxToTarget(Transform target)
@@ -283,9 +266,6 @@ public class PlayerAttack : MonoBehaviour
             Quaternion.Euler(0f, yawOffsetDegrees, 0f);
 
         p.rotation = desired;
-
-        if (debugLogs)
-            Debug.Log($"[PlayerAttack] FaceTargetInstant -> {target.name}", this);
     }
 
     private void FaceTargetSmooth(Transform target)

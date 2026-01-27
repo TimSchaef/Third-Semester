@@ -4,7 +4,7 @@ public class AttackController : MonoBehaviour
 {
     public PlayerStatsManager stats;
     public HealthComponent selfHealth;
-    public float baseAttackCooldown = 1.0f; // Sekunden
+    public float baseAttackCooldown = 1.0f; 
     public float baseDamage = 20f;
 
     float cooldownTimer = 0f;

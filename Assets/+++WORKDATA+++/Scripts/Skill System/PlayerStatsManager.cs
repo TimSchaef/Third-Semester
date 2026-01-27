@@ -130,10 +130,10 @@ public class PlayerStatsManager : MonoBehaviour
         reason = "";
         int lv = GetLevel(s.statId);
 
-        if (lv >= s.maxLevel) { reason = "Max Level erreicht."; return false; }
-        if (player.Level < s.requiredPlayerLevel) { reason = $"Benötigt Spielerlevel {s.requiredPlayerLevel}."; return false; }
-        if (s.prerequisites.Any(p => GetLevel(p.statId) == 0)) { reason = "Voraussetzung fehlt."; return false; }
-        if (player.SkillPoints < s.costPerUpgrade) { reason = "Nicht genug Skillpunkte."; return false; }
+        if (lv >= s.maxLevel) { reason = "Reached Max Level."; return false; }
+        if (player.Level < s.requiredPlayerLevel) { reason = $"Requires Player level {s.requiredPlayerLevel}."; return false; }
+        if (s.prerequisites.Any(p => GetLevel(p.statId) == 0)) { reason = "Requirement Missing."; return false; }
+        if (player.SkillPoints < s.costPerUpgrade) { reason = "Not Enough Skill Points."; return false; }
 
         return true;
     }

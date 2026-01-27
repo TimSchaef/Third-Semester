@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class SpriteTintController : MonoBehaviour
 {
-    [Header("Tint Settings")]
+    [Header("Tint")]
     [SerializeField] private Color tintColor = Color.white;
 
     private SpriteRenderer spriteRenderer;
@@ -21,7 +21,6 @@ public class SpriteTintController : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // Aktualisiert die Farbe sofort, wenn du sie im Inspector änderst
     void OnValidate()
     {
         if (spriteRenderer == null)

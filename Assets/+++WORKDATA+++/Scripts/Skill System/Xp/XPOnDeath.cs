@@ -29,7 +29,6 @@ public class XPOnDeath : MonoBehaviour
     {
         if (xpDropPrefab == null)
         {
-            Debug.LogWarning($"{name}: XPOnDeath hat kein xpDropPrefab gesetzt.");
             return;
         }
 
@@ -40,8 +39,6 @@ public class XPOnDeath : MonoBehaviour
         var pickup = go.GetComponent<XPPickup>();
         if (pickup != null)
             pickup.xpAmount = baseXP;
-        else
-            Debug.LogWarning($"{name}: xpDropPrefab hat kein XPPickup Script.");
     }
 }
 

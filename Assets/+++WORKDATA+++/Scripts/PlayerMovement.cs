@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerStatsManager stats;
     [SerializeField] private float fallbackSpeed = 5f;
 
-    [Header("Rotation (Body only)")]
+    [Header("Rotation")]
     [SerializeField] private Transform bodyPivot;    
     [SerializeField] private float turnSmoothTime = 0.1f;
     [SerializeField] private bool faceOppositeMove = true; 

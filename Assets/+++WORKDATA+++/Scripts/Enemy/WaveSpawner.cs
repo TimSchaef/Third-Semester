@@ -7,15 +7,14 @@ public class WaveSpawner : MonoBehaviour
     public class EnemySpawnEntry
     {
         public GameObject prefab;
-
-        [Tooltip("Spawn-Gewicht. 1 = normal, 2 = doppelt so häufig, 0 = nie.")]
+        
         public float weight = 1f;
     }
 
-    [Header("Spawn Settings (Weighted)")]
+    [Header("Spawn Settings")]
     public EnemySpawnEntry[] enemies;
 
-    [Header("Spawn Area (Box)")]
+    [Header("Spawn Area")]
     public Transform areaCenter;
     public Vector3 areaSize = new Vector3(15f, 0, 15f);
 
@@ -23,28 +22,24 @@ public class WaveSpawner : MonoBehaviour
     public Transform playerTransform;
 
     [Header("Spawn Restrictions")]
-    [Tooltip("Gegner dürfen NICHT innerhalb dieser Distanz zum Spieler spawnen.")]
     public float minDistanceToPlayer = 6f;
     public int maxSpawnTries = 30;
 
-    [Header("Groups / Waves")]
+    [Header("Waves")]
     public int startEnemies = 3;
     public int enemiesPerWaveIncrease = 2;
 
-    [Header("Wave Timing (between groups)")]
-    [Tooltip("Basis-Zeit zwischen zwei Waves.")]
+    [Header("Wave Timing")]
     public float baseTimeBetweenWaves = 5f;
-
-    [Tooltip("Zusätzliche Sekunden pro Wave.")]
+    
     public float timeIncreasePerWave = 1.5f;
-
-    [Tooltip("Maximale Wartezeit zwischen Waves (0 = kein Limit).")]
+    
     public float maxTimeBetweenWaves = 0f;
 
-    [Header("Spawn Timing (within group)")]
+    [Header("Spawn Timing")]
     public float spawnInterval = 0.75f;
 
-    [Header("Optional: Enemy Cap")]
+    [Header("Enemy Cap")]
     public int maxEnemiesAlive = 0;
 
     [Header("Difficulty Scaling")]
@@ -52,14 +47,11 @@ public class WaveSpawner : MonoBehaviour
 
     [Header("Spawn Indicator")]
     public GameObject spawnIndicatorPrefab;
-
-    [Tooltip("Wie lange der Indicator angezeigt wird, bevor der Gegner spawnt.")]
+    
     public float indicatorDuration = 1.0f;
-
-    [Tooltip("Y-Offset des Indicators über dem Boden (gegen Flackern/Z-Fighting).")]
+    
     public float indicatorYOffset = 0.05f;
-
-    [Tooltip("Rotation des Indicators (z.B. X=90, damit ein Sprite flach auf dem Boden liegt).")]
+    
     public Vector3 indicatorRotationEuler = new Vector3(90f, 0f, 0f);
 
     [Header("Runtime")]

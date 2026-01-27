@@ -3,10 +3,8 @@ using UnityEngine;
 public class EnemyProjectileShooter : MonoBehaviour
 {
     [Header("Target")]
-    [Tooltip("Wenn leer, wird per Player-Tag gesucht.")]
     [SerializeField] private Transform targetRoot;
-
-    [Tooltip("Optionaler Child-Name am Player, der wirklich mitläuft (z.B. 'Player', 'Model', 'Center', 'AimPoint').")]
+    
     [SerializeField] private string targetChildName = "AimPoint";
 
     [SerializeField] private bool aimFlatIgnoreY = false;
@@ -23,7 +21,7 @@ public class EnemyProjectileShooter : MonoBehaviour
     [SerializeField] private float spawnForwardOffset = 0.6f;
     [SerializeField] private float spawnUpOffset = 0.2f;
 
-    [Header("Ground Offset (Raycast)")]
+    [Header("Ground Offset")]
     [SerializeField] private bool snapToGround = true;
     [SerializeField] private LayerMask groundLayers = ~0;
     [SerializeField] private float groundRayHeight = 3f;

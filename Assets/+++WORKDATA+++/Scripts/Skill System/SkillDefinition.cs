@@ -30,11 +30,9 @@ public class SkillDefinition : ScriptableObject
     [Min(1)] public int costSkillPoints = 1;
 
     [Header("Stacking")]
-    [Tooltip("0 = infinite picks")]
     [Min(0)] public int maxPicks = 0;
 
     [Header("Drop Chance")]
-    [Tooltip("Relative weight for appearing in the level-up choices. 0 = never.")]
     [Min(0f)] public float dropWeight = 1f;
 
     [Header("Prerequisites")]

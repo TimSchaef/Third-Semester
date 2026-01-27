@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6977636052571413621}
   - component: {fileID: 4582129948371270225}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: DamageNumbers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119,6 +119,8 @@ MonoBehaviour:
   randomOffset: {x: 0.25, y: 0.1, z: 0.25}
   lifetime: 0.9
   faceCamera: 1
+  critColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  critSizeMultiplier: 1.25
 --- !u!1 &7140476023235043582
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,8 +188,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9d58c92f4c35cef41addc1add1a93134, type: 2}
+  m_sharedMaterial: {fileID: 6665984307520859327, guid: 9d58c92f4c35cef41addc1add1a93134, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -249,7 +251,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 2.4333382, z: 0, w: -53.260033}
+  m_margin: {x: -115.6638, y: 2.4333382, z: -115.47276, w: -53.260033}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

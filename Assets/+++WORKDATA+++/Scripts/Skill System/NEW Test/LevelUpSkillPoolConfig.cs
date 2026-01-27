@@ -8,11 +8,9 @@ public class LevelUpSkillPoolConfig : ScriptableObject
     [System.Serializable]
     public class PoolEntry
     {
-        [Header("Which levels?")]
-        [Tooltip("If not empty: This pool is used only for these exact levels (e.g., 3, 15, 20).")]
+        [Header("levels")]
         public List<int> exactLevels = new List<int>();
-
-        [Tooltip("If exactLevels is empty: pool is used when level is within [minLevel..maxLevel].")]
+        
         public int minLevel = 1;
 
         public int maxLevel = 999;
@@ -21,11 +19,10 @@ public class LevelUpSkillPoolConfig : ScriptableObject
         public List<SkillDefinition> skills = new List<SkillDefinition>();
 
         [Header("Behavior")]
-        [Tooltip("If true: Can also include Skills from the global SkillTree list (as fallback) when pool is too small.")]
         public bool allowFallbackToGlobalPool = false;
     }
 
-    [Header("Pools (top to bottom priority)")]
+    [Header("Pools")]
     public List<PoolEntry> pools = new List<PoolEntry>();
 
     

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Swift Strike
-  description: + 8% Attack Speed
+  description: + 12% Attack Speed
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -25,5 +25,5 @@ MonoBehaviour:
   prerequisites: []
   effects:
   - stat: 1
-    op: 0
-    value: 0.08
+    op: 1
+    value: 0.12

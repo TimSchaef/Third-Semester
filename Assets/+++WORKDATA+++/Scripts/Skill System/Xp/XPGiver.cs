@@ -10,7 +10,6 @@ public class XPGiver : MonoBehaviour
     {
         if (progress == null || stats == null)
         {
-            Debug.LogWarning("XPGiver: stats oder progress nicht gesetzt!");
             return;
         }
         

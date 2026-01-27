@@ -12,10 +12,7 @@ public class EnemyMovement : MonoBehaviour
     public float detectRange = 12f;
     public float moveSpeed = 5f;
     public float stopDistance = 1.25f;
-
-    [Header("Chase Acceleration")]
     public float chaseAcceleration = 20f;
-    
     public float minChaseSpeedAfterKnockback = 0.75f;
 
     [Header("Charge")]
@@ -27,7 +24,6 @@ public class EnemyMovement : MonoBehaviour
 
     [Header("Knockback")]
     public float knockbackDeceleration = 25f;
-    
     public float knockbackStopHoldTime = 0.05f;
 
     [Header("Hit Recover")]
@@ -37,8 +33,7 @@ public class EnemyMovement : MonoBehaviour
     [Header("Rotation")]
     public bool rotateToMoveDirection = true;
 
-    
-    [Header("Hover Animation")]
+    [Header("Hover")]
     public bool enableIdleHover = false;
     public Transform hoverVisualTransform;
     public float hoverHeight = 0.5f;
@@ -55,11 +50,10 @@ public class EnemyMovement : MonoBehaviour
 
     private Vector3 chargeDir;
 
-    
     private Vector3 hitRecoverDir;
     private float currentKnockbackSpeed = 0f;
     private bool inKnockbackStopPhase = false;
-    
+
     private float currentChaseSpeed = 0f;
 
     private void Awake()
@@ -101,6 +95,26 @@ public class EnemyMovement : MonoBehaviour
     {
         if (cooldownTimer > 0f) cooldownTimer -= Time.deltaTime;
         if (stateTimer > 0f) stateTimer -= Time.deltaTime;
+
+        // ✅ NEU: Wenn der Gegner außerhalb der Area ist -> anhalten + zurück in Bounds
+        if (EnemyAreaBounds.Instance != null && !EnemyAreaBounds.Instance.Contains(rb.position))
+        {
+            Vector3 clamped = EnemyAreaBounds.Instance.ClampToBounds(rb.position);
+
+            // Snap zurück in die Area
+            rb.position = clamped;
+
+            // hart stoppen
+            rb.linearVelocity = Vector3.zero;
+
+            // Zustände resetten, damit er danach wieder normal chased
+            state = State.Chase;
+            stateTimer = 0f;
+            inKnockbackStopPhase = false;
+            currentKnockbackSpeed = 0f;
+
+            return; // nächste Frames läuft Chase wieder ganz normal
+        }
 
         if (player == null)
         {
@@ -250,10 +264,8 @@ public class EnemyMovement : MonoBehaviour
         hoverVisualTransform.localPosition = hoverVisualLocalStartPos + Vector3.up * yOffset;
     }
 
-    
     public void OnDealtDamage(Vector3 targetPosition)
     {
-       
         Vector3 away = (transform.position - targetPosition);
         away.y = 0f;
 
@@ -261,11 +273,9 @@ public class EnemyMovement : MonoBehaviour
             away = transform.forward;
 
         BeginKnockback(away.normalized, afterHitSpeed, afterHitTime);
-
-        
         cooldownTimer = Mathf.Max(cooldownTimer, 0.2f);
     }
-    
+
     public void ApplyKnockback(Vector3 sourcePosition, float force, float duration = 0.15f, float minForce = 0f)
     {
         Vector3 away = (transform.position - sourcePosition);
@@ -275,7 +285,6 @@ public class EnemyMovement : MonoBehaviour
             away = transform.forward;
 
         float startSpeed = Mathf.Max(minForce, force);
-
         BeginKnockback(away.normalized, startSpeed, duration);
 
         cooldownTimer = Mathf.Max(cooldownTimer, 0.2f);
@@ -285,14 +294,12 @@ public class EnemyMovement : MonoBehaviour
     {
         hitRecoverDir = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.zero;
 
-        
         state = State.HitRecover;
         inKnockbackStopPhase = false;
 
         currentKnockbackSpeed = Mathf.Max(0f, startSpeed);
-        
         stateTimer = Mathf.Max(0f, minDuration);
-        
+
         currentChaseSpeed = Mathf.Min(currentChaseSpeed, minChaseSpeedAfterKnockback);
     }
 
@@ -300,7 +307,7 @@ public class EnemyMovement : MonoBehaviour
     {
         v.y = 0f;
 
-        if (EnemyArenaBounds.Instance == null)
+        if (EnemyAreaBounds.Instance == null)
         {
             rb.linearVelocity = v;
             RotateIfNeeded(v);
@@ -310,7 +317,7 @@ public class EnemyMovement : MonoBehaviour
         Vector3 current = rb.position;
         Vector3 desiredNext = current + v * Time.deltaTime;
 
-        Vector3 clampedNext = EnemyArenaBounds.Instance.ClampToBounds(desiredNext);
+        Vector3 clampedNext = EnemyAreaBounds.Instance.ClampToBounds(desiredNext);
 
         bool blocked = (clampedNext - desiredNext).sqrMagnitude > 0.0000001f;
 
@@ -325,10 +332,7 @@ public class EnemyMovement : MonoBehaviour
         Vector3 correctedVel = delta / Mathf.Max(Time.deltaTime, 0.0001f);
         correctedVel.y = 0f;
 
-        if (correctedVel.sqrMagnitude < 0.0001f)
-            rb.linearVelocity = Vector3.zero;
-        else
-            rb.linearVelocity = correctedVel;
+        rb.linearVelocity = (correctedVel.sqrMagnitude < 0.0001f) ? Vector3.zero : correctedVel;
 
         RotateIfNeeded(rb.linearVelocity);
         return true;
@@ -345,5 +349,4 @@ public class EnemyMovement : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(flat, Vector3.up);
     }
 }
-
 

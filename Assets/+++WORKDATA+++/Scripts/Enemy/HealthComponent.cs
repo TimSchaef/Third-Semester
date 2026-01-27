@@ -10,11 +10,9 @@ public class HealthComponent : MonoBehaviour
     public event Action OnDeath;
     
     [Header("Fallback HP")]
-    [Tooltip("Wird benutzt, wenn kein Stats-Objekt vorhanden ist oder MaxHP aus Stats <= 0 ist.")]
     [SerializeField] private float fallbackMaxHP = 100f;
 
     [Header("Scaling")]
-    [Tooltip("Multiplikator für MaxHP (z.B. für Wellen-Skalierung). 1 = normal.")]
     [SerializeField] private float maxHpMultiplier = 1f;
     
     [Header("Lose Panel")]
@@ -46,41 +44,30 @@ public class HealthComponent : MonoBehaviour
     private bool isDead = false;
     
     [Header("Damage Numbers")]
-    [Tooltip("Prefab (WorldSpace Canvas + TMP) das die Zahl anzeigt.")]
     [SerializeField] private DamageNumber damageNumberPrefab;
-
-    [Tooltip("Offset über dem Gegner, wo die Zahl erscheinen soll.")]
+    
     [SerializeField] private Vector3 damageNumberOffset = new Vector3(0f, 1.5f, 0f);
-
-    [Tooltip("Wenn true: Zahlen nur für Gegner (nicht Player).")]
+    
     [SerializeField] private bool damageNumbersOnlyForEnemies = true;
 
    
     [Header("Damage Flash")]
     [SerializeField] private bool flashOnDamage = true;
-
-    [Tooltip("Farbe beim Treffer (im Inspector auswählbar).")]
+    
     [SerializeField] private Color damageFlashColor = Color.red;
-
-    [Tooltip("Wie lange die Flash-Farbe sofort anliegt, bevor zurückgeblendet wird.")]
+    
     [SerializeField] private float flashHoldTime = 0.05f;
-
-    [Tooltip("Wie lange zurück zur Originalfarbe geblendet wird.")]
+    
     [SerializeField] private float flashReturnTime = 0.10f;
-
-    [Tooltip("Wenn true: nur Player flasht. Wenn false: alle (Player + Gegner).")]
+    
     [SerializeField] private bool flashOnlyPlayer = false;
-
-    [Tooltip("Unscaled Time benutzen (empfohlen, wenn du irgendwo timeScale=0 setzt).")]
+    
     [SerializeField] private bool flashIgnoreTimeScale = false;
-
-    [Tooltip("ShaderGraph Tint Reference Name. Muss im ShaderGraph existieren und genutzt werden (Texture RGB * Tint -> BaseColor).")]
+    
     [SerializeField] private string tintPropertyName = "_TintColor";
-
-    [Tooltip("Optional: Renderer manuell setzen. Leer = automatisch Children suchen.")]
+    
     [SerializeField] private Renderer[] renderers3D;
-
-    [Tooltip("Optional: SpriteRenderer manuell setzen. Leer = automatisch Children suchen.")]
+    
     [SerializeField] private SpriteRenderer[] spriteRenderers;
 
     private Tween flashTween;
@@ -229,7 +216,6 @@ public class HealthComponent : MonoBehaviour
             if (losePanel != null)
                 losePanel.Show();
             else
-                Debug.LogWarning("HealthComponent: LosePanelController ist nicht gesetzt!");
 
             return;
         }

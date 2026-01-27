@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
-public class EnemyArenaBounds : MonoBehaviour
+public class EnemyAreaBounds : MonoBehaviour
 {
-    public static EnemyArenaBounds Instance { get; private set; }
+    public static EnemyAreaBounds Instance { get; private set; }
 
     private BoxCollider box;
 
@@ -15,10 +15,8 @@ public class EnemyArenaBounds : MonoBehaviour
 
     public Vector3 ClampToBounds(Vector3 worldPos)
     {
-        
         Vector3 local = transform.InverseTransformPoint(worldPos);
 
-       
         local -= box.center;
 
         Vector3 half = box.size * 0.5f;
@@ -29,8 +27,21 @@ public class EnemyArenaBounds : MonoBehaviour
 
         local += box.center;
 
-        
         return transform.TransformPoint(local);
+    }
+
+    public bool Contains(Vector3 worldPos)
+    {
+        Vector3 local = transform.InverseTransformPoint(worldPos);
+
+        local -= box.center;
+
+        Vector3 half = box.size * 0.5f;
+
+        return
+            local.x >= -half.x && local.x <= half.x &&
+            local.y >= -half.y && local.y <= half.y &&
+            local.z >= -half.z && local.z <= half.z;
     }
 }
 

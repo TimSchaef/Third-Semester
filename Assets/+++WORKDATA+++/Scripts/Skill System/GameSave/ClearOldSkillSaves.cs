@@ -7,6 +7,5 @@ public class ClearOldSkillSaves : MonoBehaviour
         PlayerPrefs.DeleteKey("skilltree_unlocked");
         PlayerPrefs.DeleteKey("skilltree_unlocked_v2");
         PlayerPrefs.Save();
-        Debug.Log("Alte SkillTree-Saves gelöscht.");
     }
 }

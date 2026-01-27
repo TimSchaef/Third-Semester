@@ -9,7 +9,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     [SerializeField] private PlayerProgress progress;
     [SerializeField] private SkillTree tree;
 
-    [Header("Level-based Pools (optional)")]
+    [Header("Level-based Pools")]
     [SerializeField] private LevelUpSkillPoolConfig poolConfig;
 
     [Header("UI")]
@@ -17,7 +17,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     [SerializeField] private SkillChoiceButton[] choiceButtons; 
 
     [Header("Refresh")]
-    [Tooltip("Optional: Assign a UI Button to allow one reroll per shown panel.")]
     [SerializeField] private Button refreshButton;
     [SerializeField] private bool allowRefreshOncePerPanel = true;
 
@@ -25,19 +24,15 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     [SerializeField] private bool pauseGameOnOpen = true;
     [SerializeField] private MonoBehaviour[] disableWhenOpen;
 
-    [Header("Disable Root While Open")]
-    [Tooltip("Dieses Root-GameObject wird deaktiviert, solange das Skill-Panel offen ist, und beim Schließen wiederhergestellt.")]
+    [Header("Disable Root")]
     [SerializeField] private GameObject rootToDisableWhileOpen;
 
     [Header("Win Condition")]
-    [Tooltip("How many level-up choice panels must the player complete to win.")]
     [Min(1)]
     [SerializeField] private int panelsToWin = 10;
-
-    [Tooltip("Optional: shown when player wins.")]
+    
     [SerializeField] private GameObject winPanel;
-
-    [Tooltip("Optional: triggered when player wins (load scene, etc.).")]
+    
     public UnityEvent onWin;
 
     private bool isOpen;
@@ -263,7 +258,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void ApplyOpenState(bool open)
     {
-        Debug.Log($"[LevelUp] ApplyOpenState(open={open})");
 
         Cursor.visible = open;
         Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked;
