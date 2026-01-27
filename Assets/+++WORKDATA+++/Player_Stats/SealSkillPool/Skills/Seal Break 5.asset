@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Seal Break
-  description: '- 20 Damage
+  description: '- 2 HP Regen / s
 
 
-    - 2 HP Regen / s'
+    + 20 Damage'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1

@@ -15,7 +15,6 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private PlayerProgress progress;         
 
     [Header("Locks")]
-    [Tooltip("Wenn dieses Menü offen ist (z.B. Skill-Menu), darf Pause nicht geöffnet werden.")]
     [SerializeField] private LevelUpSkillChoiceController skillMenu;
 
     [Header("Behavior")]
@@ -33,13 +32,15 @@ public class PauseMenuController : MonoBehaviour
    
     public void TogglePause(InputAction.CallbackContext ctx)
     {
+        Debug.Log($"ESC action fired: phase={ctx.phase} performed={ctx.performed}");
         if (!ctx.performed) return;
-        
+
         if (skillMenu != null && skillMenu.IsOpen)
             return;
 
         Toggle();
     }
+
 
     public void Toggle()
     {

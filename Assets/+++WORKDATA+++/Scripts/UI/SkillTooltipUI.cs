@@ -75,7 +75,7 @@ public class SkillTooltipUI : MonoBehaviour
             sb.Append(StatTextUtil.GetDisplayName(stat))
               .Append(": ")
               .Append(StatTextUtil.FormatValue(stat, b))
-              .Append(" → ")
+              .Append(" -> ")
               .Append(StatTextUtil.FormatValue(stat, a))
               .AppendLine();
         }
