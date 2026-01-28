@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Power UP
-  description: '+ 5% Damage
+  description: '+ 13% Damage
 
 
     - 7 % Thorns'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 8
     op: 1
-    value: 0.05
+    value: 0.13
   - stat: 6
     op: 0
     value: -0.07

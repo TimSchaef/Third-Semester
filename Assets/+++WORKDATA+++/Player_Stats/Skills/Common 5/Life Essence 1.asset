@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Life Essence
-  description: '+ 15 Max HP
+  description: '+ 20 Max HP
 
 
     - 3% Crit Chance'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 2
     op: 0
-    value: 15
+    value: 20
   - stat: 9
     op: 0
     value: -0.03

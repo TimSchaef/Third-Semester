@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Absorbtion
-  description: '+ 8 % Life Steal
+  description: '+ 11% Life Steal
 
 
-    - 5 % Move Speed'
+    - 5% Move Speed'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 7
     op: 0
-    value: 0.08
+    value: 0.11
   - stat: 0
     op: 1
     value: -0.05

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Life Essence
-  description: '+ 15 Max HP
+  description: '+ 22 Max HP
 
 
     - 5 % Attack Speed'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 2
     op: 0
-    value: 15
+    value: 22
   - stat: 1
     op: 0
     value: -0.05

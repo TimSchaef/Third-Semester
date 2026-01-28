@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Life Surge
-  description: + 14 Max HP
+  description: + 30 Max HP
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 2
     op: 0
-    value: 14
+    value: 30

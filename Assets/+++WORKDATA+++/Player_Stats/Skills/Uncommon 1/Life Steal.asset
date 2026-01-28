@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Leech
-  description: + 8% Lfie Steal
+  description: + 18% Lfie Steal
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 7
     op: 0
-    value: 0.08
+    value: 0.18

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Quick Slash
-  description: '+ 7% Attack Speed
+  description: '+ 13% Attack Speed
 
 
     - 12 Max Hp'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 1
     op: 0
-    value: 0.07
+    value: 0.13
   - stat: 2
     op: 0
     value: -12

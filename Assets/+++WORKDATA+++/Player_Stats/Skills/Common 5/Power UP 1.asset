@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Power UP
-  description: '+ 8% Damage
+  description: '+ 14% Damage
 
 
     - 0.3 HP Regen / s'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 8
     op: 1
-    value: 0.08
+    value: 0.14
   - stat: 3
     op: 0
     value: -0.3

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Experience
-  description: + 7% Xp Gain
+  description: + 8% Xp Gain
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 5
     op: 0
-    value: 0.07
+    value: 0.08

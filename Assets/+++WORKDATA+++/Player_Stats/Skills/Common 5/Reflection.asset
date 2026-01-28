@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Reflection
-  description: "+ 9% Thorns \n\n- 6% Damage"
+  description: "+ 30% Thorns \n\n- 6% Damage"
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -26,7 +26,7 @@ MonoBehaviour:
   effects:
   - stat: 6
     op: 0
-    value: 0.09
+    value: 0.3
   - stat: 8
     op: 1
     value: -0.06

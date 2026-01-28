@@ -17,7 +17,7 @@ MonoBehaviour:
   description: '- 2 HP Regen / s
 
 
-    + 20 Damage'
+    + 25 Damage'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 8
     op: 0
-    value: 20
+    value: 25
   - stat: 3
     op: 0
     value: -2

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Chaos Range
-  description: + 6 AOE Radius
+  description: + 9 AOE Radius
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 12
     op: 0
-    value: 6
+    value: 9

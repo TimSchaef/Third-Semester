@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Seal Break
-  description: '-  14% Life Steal
+  description: '-  19% Life Steal
 
 
-    + 15% Crit Cance'
+    + 25% Crit Cance'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 7
     op: 0
-    value: -0.14
+    value: -0.9
   - stat: 9
     op: 0
-    value: 0.15
+    value: 0.25

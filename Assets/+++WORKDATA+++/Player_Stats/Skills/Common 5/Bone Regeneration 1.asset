@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Bone Regeneration
-  description: '+ 0.4 HP Regen
+  description: '+ 0.7 HP Regen
 
 
     - 5% Damage'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 3
     op: 0
-    value: 0.4
+    value: 0.7
   - stat: 8
     op: 1
     value: -0.05

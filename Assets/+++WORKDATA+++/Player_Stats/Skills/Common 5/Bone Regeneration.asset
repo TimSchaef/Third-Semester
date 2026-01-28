@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Bone Regeneration
-  description: '+ 0.4 HP Regen
+  description: '+ 0.8 HP Regen
 
 
     - 3 % Crit Chance'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 3
     op: 0
-    value: 0.4
+    value: 0.8
   - stat: 9
     op: 0
     value: -0.03

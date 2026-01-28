@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Eternal Healing
-  description: + 0.4 HP Regen / s
+  description: + 1 HP Regen / s
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1
@@ -26,4 +26,4 @@ MonoBehaviour:
   effects:
   - stat: 3
     op: 0
-    value: 0.4
+    value: 1

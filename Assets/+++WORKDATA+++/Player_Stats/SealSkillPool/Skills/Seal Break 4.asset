@@ -17,7 +17,7 @@ MonoBehaviour:
   description: '-  2 HP Regen / s
 
 
-    + 15% Lfie Steal'
+    + 19% Lfie Steal'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -32,4 +32,4 @@ MonoBehaviour:
     value: -2
   - stat: 7
     op: 0
-    value: 0.15
+    value: 0.19

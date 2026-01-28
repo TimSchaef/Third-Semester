@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Critter
-  description: '+ 5% Crit Chance
+  description: '+ 10% Crit Chance
 
 
     -12 Max HP'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 9
     op: 0
-    value: 0.05
+    value: 0.1
   - stat: 2
     op: 0
     value: -12

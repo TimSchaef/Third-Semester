@@ -167,6 +167,7 @@ GameObject:
   - component: {fileID: 2580028070786386987}
   - component: {fileID: 5024687537567495881}
   - component: {fileID: 8466230652113254132}
+  - component: {fileID: 3060291968376281479}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -235,12 +236,12 @@ SpriteRenderer:
   m_SortingLayerID: -615577115
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8877c551eb8cc0944a49f2a0ea08067e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6e65cfb1af7ad9149b55c79309d0da2c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 7.15, y: 8.06}
+  m_Size: {x: 6.33, y: 10.65}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -277,7 +278,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCollider: {fileID: 6582326336129708729}
   attackPivot: {fileID: 3041541123724220908}
-  damage: 20
   knockbackForce: 20
   activeTime: 0.1
   baseAttackCooldown: 1
@@ -550,6 +550,11 @@ MonoBehaviour:
   stats: {fileID: 2681993167726318184}
   fallbackMaxHP: 100
   maxHpMultiplier: 1
+  losePanel: {fileID: 0}
+  damageVignette: {fileID: 0}
+  damageNumberPrefab: {fileID: 0}
+  damageNumberOffset: {x: 0, y: 1.5, z: 0}
+  damageNumbersOnlyForEnemies: 1
   flashOnDamage: 1
   damageFlashColor: {r: 1, g: 0, b: 0, a: 1}
   flashHoldTime: 0.05
@@ -677,6 +682,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.252254, y: 6.9505177, z: 2.3404732}
   m_Center: {x: -0.13037497, y: 3.4752588, z: 0.021058321}
+--- !u!95 &3060291968376281479
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053158358163126664}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a81cf8149b89ee6448d183735e9ef0c8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &5023031094303250460
 PrefabInstance:
   m_ObjectHideFlags: 0
