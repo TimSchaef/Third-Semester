@@ -14,7 +14,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject panelRoot;
-    [SerializeField] private SkillChoiceButton[] choiceButtons; 
+    [SerializeField] private SkillChoiceButton[] choiceButtons;
 
     [Header("Refresh")]
     [SerializeField] private Button refreshButton;
@@ -30,9 +30,9 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     [Header("Win Condition")]
     [Min(1)]
     [SerializeField] private int panelsToWin = 10;
-    
+
     [SerializeField] private GameObject winPanel;
-    
+
     public UnityEvent onWin;
 
     private bool isOpen;
@@ -42,12 +42,13 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     private readonly Queue<int> pendingLevels = new Queue<int>();
 
     private int panelsShown;
-    private bool hasWon;
 
-   
+    // NEW: getrennte States
+    private bool winPanelOpen;     // blockt solange WinPanel offen ist
+    private bool winShownOnce;     // WinPanel darf nur ein einziges Mal erscheinen
+
     private bool refreshUsedThisPanel;
 
-    
     private bool rootPrevActive;
     private bool rootStateCached;
 
@@ -62,10 +63,11 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         isOpen = false;
         pendingLevelUps = 0;
         panelsShown = 0;
-        hasWon = false;
-        refreshUsedThisPanel = false;
 
-       
+        winPanelOpen = false;
+        winShownOnce = false;
+
+        refreshUsedThisPanel = false;
         rootStateCached = false;
 
         if (refreshButton != null)
@@ -88,7 +90,8 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void HandleLevelUp(int newLevel)
     {
-        if (hasWon) return;
+        // Während WinPanel offen: nix öffnen
+        if (winPanelOpen) return;
 
         pendingLevelUps++;
         pendingLevels.Enqueue(newLevel);
@@ -99,7 +102,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void OpenAndShowChoicesForNextPendingLevel(bool countAsPanel)
     {
-        if (hasWon) return;
+        if (winPanelOpen) return;
         if (tree == null || progress == null || panelRoot == null) return;
         if (pendingLevels.Count == 0) return;
 
@@ -108,27 +111,22 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             isOpen = true;
             panelRoot.SetActive(true);
 
-            
             SetRootDisabledWhileOpen(true);
-
             ApplyOpenState(true);
         }
         else
         {
             panelRoot.SetActive(true);
-
-            
             SetRootDisabledWhileOpen(true);
         }
 
         if (countAsPanel)
         {
             panelsShown++;
-
-            
             refreshUsedThisPanel = false;
 
-            if (panelsShown >= panelsToWin)
+            // WIN nur 1x auslösen
+            if (!winShownOnce && panelsShown >= panelsToWin)
             {
                 TriggerWin();
                 return;
@@ -161,7 +159,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void OnPickSkill(SkillDefinition skill)
     {
-        if (hasWon) return;
+        if (winPanelOpen) return;
         if (skill == null || tree == null) return;
 
         bool ok = tree.TryUnlock(skill);
@@ -187,7 +185,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     public void OnRefreshPressed()
     {
         if (!allowRefreshOncePerPanel) return;
-        if (hasWon) return;
+        if (winPanelOpen) return;
         if (!isOpen) return;
         if (refreshUsedThisPanel) return;
         if (pendingLevels.Count == 0) return;
@@ -205,19 +203,23 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         refreshButton.interactable =
             allowRefreshOncePerPanel &&
             isOpen &&
-            !hasWon &&
+            !winPanelOpen &&
             !refreshUsedThisPanel &&
             pendingLevels.Count > 0;
     }
 
     private void TriggerWin()
     {
-        hasWon = true;
+        // WinPanel nur 1x
+        winShownOnce = true;
+        winPanelOpen = true;
+
+        // FIX: LevelUp-Panel-State sauber schließen, sonst hängt isOpen
+        isOpen = false;
 
         if (panelRoot != null)
             panelRoot.SetActive(false);
 
-        
         if (pauseGameOnOpen)
             Time.timeScale = 0f;
 
@@ -230,7 +232,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
                 if (comp != null) comp.enabled = false;
         }
 
-        
         SetRootDisabledWhileOpen(true);
 
         if (winPanel != null)
@@ -238,6 +239,40 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
         UpdateRefreshButton();
         onWin?.Invoke();
+    }
+
+    /// <summary>
+    /// Vom WinPanel-Continue Button aufrufen.
+    /// Danach darf NICHT nochmal WinPanel kommen, aber LevelUps sollen weitergehen.
+    /// </summary>
+    public void ResumeAfterWin()
+    {
+        // WinPanel schließen & Spiel fortsetzen
+        winPanelOpen = false;
+
+        if (winPanel != null)
+            winPanel.SetActive(false);
+
+        Time.timeScale = 1f;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        if (disableWhenOpen != null)
+        {
+            foreach (var comp in disableWhenOpen)
+                if (comp != null) comp.enabled = true;
+        }
+
+        SetRootDisabledWhileOpen(false);
+
+        // Falls LevelUps aufgelaufen sind: direkt wieder öffnen
+        if (!isOpen && pendingLevelUps > 0 && pendingLevels.Count > 0)
+        {
+            OpenAndShowChoicesForNextPendingLevel(countAsPanel: false);
+        }
+
+        UpdateRefreshButton();
     }
 
     private void Close()
@@ -249,8 +284,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
             panelRoot.SetActive(false);
 
         ApplyOpenState(false);
-
-      
         SetRootDisabledWhileOpen(false);
 
         UpdateRefreshButton();
@@ -258,7 +291,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void ApplyOpenState(bool open)
     {
-
         Cursor.visible = open;
         Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked;
 
@@ -272,27 +304,23 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
     }
 
-    
     private void SetRootDisabledWhileOpen(bool open)
     {
         if (rootToDisableWhileOpen == null) return;
 
         if (open)
         {
-            
             if (!rootStateCached)
             {
                 rootPrevActive = rootToDisableWhileOpen.activeSelf;
                 rootStateCached = true;
             }
 
-           
             if (rootToDisableWhileOpen.activeSelf)
                 rootToDisableWhileOpen.SetActive(false);
         }
         else
         {
-            
             if (rootStateCached)
             {
                 rootToDisableWhileOpen.SetActive(rootPrevActive);
@@ -301,5 +329,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
     }
 }
+
+
 
 

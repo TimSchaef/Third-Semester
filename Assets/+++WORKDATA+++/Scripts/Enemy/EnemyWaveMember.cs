@@ -16,33 +16,31 @@ public class EnemyWaveMember : MonoBehaviour
     {
         hp = GetComponent<HealthComponent>();
         if (hp != null)
-        {
             hp.OnDeath += HandleDeath;
-        }
     }
 
     private void OnDestroy()
     {
         if (hp != null)
-        {
             hp.OnDeath -= HandleDeath;
-        }
         
         if (!reportedDeath && spawner != null)
-        {
             spawner.OnEnemyKilled(this);
-        }
     }
 
     private void HandleDeath()
     {
-        if (reportedDeath) return; 
+        if (reportedDeath) return;
         reportedDeath = true;
 
+       
         if (spawner != null)
-        {
             spawner.OnEnemyKilled(this);
-        }
+
+        
+        if (KillCounter.Instance != null)
+            KillCounter.Instance.AddKill(1);
     }
 }
+
 

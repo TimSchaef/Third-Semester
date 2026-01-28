@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &6977636052571413621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,12 +115,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02a826dff9a0f90459ff0cbed932ef9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatUpSpeed: 1.25
-  randomOffset: {x: 0.25, y: 0.1, z: 0.25}
+  floatUpSpeed: 1.31
+  randomOffset: {x: 0.25, y: 0.46, z: 0.25}
   lifetime: 0.9
   faceCamera: 1
-  critColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  critSizeMultiplier: 1.25
+  critColor: {r: 1, g: 0.70270234, b: 0.015686274, a: 1}
+  critSizeMultiplier: 1.9
 --- !u!1 &7140476023235043582
 GameObject:
   m_ObjectHideFlags: 0

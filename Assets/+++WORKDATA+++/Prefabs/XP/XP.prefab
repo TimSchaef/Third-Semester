@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0eefc15b01091b4da1f4b044d44cfd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xpAmount: 50
+  xpAmount: 40
   playerTag: Player
   destroyOnPickup: 1
   faceCamera: 1

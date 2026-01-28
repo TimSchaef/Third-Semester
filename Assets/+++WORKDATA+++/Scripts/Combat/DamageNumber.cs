@@ -15,7 +15,7 @@ public class DamageNumber : MonoBehaviour
 
     [Header("Crit")]
     [SerializeField] private Color critColor = Color.yellow;
-    [SerializeField] private float critSizeMultiplier = 1.25f;
+    [SerializeField] private float critSizeMultiplier = 2f;
 
     private TextMeshProUGUI tmp;
     private Color startColor;
