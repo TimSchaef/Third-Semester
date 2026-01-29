@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Lucky Strike
-  description: + 20% Chrit Chance
+  description: + 20% Crit Chance
   icon: {fileID: 0}
   rarity: 1
   requiredPlayerLevel: 1

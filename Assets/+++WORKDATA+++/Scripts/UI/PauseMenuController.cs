@@ -21,7 +21,7 @@ public class PauseMenuController : MonoBehaviour
 
     [Header("Stats")]
     [SerializeField] private bool hideZeroStats = true;
-    
+
     [SerializeField] private CoreStatId[] alwaysShowStats = new[]
     {
         CoreStatId.TurretCount,
@@ -31,6 +31,9 @@ public class PauseMenuController : MonoBehaviour
     };
 
     private bool isOpen;
+
+    
+    private bool pausedByThisMenu;
 
     private void Awake()
     {
@@ -43,7 +46,7 @@ public class PauseMenuController : MonoBehaviour
         if (escAction != null && escAction.action != null)
             escAction.action.Enable();
 
-        // Falls das Panel per SetActive(true) aktiviert wird:
+        
         if (pausePanel != null && pausePanel.activeInHierarchy)
             RebuildStatsUI();
     }
@@ -73,8 +76,17 @@ public class PauseMenuController : MonoBehaviour
         if (pausePanel != null)
             pausePanel.SetActive(true);
 
-        if (pauseGameOnOpen)
+       
+        if (pauseGameOnOpen && Time.timeScale > 0f)
+        {
             Time.timeScale = 0f;
+            pausedByThisMenu = true;
+        }
+        else
+        {
+          
+            pausedByThisMenu = false;
+        }
 
         RebuildStatsUI();
     }
@@ -86,7 +98,11 @@ public class PauseMenuController : MonoBehaviour
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
-        Time.timeScale = 1f;
+       
+        if (pausedByThisMenu)
+            Time.timeScale = 1f;
+
+        pausedByThisMenu = false;
     }
 
     public void RebuildStatsUI()
@@ -103,11 +119,11 @@ public class PauseMenuController : MonoBehaviour
             return;
         }
 
-        // Clear
+       
         for (int i = statsContent.childCount - 1; i >= 0; i--)
             Destroy(statsContent.GetChild(i).gameObject);
 
-        // Build
+        
         foreach (CoreStatId statId in Enum.GetValues(typeof(CoreStatId)))
         {
             float value = statsManager.GetValue(statId);
@@ -117,7 +133,6 @@ public class PauseMenuController : MonoBehaviour
                 statId == CoreStatId.HPRegen ||
                 statId == CoreStatId.LifeSteal ||
                 statId == CoreStatId.AoeRadius;
-
 
             if (hideZeroStats && !alwaysShow && Mathf.Approximately(value, 0f))
                 continue;
@@ -141,5 +156,6 @@ public class PauseMenuController : MonoBehaviour
         return false;
     }
 }
+
 
 
