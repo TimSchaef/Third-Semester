@@ -7,17 +7,15 @@ using UnityEngine.VFX;
 public class PlayerAttack : MonoBehaviour
 {
     [Header("Attack")]
-    [SerializeField] private Collider attackCollider;     
-    [SerializeField] private Transform attackPivot;       
+    [SerializeField] private Collider attackCollider;
+    [SerializeField] private Transform attackPivot;
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private float activeTime = 0.25f;
 
     [Header("Cooldown")]
-    
     [SerializeField] private float baseAttackCooldown = 1.0f;
 
     [Header("Stats")]
-    
     [SerializeField] private PlayerStatsManager stats;
 
     [Header("Auto Attack")]
@@ -105,9 +103,7 @@ public class PlayerAttack : MonoBehaviour
 
         Transform target = FindNearestTarget();
         if (!target)
-        {
             return;
-        }
 
         StartCoroutine(DoAttack(target));
     }
@@ -145,7 +141,7 @@ public class PlayerAttack : MonoBehaviour
 
         attacking = false;
     }
-    
+
     private float GetFinalDamageFromStats(out bool isCrit)
     {
         isCrit = false;
@@ -183,7 +179,6 @@ public class PlayerAttack : MonoBehaviour
             attackVfx.Stop();
 
         attackVfx.Play();
-        
     }
 
     private void AlignVfxToTarget(Transform target)
@@ -298,18 +293,30 @@ public class PlayerAttack : MonoBehaviour
 
         if (finalDamage > 0f)
         {
-            hp.ApplyDamage(finalDamage, myHealth, isCrit);
+            // Damage
+            float dealt = hp.ApplyDamage(finalDamage, myHealth, isCrit);
 
+            // ✅ Life Steal
+            if (stats != null && myHealth != null && dealt > 0f)
+            {
+                float lifeSteal = Mathf.Clamp01(stats.GetValue(CoreStatId.LifeSteal));
+                if (lifeSteal > 0f)
+                {
+                    float healAmount = dealt * lifeSteal;
+                    myHealth.Heal(healAmount);
+
+                    if (debugLogs)
+                        Debug.Log($"[LifeSteal] dealt={dealt:0.##} ls={lifeSteal:0.##} heal={healAmount:0.##}");
+                }
+            }
+
+            // Sounds
             if (isCrit)
-            {
                 SoundManager.Instance.PlaySound3D("attackCritHit", other.transform.position);
-            }
             else
-            {
                 SoundManager.Instance.PlaySound3D("attackHit", other.transform.position);
-            }
         }
-        
+
         var enemyMove =
             other.GetComponent<EnemyMovement>() ??
             other.GetComponentInParent<EnemyMovement>();
@@ -334,6 +341,7 @@ public class PlayerAttack : MonoBehaviour
     }
 #endif
 }
+
 
 
 

@@ -17,7 +17,7 @@ MonoBehaviour:
   description: '+ 15% Move Speed
 
 
-    - 5% Life Steal'
+    - 2% Life Steal'
   icon: {fileID: 0}
   rarity: 0
   requiredPlayerLevel: 1
@@ -27,9 +27,9 @@ MonoBehaviour:
   prerequisiteMode: 0
   prerequisites: []
   effects:
-  - stat: 0
+  - stat: 10
     op: 1
     value: 0.15
-  - stat: 7
+  - stat: 8
     op: 0
-    value: -0.05
+    value: -0.02

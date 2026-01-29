@@ -27,9 +27,9 @@ MonoBehaviour:
   prerequisiteMode: 0
   prerequisites: []
   effects:
-  - stat: 6
+  - stat: 11
     op: 0
     value: -0.25
-  - stat: 3
+  - stat: 7
     op: 0
     value: 2

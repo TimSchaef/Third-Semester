@@ -13,17 +13,15 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private PlayerStatsManager statsManager;
     [SerializeField] private PlayerProgress progress;
 
-    [Header("Input (optional)")]
+    [Header("Input")]
     [SerializeField] private InputActionReference escAction;
 
     [Header("Behavior")]
     [SerializeField] private bool pauseGameOnOpen = true;
 
-    [Header("Stats UI")]
-    [Tooltip("Wenn true: 0-Werte werden ausgeblendet (außer Always Show Stats).")]
+    [Header("Stats")]
     [SerializeField] private bool hideZeroStats = true;
-
-    [Tooltip("Diese Stats werden immer angezeigt, auch wenn sie 0 sind.")]
+    
     [SerializeField] private CoreStatId[] alwaysShowStats = new[]
     {
         CoreStatId.TurretCount,
