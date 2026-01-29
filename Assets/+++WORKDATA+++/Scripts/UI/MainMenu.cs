@@ -17,7 +17,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] Button exitButton;
     
     [Header("Audio")]
-    public AudioMixer audioMixer;
     public Slider masterSlider;
     public Slider musicSlider;
     public Slider sfxSlider;
@@ -26,49 +25,22 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         MusicManager.Instance.PlayMusic("MainMenu");
+        
         startButton.onClick.AddListener(StartGame);
         settingsButton.onClick.AddListener(OpenSettingsPanel);
         creditsButton.onClick.AddListener(OpenCreditsPanel);
         exitButton.onClick.AddListener(ExitGame);
+        
         mainMenuPanel.SetActive(true);
         settingsPanel.SetActive(false);
         creditsPanel.SetActive(false);
 
-        LoadVolume();
-        
-    }
-
-    public void UpdateMasterVolume(float volume)
-    {
-        audioMixer.SetFloat("MasterVolume", volume);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.UpdateSliders(masterSlider, musicSlider, sfxSlider);
+        }
     }
     
-    public void UpdateMusicVolume(float volume)
-    {
-        audioMixer.SetFloat("MusicVolume", volume);
-    }
-    
-    public void UpdateSFXVolume(float volume)
-    {
-        audioMixer.SetFloat("SFXVolume", volume);
-    }
-
-    public void SaveVolume()
-    {
-        audioMixer.GetFloat("MasterVolume", out float masterVolume);
-        PlayerPrefs.SetFloat("MasterVolume", masterVolume);
-        audioMixer.GetFloat("MusicVolume", out float musicVolume);
-        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
-        audioMixer.GetFloat("SFXVolume", out float sfxVolume);
-        PlayerPrefs.SetFloat("SFXVolume", sfxVolume);
-    }
-
-    public void LoadVolume()
-    {
-        masterSlider.value = PlayerPrefs.GetFloat("MasterVolume");
-        musicSlider.value = PlayerPrefs.GetFloat("MusicVolume");
-        sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume");
-    }
     
     private void StartGame()
     {
