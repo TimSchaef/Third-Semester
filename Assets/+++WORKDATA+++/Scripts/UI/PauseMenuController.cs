@@ -37,6 +37,12 @@ public class PauseMenuController : MonoBehaviour
 
     private void Awake()
     {
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
+        isOpen = false;
+        pausedByThisMenu = false;
+
         if (escAction != null && escAction.action != null)
             escAction.action.performed += TogglePause;
     }
