@@ -26,7 +26,8 @@ public class PauseMenuController : MonoBehaviour
     {
         CoreStatId.TurretCount,
         CoreStatId.HPRegen,
-        CoreStatId.LifeSteal
+        CoreStatId.LifeSteal,
+        CoreStatId.AoeRadius
     };
 
     private bool isOpen;
@@ -111,7 +112,12 @@ public class PauseMenuController : MonoBehaviour
         {
             float value = statsManager.GetValue(statId);
 
-            bool alwaysShow = ArrayContains(alwaysShowStats, statId);
+            bool alwaysShow =
+                statId == CoreStatId.TurretCount ||
+                statId == CoreStatId.HPRegen ||
+                statId == CoreStatId.LifeSteal ||
+                statId == CoreStatId.AoeRadius;
+
 
             if (hideZeroStats && !alwaysShow && Mathf.Approximately(value, 0f))
                 continue;
