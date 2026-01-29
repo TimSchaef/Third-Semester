@@ -42,10 +42,9 @@ public class LevelUpSkillChoiceController : MonoBehaviour
     private readonly Queue<int> pendingLevels = new Queue<int>();
 
     private int panelsShown;
-
-    // NEW: getrennte States
-    private bool winPanelOpen;     // blockt solange WinPanel offen ist
-    private bool winShownOnce;     // WinPanel darf nur ein einziges Mal erscheinen
+    
+    private bool winPanelOpen;   
+    private bool winShownOnce;     
 
     private bool refreshUsedThisPanel;
 
@@ -90,7 +89,6 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void HandleLevelUp(int newLevel)
     {
-        // Während WinPanel offen: nix öffnen
         if (winPanelOpen) return;
 
         pendingLevelUps++;
@@ -124,8 +122,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         {
             panelsShown++;
             refreshUsedThisPanel = false;
-
-            // WIN nur 1x auslösen
+            
             if (!winShownOnce && panelsShown >= panelsToWin)
             {
                 TriggerWin();
@@ -210,11 +207,11 @@ public class LevelUpSkillChoiceController : MonoBehaviour
 
     private void TriggerWin()
     {
-        // WinPanel nur 1x
+      
         winShownOnce = true;
         winPanelOpen = true;
 
-        // FIX: LevelUp-Panel-State sauber schließen, sonst hängt isOpen
+       
         isOpen = false;
 
         if (panelRoot != null)
@@ -240,14 +237,9 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         UpdateRefreshButton();
         onWin?.Invoke();
     }
-
-    /// <summary>
-    /// Vom WinPanel-Continue Button aufrufen.
-    /// Danach darf NICHT nochmal WinPanel kommen, aber LevelUps sollen weitergehen.
-    /// </summary>
+    
     public void ResumeAfterWin()
     {
-        // WinPanel schließen & Spiel fortsetzen
         winPanelOpen = false;
 
         if (winPanel != null)

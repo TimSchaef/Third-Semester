@@ -8,8 +8,9 @@ public class StatRowUI : MonoBehaviour
 
     public void Set(string name, string value)
     {
-        if (nameText) nameText.text = name;
-        if (valueText) valueText.text = value;
+        nameText.text = name;
+        valueText.text = value;
     }
+
 }
 

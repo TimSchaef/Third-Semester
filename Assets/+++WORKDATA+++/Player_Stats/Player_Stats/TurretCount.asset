@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27bc93ec0c173754f986cd7beb174d69, type: 3}
   m_Name: TurretCount
   m_EditorClassIdentifier: 
-  statId: 14
+  statId: 12
   displayName: TurretCount
   description: 'increases the Turret count
 

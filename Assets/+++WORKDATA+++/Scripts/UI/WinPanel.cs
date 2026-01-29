@@ -40,8 +40,6 @@ public class WinPanelUI : MonoBehaviour
 
         if (!string.IsNullOrEmpty(sceneToLoad))
             SceneManager.LoadScene(sceneToLoad);
-        else
-            Debug.LogWarning("WinPanelUI: Keine Scene angegeben!");
     }
 }
 

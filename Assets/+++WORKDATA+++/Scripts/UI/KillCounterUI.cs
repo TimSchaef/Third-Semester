@@ -11,7 +11,7 @@ public class KillCounterUI: MonoBehaviour
         if (KillCounter.Instance == null) return;
 
         KillCounter.Instance.OnKillsChanged += HandleChanged;
-        HandleChanged(KillCounter.Instance.Kills); // refresh immediately
+        HandleChanged(KillCounter.Instance.Kills); 
     }
 
     private void OnDisable()

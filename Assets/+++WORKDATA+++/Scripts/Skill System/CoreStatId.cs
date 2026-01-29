@@ -1,21 +1,21 @@
 public enum CoreStatId
 {
-    MoveSpeed,
-    AttackSpeed,
-    MaxHP,
-    HPRegen,
-    Armor,
-    XPGain,
-    Thorns,
-    LifeSteal,
-    Damage,
-    CritChance,
-    CritDamage,
     AoeDamage,
     AoeRadius,
     AoeTickRate,
+    AttackSpeed,
+    CritChance,
+    CritDamage,
+    Damage,
+    HPRegen,
+    LifeSteal,
+    MaxHP,
+    MoveSpeed,
+    Thorns,
     TurretCount,    
-    TurretDamage   
+    TurretDamage,
+    XPGain,
+    Armor
 }
 
 
