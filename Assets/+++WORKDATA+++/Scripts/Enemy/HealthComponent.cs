@@ -164,6 +164,15 @@ public class HealthComponent : MonoBehaviour
         {
             damageVignette.Play();
         }
+
+        if (CompareTag("Player"))
+        {
+            SoundManager.Instance.PlaySound3D("playerHit", transform.position);
+        }
+        else
+        {
+            SoundManager.Instance.PlaySound3D("enemyHit", transform.position);
+        }
         
 
         SpawnDamageNumber(taken, isCrit);
@@ -213,6 +222,7 @@ public class HealthComponent : MonoBehaviour
 
         if (CompareTag("Player"))
         {
+            SoundManager.Instance.PlaySound3D("playerDeath", transform.position);
             if (losePanel != null)
                 losePanel.Show();
             else
@@ -220,6 +230,7 @@ public class HealthComponent : MonoBehaviour
             return;
         }
 
+        SoundManager.Instance.PlaySound3D("enemyDeath", transform.position);
       
         StartCoroutine(EnemyDeathRoutine());
     }

@@ -312,9 +312,9 @@ public class PlayerAttack : MonoBehaviour
 
             // Sounds
             if (isCrit)
-                SoundManager.Instance.PlaySound3D("attackCritHit", other.transform.position);
+                SoundManager.Instance.PlaySound3D("enemyCritHit", other.transform.position);
             else
-                SoundManager.Instance.PlaySound3D("attackHit", other.transform.position);
+                SoundManager.Instance.PlaySound3D("enemyHit", other.transform.position);
         }
 
         var enemyMove =
