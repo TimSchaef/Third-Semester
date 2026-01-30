@@ -416,9 +416,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicTracks:
   - TrackName: MainMenu
-    clip: {fileID: 8300000, guid: 1ff0ca2b6e340784bbae7dfc936c70a5, type: 3}
+    clip: {fileID: 8300000, guid: 8c9b8e6e9f6944146828cbe585a2b26a, type: 3}
   - TrackName: Game
-    clip: {fileID: 8300000, guid: 221697341e42ed94b9a53e643432096e, type: 3}
+    clip: {fileID: 8300000, guid: 2fcd0514b6c69684892a9158d8860617, type: 3}
 --- !u!114 &248378380
 MonoBehaviour:
   m_ObjectHideFlags: 0
