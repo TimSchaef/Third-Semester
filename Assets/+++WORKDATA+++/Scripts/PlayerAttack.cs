@@ -110,9 +110,8 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator DoAttack(Transform target)
     {
+        SoundManager.Instance.PlaySound3D("attack", transform.position);   
         attacking = true;
-
-        SoundManager.Instance.PlaySound3D("attack", transform.position);
 
         cooldownTimer = GetEffectiveCooldown();
 
