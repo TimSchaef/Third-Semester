@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class StatTextUtil
+
+public class StatTextUtil : MonoBehaviour
 {
     private static readonly HashSet<CoreStatId> PercentStats = new()
     {
