@@ -17,13 +17,18 @@ public class TurretController : MonoBehaviour
 
         public float lifetime;
         public Action<TurretController> onExpired;
+        
+        public string shootTriggerName;
     }
 
     private Config cfg;
     private float lifeTimer;
     private float shotTimer;
 
-    private Camera cam;
+    [Header("Animation")]
+    [SerializeField] private Animator animator; 
+
+    private int shootTriggerHash;
 
     private readonly Collider[] buffer = new Collider[64];
 
@@ -32,7 +37,14 @@ public class TurretController : MonoBehaviour
         cfg = config;
         lifeTimer = Mathf.Max(0.1f, cfg.lifetime);
         shotTimer = 0f;
-        cam = Camera.main;
+
+        if (!animator) animator = GetComponentInChildren<Animator>();
+
+     
+        if (string.IsNullOrEmpty(cfg.shootTriggerName))
+            cfg.shootTriggerName = "Shoot";
+
+        shootTriggerHash = Animator.StringToHash(cfg.shootTriggerName);
     }
 
     private void Update()
@@ -44,18 +56,29 @@ public class TurretController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         float interval = 1f / Mathf.Max(0.1f, cfg.fireRate);
         shotTimer -= Time.deltaTime;
         if (shotTimer > 0f) return;
-        shotTimer = interval;
 
         var target = FindNearestTarget();
-        if (!target) return;
+        if (!target)
+        {
+            shotTimer = 0f;
+            return;
+        }
+
+        
+        shotTimer = interval;
+
+        
+        if (animator)
+            animator.SetTrigger(shootTriggerHash);
+
         
         target.ApplyDamage(cfg.damage, cfg.ownerHealth);
     }
-    
+
     private HealthComponent FindNearestTarget()
     {
         int count = Physics.OverlapSphereNonAlloc(
@@ -98,5 +121,6 @@ public class TurretController : MonoBehaviour
     }
 #endif
 }
+
 
 

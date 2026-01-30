@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4988637132275213113}
   - component: {fileID: 4683017928293083458}
   - component: {fileID: 6957541068158279230}
+  - component: {fileID: 1710510699722445612}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -45,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4145c26f64e29347a878523d46de0a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 1710510699722445612}
 --- !u!212 &6957541068158279230
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -100,3 +102,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1710510699722445612
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3135538669212279497}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 06b3a2586abf5884f8822f3c0807975e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
