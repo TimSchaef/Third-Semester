@@ -9,7 +9,7 @@ public class UIHealthDisplay : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TMP_Text hitpointsTextmesh;
-    [SerializeField] private Image hpFillImage; // Image Type = Filled
+    [SerializeField] private Image hpFillImage; 
 
     [Header("Formatting")]
     [SerializeField] private bool showAsIntegers = true;

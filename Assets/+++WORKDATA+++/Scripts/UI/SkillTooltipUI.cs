@@ -15,7 +15,7 @@ public class SkillTooltipUI : MonoBehaviour
     [SerializeField] private PlayerStatsManager statsManager;
 
     [Header("Default")]
-    [SerializeField] private string defaultTitle = "Wähle ein Upgrade";
+    [SerializeField] private string defaultTitle = "Choose a titel";
     [SerializeField] private string defaultStats = "";
 
     private const string PREVIEW_SOURCE_ID = "skill_preview";

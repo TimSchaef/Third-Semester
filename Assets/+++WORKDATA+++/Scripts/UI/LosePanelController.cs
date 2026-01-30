@@ -9,14 +9,13 @@ public class LosePanelController : MonoBehaviour
     [Header("Pause / Cursor")]
     [SerializeField] private bool pauseGameOnShow = true;
 
-    [Header("Disable While Open (optional)")]
+    [Header("Disable While Open")]
     [SerializeField] private MonoBehaviour[] disableWhenOpen;
 
     [Header("Scene Buttons")]
-    [Tooltip("Wenn leer, wird beim Retry die aktive Scene neu geladen.")]
     [SerializeField] private string retrySceneName = "";
 
-    [Tooltip("Scene für Main Menu (muss in Build Settings sein).")]
+    
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     private bool isOpen;
@@ -86,8 +85,6 @@ public class LosePanelController : MonoBehaviour
 
         if (!string.IsNullOrEmpty(mainMenuSceneName))
             SceneManager.LoadScene(mainMenuSceneName);
-        else
-            Debug.LogWarning("LosePanelController: mainMenuSceneName ist leer!");
     }
 
     public void OnQuitPressed()

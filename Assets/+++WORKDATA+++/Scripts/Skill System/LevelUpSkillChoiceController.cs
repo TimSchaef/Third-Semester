@@ -257,8 +257,7 @@ public class LevelUpSkillChoiceController : MonoBehaviour
         }
 
         SetRootDisabledWhileOpen(false);
-
-        // Falls LevelUps aufgelaufen sind: direkt wieder öffnen
+        
         if (!isOpen && pendingLevelUps > 0 && pendingLevels.Count > 0)
         {
             OpenAndShowChoicesForNextPendingLevel(countAsPanel: false);

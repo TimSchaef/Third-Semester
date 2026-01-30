@@ -292,10 +292,8 @@ public class PlayerAttack : MonoBehaviour
 
         if (finalDamage > 0f)
         {
-            // Damage
             float dealt = hp.ApplyDamage(finalDamage, myHealth, isCrit);
-
-            // ✅ Life Steal
+            
             if (stats != null && myHealth != null && dealt > 0f)
             {
                 float lifeSteal = Mathf.Clamp01(stats.GetValue(CoreStatId.LifeSteal));
@@ -309,7 +307,7 @@ public class PlayerAttack : MonoBehaviour
                 }
             }
 
-            // Sounds
+            
             if (isCrit)
                 SoundManager.Instance.PlaySound3D("enemyCritHit", other.transform.position);
             else

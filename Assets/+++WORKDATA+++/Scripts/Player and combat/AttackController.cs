@@ -24,7 +24,7 @@ public class AttackController : MonoBehaviour
         float cd = baseAttackCooldown / atkSpeedMult;
         cooldownTimer = cd;
         float dmgMult = stats != null ? stats.GetValue(CoreStatId.Damage) : 1f;
-        if (dmgMult <= 0f) dmgMult = 1f; // safety
+        if (dmgMult <= 0f) dmgMult = 1f; 
         float finalDamage = baseDamage * dmgMult;
         
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f))

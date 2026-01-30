@@ -96,24 +96,23 @@ public class EnemyMovement : MonoBehaviour
         if (cooldownTimer > 0f) cooldownTimer -= Time.deltaTime;
         if (stateTimer > 0f) stateTimer -= Time.deltaTime;
 
-        // ✅ NEU: Wenn der Gegner außerhalb der Area ist -> anhalten + zurück in Bounds
+       
         if (EnemyAreaBounds.Instance != null && !EnemyAreaBounds.Instance.Contains(rb.position))
         {
             Vector3 clamped = EnemyAreaBounds.Instance.ClampToBounds(rb.position);
 
-            // Snap zurück in die Area
+            
             rb.position = clamped;
 
-            // hart stoppen
+       
             rb.linearVelocity = Vector3.zero;
-
-            // Zustände resetten, damit er danach wieder normal chased
+            
             state = State.Chase;
             stateTimer = 0f;
             inKnockbackStopPhase = false;
             currentKnockbackSpeed = 0f;
 
-            return; // nächste Frames läuft Chase wieder ganz normal
+            return; 
         }
 
         if (player == null)

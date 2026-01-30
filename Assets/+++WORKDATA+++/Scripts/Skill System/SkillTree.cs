@@ -101,13 +101,11 @@ public class SkillTree : MonoBehaviour
 
         if (!CanUnlock(skill, out var reason))
         {
-            Debug.Log($"[SkillTree] Cannot pick {skill.skillId}: {reason}");
             return false;
         }
 
         if (!player.SpendSkillPoints(skill.costSkillPoints))
         {
-            Debug.Log($"[SkillTree] SpendSkillPoints failed for {skill.skillId}");
             return false;
         }
 
