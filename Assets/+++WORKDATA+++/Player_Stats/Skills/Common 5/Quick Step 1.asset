@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Quick Step
-  description: '+ 14% Move Speed
+  description: '+ 10% Move Speed
 
 
     - 5% Attack Speed'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 10
     op: 1
-    value: 0.14
+    value: 0.1
   - stat: 3
     op: 0
     value: -0.05

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillId: aoe_damage_1
   displayName: Absorbtion
-  description: '+ 2% Life Steal
+  description: '+ 1% Life Steal
 
 
     -7% Thorns'
@@ -29,7 +29,7 @@ MonoBehaviour:
   effects:
   - stat: 8
     op: 0
-    value: 0.02
+    value: 0.01
   - stat: 11
     op: 0
     value: -0.07
