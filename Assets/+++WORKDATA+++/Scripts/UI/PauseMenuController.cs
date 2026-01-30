@@ -104,11 +104,13 @@ public class PauseMenuController : MonoBehaviour
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
-       
-        if (pausedByThisMenu)
-            Time.timeScale = 1f;
 
-        pausedByThisMenu = false;
+        if (pausedByThisMenu)
+        {
+            Time.timeScale = 1f;
+            pausedByThisMenu = false;
+        }
+           
     }
 
     public void RebuildStatsUI()
